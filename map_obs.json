@@ -1,0 +1,10 @@
+{
+    "map": {
+    "none": 0,
+    "wall": 1,
+    "door": 2,
+    "ball": 3,
+    "agent": 4,
+    "goal": 5
+    }
+}
