@@ -24,26 +24,53 @@ objectives = []
 #Objective(initial_state, final_state, observation_top, observation_width, observation_height)
 objective1 = Objective([1,1], [6,3], [0,0], 7, 7)
 objectives.append(objective1)
+objective1r = Objective([6,3], [1,1], [0,0], 7, 7)
+objectives.append(objective1r)
+
 objective2 = Objective([1,1], [3,6], [0,0], 7, 7)
 objectives.append(objective2)
+objective2r = Objective([3,6], [1,1], [0,0], 7, 7)
+objectives.append(objective2r)
+
 objective3 = Objective([6,3], [9,6], [6,0], 7, 7)
 objectives.append(objective3)
+objective3r = Objective([9,6], [6,3], [6,0], 7, 7)
+objectives.append(objective3r)
+
 objective4 = Objective([3,6], [6,9], [0,6], 7, 7)
 objectives.append(objective4)
+objective4r = Objective([6,9], [3,6], [0,6], 7, 7)
+objectives.append(objective4r)
+
 objective5 = Objective([6,9], [11,11], [6,6], 7, 7)
 objectives.append(objective5)
+objective5r = Objective([11,11], [6,9], [6,6], 7, 7)
+objectives.append(objective5r)
+
 objective6 = Objective([9,6], [11,11], [6,6], 7, 7)
 objectives.append(objective6)
+objective6r = Objective([11,11], [9,6], [6,6], 7, 7)
+objectives.append(objective6r)
+
+objective7 = Objective([3,6],[6,3], [0,0], 7, 7)
+objectives.append(objective7)
+objective7r = Objective([6,3], [3,6], [0,0], 7, 7)
+objectives.append(objective7r)
+
+objective8 = Objective([6, 9], [9, 6],[6,6], 7, 7)
+objectives.append(objective8)
+objective8r = Objective([9, 6], [6, 9], [6,6], 7, 7)
+objectives.append(objective8r)
 
 # high_level_model = HLM(objectives, start_state, goal_state, env_settings)
 
 # high_level_model.train_subcontrollers()
 # high_level_model.save('test_HLM')
-# high_level_model = None
+high_level_model = None
 high_level_model = HLM(load_dir='test_HLM')
 
 # high_level_model.create_states()
 # high_level_model.create_edges()
-high_level_model.demonstrate_capabilities()
-#high_level_model.generate_graph()
+#high_level_model.demonstrate_capabilities()
+high_level_model.generate_graph()
 

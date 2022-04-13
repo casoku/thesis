@@ -247,7 +247,7 @@ class HLM:
 
         # Need to create a layout when doing
         # separate calls to draw nodes and edges
-        pos = nx.spectral_layout(G)
+        pos = nx.circular_layout(G)
         nx.draw_networkx_nodes(G, pos, cmap=plt.get_cmap('jet'), node_size = 500)
         nx.draw_networkx_labels(G, pos)
         nx.draw_networkx_edges(G, pos, edgelist=black_edges, arrows=True)
