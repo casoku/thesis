@@ -4,8 +4,10 @@ __pycache__/
 *$py.class
 
 # Self added gitignores
-Subcontrollers/	
-Models/		
+Subcontrollers/
+Subcontrollers/*	
+Models/
+Models/*		
 
 # C extensions
 *.so
