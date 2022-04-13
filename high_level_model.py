@@ -1,3 +1,5 @@
+import os
+import pickle
 from Util.State import State
 from Util.Edge import Edge
 from Util.Objective import Objective
@@ -8,7 +10,7 @@ import matplotlib.pyplot as plt
 
 
 class HLM:
-    def __init__(self, objectives, start_state, goal_state, env_settings):
+    def __init__(self, objectives =None, start_state=None, goal_state=None, env_settings=None):
         self.env_settings = env_settings
         self.env = Maze(**env_settings)
         self.controllers = []
@@ -19,6 +21,7 @@ class HLM:
         self.goal_state = goal_state
         self.states = []
         self.edges = []
+
 
     def train_subcontrollers(self):
         '''
@@ -40,10 +43,39 @@ class HLM:
         Save the subcontrollers/HLM 
         """
 
+        #Create path and folder to save HLM in
+        save_path = os.path.join('Models', save_dir)
+        if not os.path.isdir(save_path):
+            os.mkdir(save_path)
+
+        #Create subfolder to save subcontrollers of this HLM in
+        subcontrollers_path = os.path.join('Models', save_dir, 'Subcontrollers')
+        if not os.path.isdir(subcontrollers_path):
+            os.mkdir(subcontrollers_path)
+
+        #Save each subcontroller in a seperate folder
+        for controller in self.controllers:
+            controller_dir = "controller" + str(controller.id)
+            controller_path = os.path.join(subcontrollers_path, controller_dir)
+            controller.save(controller_path)
+
+        #Save the data from the models
+        model_file = os.path.join(save_path, 'model_data.p')
+        model_data = {
+            'objectives': self.objectives,
+            'start_state': self.start_state,
+            'goal_state': self.goal_state,
+            'env_settings': self.env_settings
+        }
+
+        with open(model_file, 'wb') as pickleFile:
+            pickle.dump(model_data, pickleFile)
+
     def load(self, load_dir):
         """
-        Load the subcontrollers/HLM
+        Load the subcontrollers/HLM and create all edges and states in the model
         """
+
 
     def create_states(self):
         '''
