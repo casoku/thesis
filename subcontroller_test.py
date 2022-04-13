@@ -31,6 +31,7 @@ task1 = Objective(initial_states, final_states, observation_top, observation_wid
 controller = SubtaskController(assign_controller_id(controller_id), task1.start_state, task1.final_state, env_settings=env_settings,
                 observation_top=observation_top, observation_width=observation_width, observation_height=observation_height)
 controller.learn(10000)
+controller.save("test_subcontroller1")
 
 initial_states2 = [1,1]
 final_states2 = [3,6] #(x, y, orientation)
@@ -38,6 +39,7 @@ task2 = Objective(initial_states2, final_states2, observation_top, observation_w
 controller2 = SubtaskController(assign_controller_id(controller_id), task2.start_state, task2.final_state, env_settings=env_settings,
                 observation_top=observation_top, observation_width=observation_width, observation_height=observation_height)
 controller2.learn(10000)
+controller2.save("test_subcontroller2")
 
 # #--------Second room controllers--------
 # initial_states3 = [6,3]
@@ -76,6 +78,8 @@ controller2.learn(10000)
 # controller6.learn()
 
 print("-------------Controller 1 performance----------------------")
+controller = None
+controller = SubtaskController(load_dir="test_subcontroller1")
 controller.eval_performance(100)
 performance = controller.get_performance()
 print(performance)
@@ -84,7 +88,9 @@ if(performance['performance_estimates']['avg_num_steps'] > 10):
 print()
 controller.demonstrate_capabilities()
 print()
-# print("-------------Controller 2 performance----------------------")
+print("-------------Controller 2 performance----------------------")
+controller2 = None
+controller2 = SubtaskController(load_dir="test_subcontroller2")
 controller2.eval_performance()
 performance = controller2.get_performance()
 print(performance)

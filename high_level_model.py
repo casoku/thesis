@@ -30,10 +30,20 @@ class HLM:
         for task in self.objectives:
             controller = SubtaskController(controller_id, task.start_state, task.final_state, env_settings=self.env_settings,
                  observation_top=task.observation_top, observation_width=task.observation_width, observation_height=task.observation_height)
-            controller.learn(10000)
+            controller.learn(20000)
             self.controllers.append(controller)
             controller_id += 1
             print("controller" + str(controller_id) + " done")
+
+    def save(self, save_dir):
+        """
+        Save the subcontrollers/HLM 
+        """
+
+    def load(self, load_dir):
+        """
+        Load the subcontrollers/HLM
+        """
 
     def create_states(self):
         '''
