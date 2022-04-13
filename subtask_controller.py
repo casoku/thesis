@@ -57,12 +57,13 @@ class SubtaskController(object):
         """
         Save the controller object.
         """
-        if not os.path.isdir(save_dir):
-            os.mkdir(save_dir)
+        save_path = os.path.join('Subcontrollers', save_dir)
+        if not os.path.isdir(save_path):
+            os.mkdir(save_path)
 
-        model_file = os.path.join(save_dir, 'model')
+        model_file = os.path.join(save_path, 'model')
         self.model.save(model_file)
-        controller_file = os.path.join(save_dir, 'controller_data.p')
+        controller_file = os.path.join(save_path, 'controller_data.p')
 
         controller_data = {
             'controller_id' : self.id,
@@ -85,8 +86,8 @@ class SubtaskController(object):
         """
         Load a controller object
         """
-
-        controller_file = os.path.join(save_dir, 'controller_data.p')
+        save_path = os.path.join('Subcontrollers', save_dir)
+        controller_file = os.path.join(save_path, 'controller_data.p')
         with open(controller_file, 'rb') as pickleFile:
             controller_data = pickle.load(pickleFile)
 
@@ -105,7 +106,7 @@ class SubtaskController(object):
         print(self.env_settings)
         self._set_training_env(self.env_settings)
 
-        model_file = os.path.join(save_dir, 'model')
+        model_file = os.path.join(save_path, 'model')
         self.model = PPO.load(model_file, env=self.training_env)
         
     def predict(self, obs, deterministic=True):

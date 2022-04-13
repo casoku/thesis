@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Self added gitignores
+Subcontrollers/	#Folder to save Subcontrollers
+Models/		#Folder to save High Level Models
+
 # C extensions
 *.so
 
