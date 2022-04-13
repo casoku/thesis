@@ -4,8 +4,8 @@ __pycache__/
 *$py.class
 
 # Self added gitignores
-Subcontrollers/	#Folder to save Subcontrollers
-Models/		#Folder to save High Level Models
+Subcontrollers/	
+Models/		
 
 # C extensions
 *.so
