@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Self added gitignores
+Subcontrollers/
+Subcontrollers/*	
+Models/
+Models/*		
+
 # C extensions
 *.so
 

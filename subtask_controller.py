@@ -1,3 +1,5 @@
+import os
+import pickle
 import gym
 from minigrid_env import Maze
 from stable_baselines3 import A2C, PPO
@@ -9,7 +11,7 @@ class SubtaskController(object):
     """
     Class representing a goal-oriented sub-task within the environment
     """
-    def __init__(self, controller_id, init_state = None, final_state=None, observation_width=7, observation_height = 7, observation_top = [0, 0],env_settings=None, max_training_steps=1e6, load_dir=None, verbose=False):
+    def __init__(self, controller_id=None, init_state = None, final_state=None, observation_width=7, observation_height = 7, observation_top = [0, 0],env_settings=None, max_training_steps=1e6, load_dir=None, HLM_load = False, verbose=False):
         self.id = controller_id
         self.init_state = init_state
         self.final_state = final_state
@@ -18,6 +20,7 @@ class SubtaskController(object):
         self.observation_top = observation_top
         self.env_settings = env_settings
         self.max_training_steps = max_training_steps
+        self.training_steps = 0
         self.verbose = verbose
 
         self.data = {
@@ -27,13 +30,14 @@ class SubtaskController(object):
         }
 
         if load_dir is None:
+            assert controller_id is not None
             assert init_state is not None
             assert final_state is not None
             assert env_settings is not None
             self._set_training_env(env_settings)
             self._init_learning_alg(verbose=self.verbose)
-
-        #TODO load a controller
+        else:
+            self.load(load_dir, HLM_load=HLM_load)
     
     def learn(self, total_timesteps = 5e4):
         """
@@ -48,17 +52,75 @@ class SubtaskController(object):
         self.training_steps = total_timesteps
         #self.data['total_training_steps'] = self.data['total_training_steps'] + total_timesteps
 
+
+    def save(self, save_dir, HLM_save = False):
+        """
+        Save the controller object.
+        """
+        save_path = None
+        if HLM_save:
+            save_path = save_dir
+        else:
+            save_path = os.path.join('Subcontrollers', save_dir)
+        if not os.path.isdir(save_path):
+            os.mkdir(save_path)
+
+        model_file = os.path.join(save_path, 'model')
+        self.model.save(model_file)
+        controller_file = os.path.join(save_path, 'controller_data.p')
+
+        controller_data = {
+            'controller_id' : self.id,
+            'init_state' : self.init_state,
+            'final_state' : self.final_state,
+            'observation_width': self.observation_width,
+            'observation_height': self.observation_height,
+            'observation_top': self.observation_top,
+            'env_settings' : self.env_settings,
+            'verbose' : self.verbose,
+            'max_training_steps' : self.max_training_steps,
+            'training_steps': self.training_steps,
+            'data' : self.data,
+        }
+
+        with open(controller_file, 'wb') as pickleFile:
+            pickle.dump(controller_data, pickleFile)
+
+    def load(self, load_dir, HLM_load = False):
+        """
+        Load a controller object
+        """
+        if HLM_load:
+            load_path = load_dir
+        else:
+            load_path = os.path.join('Subcontrollers', load_dir)
+
+
+        controller_file = os.path.join(load_path, 'controller_data.p')
+        with open(controller_file, 'rb') as pickleFile:
+            controller_data = pickle.load(pickleFile)
+
+        self.id = controller_data['controller_id']
+        self.init_state = controller_data['init_state']
+        self.final_state = controller_data['final_state']
+        self.observation_width = controller_data['observation_width']
+        self.observation_height = controller_data['observation_height']
+        self.observation_top = controller_data['observation_top']
+        self.env_settings = controller_data['env_settings']
+        self.max_training_steps = controller_data['max_training_steps']
+        self.training_steps = controller_data['training_steps']
+        self.verbose = controller_data['verbose']
+        self.data = controller_data['data']
+
+        print(self.env_settings)
+        self._set_training_env(self.env_settings)
+
+        model_file = os.path.join(load_path, 'model')
+        self.model = PPO.load(model_file, env=self.training_env)
+        
     def predict(self, obs, deterministic=True):
         """
         Get the sub-system's action, given the current environment observation (state)
-
-        Inputs
-        ------
-        obs : tuple
-            Tuple representing the current environment observation (state).
-        deterministic (optional) : bool
-            Flag indicating whether or not to return a deterministic action or a distribution
-            over actions.
         """
         action, _states = self.model.predict(obs, deterministic=deterministic)
         return action, _states
@@ -96,13 +158,6 @@ class SubtaskController(object):
     def eval_performance(self, n_episodes=400, n_steps=100):
         """
         Perform empirical evaluation of the performance of the learned controller.
-
-        Inputs
-        ------
-        n_episodes : int
-            Number of episodes to rollout for evaluation.
-        n_steps : int
-            Length of each episode.
         """
         success_count = 0
         avg_num_steps = 0
