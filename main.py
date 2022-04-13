@@ -38,8 +38,8 @@ objectives.append(objective6)
 # high_level_model = HLM(objectives, start_state, goal_state, env_settings)
 
 # high_level_model.train_subcontrollers()
-#high_level_model.save('test_HLM')
-high_level_model = None
+# high_level_model.save('test_HLM')
+# high_level_model = None
 high_level_model = HLM(load_dir='test_HLM')
 
 # high_level_model.create_states()
