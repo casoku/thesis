@@ -1,5 +1,8 @@
+from ast import Sub
 import os
 import pickle
+
+from yaml import load
 from Util.State import State
 from Util.Edge import Edge
 from Util.Objective import Objective
@@ -10,17 +13,21 @@ import matplotlib.pyplot as plt
 
 
 class HLM:
-    def __init__(self, objectives =None, start_state=None, goal_state=None, env_settings=None):
-        self.env_settings = env_settings
-        self.env = Maze(**env_settings)
+    def __init__(self, objectives =None, start_state=None, goal_state=None, env_settings=None, load_dir = None):
         self.controllers = []
-        self.objectives = objectives
         self.success_probabilities = []
         self.cost = []
-        self.start_state = start_state
-        self.goal_state = goal_state
         self.states = []
         self.edges = []
+
+        if load_dir is None:
+            self.env_settings = env_settings
+            self.env = Maze(**env_settings)
+            self.objectives = objectives
+            self.start_state = start_state
+            self.goal_state = goal_state
+        else:
+            self.load(load_dir)
 
 
     def train_subcontrollers(self):
@@ -33,7 +40,7 @@ class HLM:
         for task in self.objectives:
             controller = SubtaskController(controller_id, task.start_state, task.final_state, env_settings=self.env_settings,
                  observation_top=task.observation_top, observation_width=task.observation_width, observation_height=task.observation_height)
-            controller.learn(20000)
+            controller.learn(10000)
             self.controllers.append(controller)
             controller_id += 1
             print("controller" + str(controller_id) + " done")
@@ -57,7 +64,7 @@ class HLM:
         for controller in self.controllers:
             controller_dir = "controller" + str(controller.id)
             controller_path = os.path.join(subcontrollers_path, controller_dir)
-            controller.save(controller_path)
+            controller.save(controller_path, HLM_save = True)
 
         #Save the data from the models
         model_file = os.path.join(save_path, 'model_data.p')
@@ -75,7 +82,29 @@ class HLM:
         """
         Load the subcontrollers/HLM and create all edges and states in the model
         """
+        # Load model data
+        load_path = os.path.join('Models', load_dir)
+        model_file = os.path.join(load_path, 'model_data.p')
+        with open(model_file, 'rb') as pickleFile:
+            model_data = pickle.load(pickleFile)
 
+        self.objectives = model_data['objectives']
+        self.start_state = model_data['start_state']
+        self.goal_state = model_data['goal_state']
+        self.env_settings = model_data['env_settings']
+        self.env = Maze(**self.env_settings)
+
+        #Load subcontrollers
+        controllers_path = os.path.join(load_path, 'Subcontrollers')
+        print(next(os.walk(controllers_path))[1])
+        for controller_file in next(os.walk(controllers_path))[1]:
+            print(controller_file)
+            subtask_controller_path = os.path.join(controllers_path, controller_file)
+            subtask_controller = SubtaskController(load_dir=subtask_controller_path, HLM_load=True)
+            self.controllers.append(subtask_controller)
+
+        self.create_states()
+        self.create_edges()
 
     def create_states(self):
         '''

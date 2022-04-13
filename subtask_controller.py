@@ -11,7 +11,7 @@ class SubtaskController(object):
     """
     Class representing a goal-oriented sub-task within the environment
     """
-    def __init__(self, controller_id=None, init_state = None, final_state=None, observation_width=7, observation_height = 7, observation_top = [0, 0],env_settings=None, max_training_steps=1e6, load_dir=None, verbose=False):
+    def __init__(self, controller_id=None, init_state = None, final_state=None, observation_width=7, observation_height = 7, observation_top = [0, 0],env_settings=None, max_training_steps=1e6, load_dir=None, HLM_load = False, verbose=False):
         self.id = controller_id
         self.init_state = init_state
         self.final_state = final_state
@@ -37,7 +37,7 @@ class SubtaskController(object):
             self._set_training_env(env_settings)
             self._init_learning_alg(verbose=self.verbose)
         else:
-            self.load(load_dir)
+            self.load(load_dir, HLM_load=HLM_load)
     
     def learn(self, total_timesteps = 5e4):
         """
@@ -53,11 +53,15 @@ class SubtaskController(object):
         #self.data['total_training_steps'] = self.data['total_training_steps'] + total_timesteps
 
 
-    def save(self, save_dir):
+    def save(self, save_dir, HLM_save = False):
         """
         Save the controller object.
         """
-        save_path = os.path.join('Subcontrollers', save_dir)
+        save_path = None
+        if HLM_save:
+            save_path = save_dir
+        else:
+            save_path = os.path.join('Subcontrollers', save_dir)
         if not os.path.isdir(save_path):
             os.mkdir(save_path)
 
@@ -82,12 +86,17 @@ class SubtaskController(object):
         with open(controller_file, 'wb') as pickleFile:
             pickle.dump(controller_data, pickleFile)
 
-    def load(self, save_dir):
+    def load(self, load_dir, HLM_load = False):
         """
         Load a controller object
         """
-        save_path = os.path.join('Subcontrollers', save_dir)
-        controller_file = os.path.join(save_path, 'controller_data.p')
+        if HLM_load:
+            load_path = load_dir
+        else:
+            load_path = os.path.join('Subcontrollers', load_dir)
+
+
+        controller_file = os.path.join(load_path, 'controller_data.p')
         with open(controller_file, 'rb') as pickleFile:
             controller_data = pickle.load(pickleFile)
 
@@ -106,7 +115,7 @@ class SubtaskController(object):
         print(self.env_settings)
         self._set_training_env(self.env_settings)
 
-        model_file = os.path.join(save_path, 'model')
+        model_file = os.path.join(load_path, 'model')
         self.model = PPO.load(model_file, env=self.training_env)
         
     def predict(self, obs, deterministic=True):
