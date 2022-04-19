@@ -20,7 +20,7 @@ env = Environment(**env_settings)
 Create a list of sub-tasks in the environment that are used to generate a HLM
 '''
 objectives = []
-#Objective(initial_state, final_state, observation_top, observation_width, observation_height)
+#Objective(start_state, goal_state, observation_top, observation_width, observation_height)
 objective1 = Objective([1,1], [6,3], [0,0], 7, 7)
 objectives.append(objective1)
 objective1r = Objective([6,3], [1,1], [0,0], 7, 7)
@@ -61,15 +61,15 @@ objectives.append(objective8)
 objective8r = Objective([9, 6], [6, 9], [6,6], 7, 7)
 objectives.append(objective8r)
 
-# high_level_model = HLM(objectives, start_state, goal_state, env_settings)
+high_level_model = HLM(objectives, start_state, goal_state, env_settings)
 
-# high_level_model.train_subcontrollers()
-# high_level_model.save('test_HLM')
+high_level_model.train_subcontrollers()
+high_level_model.save('test_HLM')
 high_level_model = None
 high_level_model = HLM(load_dir='test_HLM')
 
-# high_level_model.create_states()
-# high_level_model.create_edges()
+high_level_model.create_states()
+high_level_model.create_edges()
 #high_level_model.demonstrate_capabilities()
 high_level_model.generate_graph()
 
