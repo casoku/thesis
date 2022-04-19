@@ -2,9 +2,8 @@ import json
 from random import random, randint
 from gym_minigrid.minigrid import *
 import numpy as np
-from operator import add
 
-from Util.environment_util import generate_doors, generate_rooms, place_agent, place_goal, place_obstacles, same_position
+from Util.environment_util import *
 
 class Environment(MiniGridEnv):
     """
@@ -73,21 +72,7 @@ class Environment(MiniGridEnv):
         """
         Generate the observation of the agent, which in this environment, is its state.
         """
-        
-        agent_pos = self.agent_pos
-        obs_grid = self.grid.slice(self.observation_top[0], self.observation_top[1], self.observation_width, self.observation_height)
-        #obs_grid = self.grid
-
-        def map_fun(object):
-            if (object == None):
-                return "none"
-            else:
-                return object.type
-
-        obs_out = [map_fun(line) for line in obs_grid.grid] 
-        
-        if agent_pos[1] - self.observation_top[1] < obs_grid.height and agent_pos[1] - self.observation_top[1] >= 0 and agent_pos[0] - self.observation_top[0] < obs_grid.width and agent_pos[0] - self.observation_top[0] >= 0:
-            obs_out[(agent_pos[1] - self.observation_top[1]) * obs_grid.width + agent_pos[0] - self.observation_top[0]] = 'agent'
+        obs_grid, obs_out = create_observation(self)
 
         #change observation to integers
         with open('map_obs.json') as json_file:
@@ -130,68 +115,14 @@ class Environment(MiniGridEnv):
             action = 0
 
         # Update obstacle positions
-        objects_old_pos = []
-        objects_new_pos = []
-        for i_obst in range(len(self.obstacles)):
-            old_pos = self.obstacles[i_obst].cur_pos
-            objects_old_pos.append(old_pos)
-            new_pos = old_pos
-            
-            #Generate new coordinate for obstacles, ensure it makes a move if possible
-            max_iterations = 50
-            cur_iteration = 0 
-            while(same_position(old_pos, new_pos) and cur_iteration < max_iterations):
-                x_or_y = random()
-                change_array = [-1, 1]
-                change = change_array[randint(0, 1)]
-                if x_or_y < 0.5:
-                    top = tuple(map(add, old_pos, (change, 0)))
-                else:
-                    top = tuple(map(add, old_pos, (0, change)))
-                cur_iteration += 1
-
-                try:
-                    new_pos = self.place_obj(self.obstacles[i_obst], top=top, size=(1,1), max_tries=10)
-                    self.grid.set(*old_pos, None)
-                except:
-                    pass
-            
-            objects_new_pos.append(new_pos)
+        objects_old_pos, objects_new_pos = update_obstacles_positions(self)
         
         # Update the agent's position
         agent_old_pos = self.agent_pos
         agent_new_pos = self.get_front_pos(action)
         agent_new_cell = self.grid.get(*agent_new_pos)
 
-        done = False
-        reward = 0
-
-        info = {
-            'task_complete' : False,
-            'ball' : False,
-            'wall' : False
-        }
-        #Check if there is a collision when agent and object swap places
-        collision = False
-        for i in range(0, len(objects_old_pos)):
-            if same_position(agent_old_pos, objects_new_pos[i]) and same_position(agent_new_pos, objects_old_pos[i]):
-                collision = True
-            
-
-        if agent_new_cell == None or agent_new_cell.can_overlap():
-            self.agent_pos = agent_new_pos
-        if same_position(agent_new_pos, self.sub_task_goal):
-            done = True
-            info['task_complete'] = True
-            reward = 1
-        if (agent_new_cell != None and agent_new_cell.type == 'ball') or collision:
-            done = True
-            info['ball'] = True
-            reward = -1
-        if agent_new_cell != None and agent_new_cell.type == 'wall':
-            done = True
-            info['wall'] = True
-            reward = -1
+        done, info, reward = update_environment(self, objects_old_pos, objects_new_pos, agent_old_pos, agent_new_pos, agent_new_cell)
         
         obs = self.gen_obs()
 

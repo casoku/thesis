@@ -1,7 +1,7 @@
 import os
 import pickle
 import gym
-from Util.subtask_controller_util import calculate_step_data, create_controller_save_files, load_controller_files
+from Util.subtask_controller_util import *
 from Environment import Environment
 from stable_baselines3 import A2C, PPO
 from stable_baselines3 import DQN
