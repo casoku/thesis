@@ -1,6 +1,7 @@
 import os
 import pickle
 import gym
+from Util.subtask_controller_util import calculate_step_data, create_controller_save_files, load_controller_files
 from minigrid_env import Maze
 from stable_baselines3 import A2C, PPO
 from stable_baselines3 import DQN
@@ -11,10 +12,10 @@ class SubtaskController(object):
     """
     Class representing a goal-oriented sub-task within the environment
     """
-    def __init__(self, controller_id=None, init_state = None, final_state=None, observation_width=7, observation_height = 7, observation_top = [0, 0],env_settings=None, max_training_steps=1e6, load_dir=None, HLM_load = False, verbose=False):
+    def __init__(self, controller_id=None, start_state=None, goal_state=None, observation_width=7, observation_height=7, observation_top=[0, 0],env_settings=None, max_training_steps=1e6, load_dir=None, HLM_load=False, verbose=False):
         self.id = controller_id
-        self.init_state = init_state
-        self.final_state = final_state
+        self.start_state = start_state
+        self.goal_state = goal_state
         self.observation_width = observation_width
         self.observation_height = observation_height
         self.observation_top = observation_top
@@ -31,48 +32,32 @@ class SubtaskController(object):
 
         if load_dir is None:
             assert controller_id is not None
-            assert init_state is not None
-            assert final_state is not None
+            assert start_state is not None
+            assert goal_state is not None
             assert env_settings is not None
             self._set_training_env(env_settings)
             self._init_learning_alg(verbose=self.verbose)
         else:
             self.load(load_dir, HLM_load=HLM_load)
     
-    def learn(self, total_timesteps = 5e4):
+    def learn(self, total_timesteps=5e4):
         """
         Train the sub-system for a specified number of timesteps.
-
-        Inputs
-        ------
-        total_timesteps : int
-            Total number of timesteps to train the sub-system for.
         """
         self.model.learn(total_timesteps=total_timesteps)
         self.training_steps = total_timesteps
         #self.data['total_training_steps'] = self.data['total_training_steps'] + total_timesteps
 
-
-    def save(self, save_dir, HLM_save = False):
+    def save(self, save_dir=None, HLM_save=False):
         """
         Save the controller object.
         """
-        save_path = None
-        if HLM_save:
-            save_path = save_dir
-        else:
-            save_path = os.path.join('Subcontrollers', save_dir)
-        if not os.path.isdir(save_path):
-            os.mkdir(save_path)
-
-        model_file = os.path.join(save_path, 'model')
-        self.model.save(model_file)
-        controller_file = os.path.join(save_path, 'controller_data.p')
-
+        controller_file = create_controller_save_files(save_dir, HLM_save, self.model)
+        
         controller_data = {
             'controller_id' : self.id,
-            'init_state' : self.init_state,
-            'final_state' : self.final_state,
+            'start_state' : self.start_state,
+            'goal_state' : self.goal_state,
             'observation_width': self.observation_width,
             'observation_height': self.observation_height,
             'observation_top': self.observation_top,
@@ -86,23 +71,19 @@ class SubtaskController(object):
         with open(controller_file, 'wb') as pickleFile:
             pickle.dump(controller_data, pickleFile)
 
-    def load(self, load_dir, HLM_load = False):
+    def load(self, load_dir=None, HLM_load = False):
         """
         Load a controller object
         """
-        if HLM_load:
-            load_path = load_dir
-        else:
-            load_path = os.path.join('Subcontrollers', load_dir)
 
+        controller_file, model_file = load_controller_files(load_dir, HLM_load)
 
-        controller_file = os.path.join(load_path, 'controller_data.p')
         with open(controller_file, 'rb') as pickleFile:
             controller_data = pickle.load(pickleFile)
 
         self.id = controller_data['controller_id']
-        self.init_state = controller_data['init_state']
-        self.final_state = controller_data['final_state']
+        self.start_state = controller_data['start_state']
+        self.goal_state = controller_data['goal_state']
         self.observation_width = controller_data['observation_width']
         self.observation_height = controller_data['observation_height']
         self.observation_top = controller_data['observation_top']
@@ -111,11 +92,8 @@ class SubtaskController(object):
         self.training_steps = controller_data['training_steps']
         self.verbose = controller_data['verbose']
         self.data = controller_data['data']
-
-        print(self.env_settings)
+        
         self._set_training_env(self.env_settings)
-
-        model_file = os.path.join(load_path, 'model')
         self.model = PPO.load(model_file, env=self.training_env)
         
     def predict(self, obs, deterministic=True):
@@ -125,13 +103,18 @@ class SubtaskController(object):
         action, _states = self.model.predict(obs, deterministic=deterministic)
         return action, _states
 
-    def _set_training_env(self, env_settings):
+    def _set_training_env(self, env_settings=None):
+        """
+        Set the training environment to a newly genereted instance of the environment
+        Set the observation size to the subgrid required for this subtask
+        Set the start and goal state 
+        """
+        assert env_settings is not None
+
         self.training_env = Maze(**env_settings)
         self.training_env.set_observation_size(self.observation_width, self.observation_height, self.observation_top)
-        self.training_env.agent_start_states = self.init_state
-        #self.training_env.goal_states = self.final_state
-        self.training_env.sub_task_goal = self.final_state
-
+        self.training_env.agent_start_states = self.start_state
+        self.training_env.sub_task_goal = self.goal_state
 
     def _init_learning_alg(self, verbose=None):
         self.model = PPO("MlpPolicy", 
@@ -145,27 +128,15 @@ class SubtaskController(object):
                     ent_coef=0.0,
                     learning_rate=2.5e-3,
                     clip_range=0.2)
-        # self.model = DQN("MlpPolicy",
-        #                 self.training_env,
-        #                 verbose=verbose,
-        #                 batch_size=64,
-        #                 tau=1,
-        #                 gamma=0.99,
-        #                 train_freq=2,
-        #                 learning_rate=0.05)
-        #self.model = A2C("MultiInputPolicy", self.training_env, verbose=verbose)
     
-    def eval_performance(self, n_episodes=400, n_steps=100):
+    def eval_performance(self, n_episodes=400, n_steps=100, total_steps=0):
         """
         Perform empirical evaluation of the performance of the learned controller.
         """
         success_count = 0
-        avg_num_steps = 0
         trials = 0
-        total_steps = 0
         num_steps = 0
 
-        rollout_successes = []
         steps = []
 
         for episode_ind in range(n_episodes):
@@ -178,24 +149,15 @@ class SubtaskController(object):
                 total_steps = total_steps + 1
                 action, _states = self.model.predict(obs, deterministic=True)
                 obs, reward, done, info = self.training_env.step(action)
-                if step_ind == n_steps - 1:
-                    rollout_successes.append(0)
                 if done:
                     if info['task_complete']:
                         #avg_num_steps = (avg_num_steps + num_steps) / 2
                         steps.append(num_steps)
                         success_count = success_count + 1
-                        rollout_successes.append(1)
-                    else:
-                        rollout_successes.append(0)
                     break
-        avg_num_steps = 0
-        std_num_steps = 0
-        if len(steps) > 0:
-            avg_num_steps = np.mean(steps)
-            std_num_steps = np.std(steps)
-            
 
+            avg_num_steps, std_num_steps = calculate_step_data(steps)
+            
         self.data['performance_estimates'] = {
             'training_steps' : self.training_steps,
             'success_count' : success_count,
@@ -230,7 +192,4 @@ class SubtaskController(object):
 
         obs = self.training_env.reset()
         return info['task_complete']
-
-    def is_subtask_complete(self, obs):
-        return
     
