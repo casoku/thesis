@@ -2,7 +2,7 @@ import os
 import pickle
 import gym
 from Util.subtask_controller_util import calculate_step_data, create_controller_save_files, load_controller_files
-from minigrid_env import Maze
+from Environment import Environment
 from stable_baselines3 import A2C, PPO
 from stable_baselines3 import DQN
 import numpy as np
@@ -111,7 +111,7 @@ class SubtaskController(object):
         """
         assert env_settings is not None
 
-        self.training_env = Maze(**env_settings)
+        self.training_env = Environment(**env_settings)
         self.training_env.set_observation_size(self.observation_width, self.observation_height, self.observation_top)
         self.training_env.agent_start_states = self.start_state
         self.training_env.sub_task_goal = self.goal_state

@@ -1,6 +1,5 @@
 from Util.Objective import Objective
-from minigrid_env import Maze
-from subtask_controller import SubtaskController
+from Environment import Environment
 from high_level_model import HLM
 
 goal_state = [11, 11] # The final goal state to reach in the complex environment
@@ -15,7 +14,7 @@ env_settings = {
     'width' : 13,
     'height' : 13
 }
-env = Maze(**env_settings)
+env = Environment(**env_settings)
 
 '''
 Create a list of sub-tasks in the environment that are used to generate a HLM

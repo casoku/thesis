@@ -1,6 +1,6 @@
 import gym
 from Util.Objective import Objective
-from minigrid_env import Maze
+from Environment import Environment
 from subtask_controller import SubtaskController
 
 env_settings = {
@@ -10,7 +10,7 @@ env_settings = {
     'width' : 13,
     'height' : 13
 }
-env = Maze(**env_settings)
+env = Environment(**env_settings)
 #env = gym.make('MiniGrid-FourRooms-v0')
 
 controller_list = []
