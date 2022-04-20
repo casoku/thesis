@@ -1,5 +1,5 @@
 import json
-from random import random, randint
+from random import randint
 from gym_minigrid.minigrid import *
 import numpy as np
 
@@ -31,7 +31,7 @@ class Environment(MiniGridEnv):
 
         #Set observation size
         self.set_observation_size(observation_width, observation_height, observation_top)
-        self.slip_p = slip_p
+        self.slip_p = slip_p    #Not used
 
         super().__init__(grid_size=self.size, max_steps=4 * self.size * self.size)
 

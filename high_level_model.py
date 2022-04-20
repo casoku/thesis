@@ -1,16 +1,13 @@
-from ast import Sub
 import os
 import pickle
-
-from yaml import load
-from Util.State import State
-from Util.Edge import Edge
-from Util.Objective import Objective
-from Environment import Environment
-from Util.high_level_model_util import find_controller, find_edge_states
-from subtask_controller import SubtaskController
 import networkx as nx
 import matplotlib.pyplot as plt
+
+from Util.State import State
+from Util.Edge import Edge
+from Environment import Environment
+from Util.high_level_model_util import *
+from subtask_controller import SubtaskController
 
 
 class HLM:
@@ -51,24 +48,16 @@ class HLM:
         Save the subcontrollers/HLM 
         """
 
-        #Create path and folder to save HLM in
-        save_path = os.path.join('Models', save_dir)
-        if not os.path.isdir(save_path):
-            os.mkdir(save_path)
-
-        #Create subfolder to save subcontrollers of this HLM in
-        subcontrollers_path = os.path.join('Models', save_dir, 'Subcontrollers')
-        if not os.path.isdir(subcontrollers_path):
-            os.mkdir(subcontrollers_path)
+        #Create locations and files to save to
+        model_file, subcontroller_path = create_HLM_save_files(save_dir)
 
         #Save each subcontroller in a seperate folder
         for controller in self.controllers:
             controller_dir = "controller" + str(controller.id)
-            controller_path = os.path.join(subcontrollers_path, controller_dir)
+            controller_path = os.path.join(subcontroller_path, controller_dir)
             controller.save(controller_path, HLM_save = True)
 
         #Save the data from the models
-        model_file = os.path.join(save_path, 'model_data.p')
         model_data = {
             'objectives': self.objectives,
             'start_state': self.start_state,
@@ -97,13 +86,12 @@ class HLM:
 
         #Load subcontrollers
         controllers_path = os.path.join(load_path, 'Subcontrollers')
-        print(next(os.walk(controllers_path))[1])
         for controller_file in next(os.walk(controllers_path))[1]:
-            print(controller_file)
             subtask_controller_path = os.path.join(controllers_path, controller_file)
             subtask_controller = SubtaskController(load_dir=subtask_controller_path, HLM_load=True)
             self.controllers.append(subtask_controller)
 
+        #Create the edges and states for the loaded HLM
         self.create_states()
         self.create_edges()
 
@@ -157,6 +145,10 @@ class HLM:
         print('Done creating edges for HLM')
 
     def demonstrate_capabilities(self, n_episodes=8, n_steps=100, render=True):
+        '''
+        Dummy method, currently it just selects the first controller who's starting state is 
+        equal to the finish of the previous task. Should use the higher level planning synthesized with planning
+        '''
         for episodes in range(n_episodes):
             # select start controller
             controller = None

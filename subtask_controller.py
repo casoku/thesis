@@ -1,11 +1,8 @@
-import os
 import pickle
-import gym
+from stable_baselines3 import PPO
+
 from Util.subtask_controller_util import *
 from Environment import Environment
-from stable_baselines3 import A2C, PPO
-from stable_baselines3 import DQN
-import numpy as np
 
 
 class SubtaskController(object):
