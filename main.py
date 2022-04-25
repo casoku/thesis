@@ -61,15 +61,13 @@ objectives.append(objective8)
 objective8r = Objective([9, 6], [6, 9], [6,6], 7, 7)
 objectives.append(objective8r)
 
-# high_level_model = HLM(objectives, start_state, goal_state, env_settings)
-# high_level_model.train_subcontrollers()
-# high_level_model.save('test_HLM')
+#high_level_model = HLM(objectives, start_state, goal_state, env_settings)
+#high_level_model.train_subcontrollers()
+#high_level_model.save('full_HLM')
 
 high_level_model = None
-high_level_model = HLM(load_dir='test_HLM')
+high_level_model = HLM(load_dir='full_HLM')
 
-high_level_model.create_states()
-high_level_model.create_edges()
 high_level_model.demonstrate_capabilities()
-#high_level_model.generate_graph()
+high_level_model.generate_graph()
 

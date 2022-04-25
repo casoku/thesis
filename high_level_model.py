@@ -2,6 +2,7 @@ import os
 import pickle
 import networkx as nx
 import matplotlib.pyplot as plt
+import random
 
 from Util.State import State
 from Util.Edge import Edge
@@ -176,24 +177,29 @@ class HLM:
                     if done:
                         print(info)
                         if info['task_complete']:
-                            #Goal reached
                             print(cur_edge.state2.to_string())
                             print(self.goal_state)
+                            #Goal reached
                             if cur_edge.state2 == self.goal_state:
                                 print("goal reached! :)")
                                 finished = True
                                 break
-                            #Find next controller
+                            #Find next possible controller
+                            potentialControllers = []
                             for edge in self.edges:
                                 if edge.state1 == cur_edge.state2:
-                                    controller = edge.controller
-                                    self.env.set_observation_size(controller.observation_width, controller.observation_height, controller.observation_top)
-                                    self.env.sub_task_goal = controller.goal_state
-                                    cur_edge = edge
-                                    print("new controller = " + str(cur_edge.name))
-                                    print("new controller start: " + str(cur_edge.state1.to_string()) + ", goal: " + str(cur_edge.state2.to_string()))
-                                    obs = self.env.gen_obs()
-                                    break
+                                    potentialControllers.append(edge)
+                            
+                            #Select next controller at random
+                            edge = random.choice(potentialControllers)
+                            controller = edge.controller
+                            self.env.set_observation_size(controller.observation_width, controller.observation_height, controller.observation_top)
+                            self.env.sub_task_goal = controller.goal_state
+                            cur_edge = edge
+                            print("new controller = " + str(cur_edge.name))
+                            print("new controller start: " + str(cur_edge.state1.to_string()) + ", goal: " + str(cur_edge.state2.to_string()))
+                            obs = self.env.gen_obs()
+
                         else:
                             print("sub task failed :(")
                             finished = True
