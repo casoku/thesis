@@ -1,6 +1,6 @@
 import gym
 from Util.Objective import Objective
-from minigrid_env import Maze
+from Environment import Environment
 from subtask_controller import SubtaskController
 
 env_settings = {
@@ -10,7 +10,7 @@ env_settings = {
     'width' : 13,
     'height' : 13
 }
-env = Maze(**env_settings)
+env = Environment(**env_settings)
 #env = gym.make('MiniGrid-FourRooms-v0')
 
 controller_list = []
@@ -21,14 +21,14 @@ def assign_controller_id(controller_id):
     return controller_id
 
 # #--------First room controllers--------
-initial_states = [1,1]
-final_states = [6,3]
+initial_state = [1,1]
+goal_state = [6,3]
 observation_top = [0, 0]
 observation_width = 7
 observation_height = 7
 #final_states = [11, 11]
-task1 = Objective(initial_states, final_states, observation_top, observation_width, observation_height)
-controller = SubtaskController(assign_controller_id(controller_id), task1.start_state, task1.final_state, env_settings=env_settings,
+task1 = Objective(initial_state, goal_state, observation_top, observation_width, observation_height)
+controller = SubtaskController(assign_controller_id(controller_id), task1.start_state, task1.goal_state, env_settings=env_settings,
                 observation_top=observation_top, observation_width=observation_width, observation_height=observation_height)
 controller.learn(10000)
 controller.save("test_subcontroller1")
@@ -36,7 +36,7 @@ controller.save("test_subcontroller1")
 initial_states2 = [1,1]
 final_states2 = [3,6] #(x, y, orientation)
 task2 = Objective(initial_states2, final_states2, observation_top, observation_width, observation_height)
-controller2 = SubtaskController(assign_controller_id(controller_id), task2.start_state, task2.final_state, env_settings=env_settings,
+controller2 = SubtaskController(assign_controller_id(controller_id), task2.start_state, task2.goal_state, env_settings=env_settings,
                 observation_top=observation_top, observation_width=observation_width, observation_height=observation_height)
 controller2.learn(10000)
 controller2.save("test_subcontroller2")

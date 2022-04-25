@@ -1,15 +1,14 @@
-from ast import Sub
 import os
 import pickle
-
-from yaml import load
-from Util.State import State
-from Util.Edge import Edge
-from Util.Objective import Objective
-from minigrid_env import Maze
-from subtask_controller import SubtaskController
 import networkx as nx
 import matplotlib.pyplot as plt
+import random
+
+from Util.State import State
+from Util.Edge import Edge
+from Environment import Environment
+from Util.high_level_model_util import *
+from subtask_controller import SubtaskController
 
 
 class HLM:
@@ -22,7 +21,7 @@ class HLM:
 
         if load_dir is None:
             self.env_settings = env_settings
-            self.env = Maze(**env_settings)
+            self.env = Environment(**env_settings)
             self.objectives = objectives
             self.start_state = start_state
             self.goal_state = goal_state
@@ -38,7 +37,7 @@ class HLM:
         controller_id = 0
         print("start training " + str(len(self.objectives)) + " Controllers")
         for task in self.objectives:
-            controller = SubtaskController(controller_id, task.start_state, task.final_state, env_settings=self.env_settings,
+            controller = SubtaskController(controller_id, task.start_state, task.goal_state, env_settings=self.env_settings,
                  observation_top=task.observation_top, observation_width=task.observation_width, observation_height=task.observation_height)
             controller.learn(10000)
             self.controllers.append(controller)
@@ -50,24 +49,16 @@ class HLM:
         Save the subcontrollers/HLM 
         """
 
-        #Create path and folder to save HLM in
-        save_path = os.path.join('Models', save_dir)
-        if not os.path.isdir(save_path):
-            os.mkdir(save_path)
-
-        #Create subfolder to save subcontrollers of this HLM in
-        subcontrollers_path = os.path.join('Models', save_dir, 'Subcontrollers')
-        if not os.path.isdir(subcontrollers_path):
-            os.mkdir(subcontrollers_path)
+        #Create locations and files to save to
+        model_file, subcontroller_path = create_HLM_save_files(save_dir)
 
         #Save each subcontroller in a seperate folder
         for controller in self.controllers:
             controller_dir = "controller" + str(controller.id)
-            controller_path = os.path.join(subcontrollers_path, controller_dir)
+            controller_path = os.path.join(subcontroller_path, controller_dir)
             controller.save(controller_path, HLM_save = True)
 
         #Save the data from the models
-        model_file = os.path.join(save_path, 'model_data.p')
         model_data = {
             'objectives': self.objectives,
             'start_state': self.start_state,
@@ -92,17 +83,16 @@ class HLM:
         self.start_state = model_data['start_state']
         self.goal_state = model_data['goal_state']
         self.env_settings = model_data['env_settings']
-        self.env = Maze(**self.env_settings)
+        self.env = Environment(**self.env_settings)
 
         #Load subcontrollers
         controllers_path = os.path.join(load_path, 'Subcontrollers')
-        print(next(os.walk(controllers_path))[1])
         for controller_file in next(os.walk(controllers_path))[1]:
-            print(controller_file)
             subtask_controller_path = os.path.join(controllers_path, controller_file)
             subtask_controller = SubtaskController(load_dir=subtask_controller_path, HLM_load=True)
             self.controllers.append(subtask_controller)
 
+        #Create the edges and states for the loaded HLM
         self.create_states()
         self.create_edges()
 
@@ -122,30 +112,13 @@ class HLM:
                 id += 1
             
             name = "S" + str(id)
-            S2 = State(name, task.final_state)
+            S2 = State(name, task.goal_state)
             
             if S2 not in self.states:
                 self.states.append(S2)
                 id += 1
             
         print('Done creating state of HLM')
-
-    def find_edge_states(self, task):
-        start_state = None
-        end_state = None
-        for state in self.states:
-            if state.low_level_state == task.start_state:
-                start_state = state
-
-            if state.low_level_state == task.final_state:
-                end_state = state
-    
-        return start_state, end_state 
-
-    def find_controller(self, start_state, end_state):
-        for controller in self.controllers:
-            if controller.init_state == start_state and controller.final_state == end_state:
-                return controller
 
     def create_edges(self):
         '''
@@ -156,25 +129,27 @@ class HLM:
         id = 0
         for task in self.objectives:
             #find states regarding start and end of edge
-            start_state, end_state = self.find_edge_states(task)
+            start_state, end_state = find_edge_states(self, task)
 
             #find controller regarding edge
-            edge_controller = self.find_controller(start_state, end_state)
+            edge_controller = find_controller(self, start_state, end_state)
 
             #calculate probability and cost of edge
             edge_controller.eval_performance(n_episodes = 100)
             success_probability, cost, std = edge_controller.get_data()
-            print(edge_controller.get_performance())
 
             #create edge
             id += 1
             name = 'E' + str(id)
             edge = Edge(name, edge_controller, start_state, end_state, success_probability, cost)
-            #add edge to self.edges
             self.edges.append(edge)
         print('Done creating edges for HLM')
 
     def demonstrate_capabilities(self, n_episodes=8, n_steps=100, render=True):
+        '''
+        Dummy method, currently it just selects the first controller who's starting state is 
+        equal to the finish of the previous task. Should use the higher level planning synthesized with planning
+        '''
         for episodes in range(n_episodes):
             # select start controller
             controller = None
@@ -188,7 +163,7 @@ class HLM:
 
             #reset environment
             self.env.set_observation_size(controller.observation_width, controller.observation_height, controller.observation_top)
-            self.env.sub_task_goal = controller.final_state
+            self.env.sub_task_goal = controller.goal_state
             obs = self.env.reset()
             self.env.render(highlight=False)
 
@@ -202,24 +177,29 @@ class HLM:
                     if done:
                         print(info)
                         if info['task_complete']:
-                            #Goal reached
                             print(cur_edge.state2.to_string())
                             print(self.goal_state)
+                            #Goal reached
                             if cur_edge.state2 == self.goal_state:
                                 print("goal reached! :)")
                                 finished = True
                                 break
-                            #Find next controller
+                            #Find next possible controller
+                            potentialControllers = []
                             for edge in self.edges:
                                 if edge.state1 == cur_edge.state2:
-                                    controller = edge.controller
-                                    self.env.set_observation_size(controller.observation_width, controller.observation_height, controller.observation_top)
-                                    self.env.sub_task_goal = controller.final_state
-                                    cur_edge = edge
-                                    print("new controller = " + str(cur_edge.name))
-                                    print("new controller start: " + str(cur_edge.state1.to_string()) + ", goal: " + str(cur_edge.state2.to_string()))
-                                    obs = self.env.gen_obs()
-                                    break
+                                    potentialControllers.append(edge)
+                            
+                            #Select next controller at random
+                            edge = random.choice(potentialControllers)
+                            controller = edge.controller
+                            self.env.set_observation_size(controller.observation_width, controller.observation_height, controller.observation_top)
+                            self.env.sub_task_goal = controller.goal_state
+                            cur_edge = edge
+                            print("new controller = " + str(cur_edge.name))
+                            print("new controller start: " + str(cur_edge.state1.to_string()) + ", goal: " + str(cur_edge.state2.to_string()))
+                            obs = self.env.gen_obs()
+
                         else:
                             print("sub task failed :(")
                             finished = True

@@ -1,14 +1,11 @@
 #!/usr/bin/env python3
 
 from enum import IntEnum
-import time
 import argparse
 import numpy as np
-import gym
-import gym_minigrid
 from gym_minigrid.wrappers import *
 from gym_minigrid.window import Window
-from minigrid_env import Maze
+from Environment import Environment
 
 class Actions(IntEnum):
         up = 0
@@ -101,14 +98,14 @@ args = parser.parse_args()
 
 # %% Setup and create the environment
 env_settings = {
-    'agent_start_states' : [(1,1)],
-    'goal_states': [(11, 11)],
+    'agent_start_states' : [1,1],
+    'goal_states': [11, 11],
     'slip_p' : 0,
     'width' : 13,
     'height' : 13,
     'obstacles_per_room': 1
 }
-env = Maze(**env_settings)
+env = Environment(**env_settings)
 observation_top = [6, 0]
 observation_width = 7
 observation_height = 7
