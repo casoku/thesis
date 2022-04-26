@@ -111,7 +111,7 @@ def update_environment(environment=None, objects_old_pos=None, objects_new_pos=N
     info = {
         'task_complete' : False,
         'ball' : False,
-        'wall' : False
+        'lava' : False
     }
     #Check if there is a collision when agent and object swap places
     collision = False
@@ -130,9 +130,9 @@ def update_environment(environment=None, objects_old_pos=None, objects_new_pos=N
         done = True
         info['ball'] = True
         reward = -1
-    if agent_new_cell != None and agent_new_cell.type == 'wall':
+    if agent_new_cell != None and agent_new_cell.type == 'lava':
         done = True
-        info['wall'] = True
+        info['lava'] = True
         reward = -1
 
     return done, info, reward

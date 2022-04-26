@@ -68,6 +68,7 @@ objectives.append(objective8r)
 high_level_model = None
 high_level_model = HLM(load_dir='full_HLM')
 
-high_level_model.demonstrate_capabilities()
+#high_level_model.demonstrate_capabilities()
 high_level_model.generate_graph()
+high_level_model.print_controllers_performance()
 

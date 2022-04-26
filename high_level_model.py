@@ -119,6 +119,10 @@ class HLM:
             
         print('Done creating state of HLM')
 
+    def print_controllers_performance(self):
+        for controller in self.controllers:
+            print(controller.get_performance())
+
     def create_edges(self):
         '''
         Create a edge for each controller between a start and final state

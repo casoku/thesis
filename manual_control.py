@@ -100,7 +100,7 @@ args = parser.parse_args()
 # %% Setup and create the environment
 env_settings = {
     'agent_start_states' : [1,1],
-    'goal_states': [2, 18],
+    'goal_states': [2, 24],
     'slip_p' : 0,
     'width' : 29,
     'height' : 29,
@@ -109,7 +109,7 @@ env_settings = {
 env = Deterministic_Environment(**env_settings)
 observation_top = [0, 0]
 observation_width = 29
-observation_height = 22
+observation_height = 29
 env.set_observation_size(observation_width, observation_height, observation_top)
 
 window = Window('gym_minigrid - Maze')

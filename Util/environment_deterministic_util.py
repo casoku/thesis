@@ -42,7 +42,7 @@ def generate_doors(environment=None):
     environment.put_obj(Door('grey', is_open=True), 17, 21)
     environment.put_obj(Door('grey', is_open=True), 23, 21)
     environment.put_obj(Door('grey', is_open=True), 7, 24)
-    environment.put_obj(Door('grey', is_open=True), 24, 25)
+    environment.put_obj(Door('grey', is_open=True), 21, 25)
     #
 
 def place_goal(environment=None):
@@ -153,10 +153,10 @@ def update_environment(environment=None, objects_old_pos=None, objects_new_pos=N
         done = True
         info['ball'] = True
         reward = -1
-    if agent_new_cell != None and agent_new_cell.type == 'wall':
-        done = True
-        info['wall'] = True
-        reward = -1
+    # if agent_new_cell != None and agent_new_cell.type == 'wall':
+    #     done = True
+    #     info['wall'] = True
+    #     reward = -1
 
     return done, info, reward
 
