@@ -28,7 +28,7 @@ observation_width = 7
 observation_height = 7
 #final_states = [11, 11]
 task1 = Objective(initial_state, goal_state, observation_top, observation_width, observation_height)
-controller = SubtaskController(assign_controller_id(controller_id), task1.start_state, task1.goal_state, env_settings=env_settings,
+controller = SubtaskController(assign_controller_id(controller_id), task1.start_state, task1.goal_state, env=env,
                 observation_top=observation_top, observation_width=observation_width, observation_height=observation_height)
 controller.learn(10000)
 controller.save("test_subcontroller1")
@@ -36,7 +36,7 @@ controller.save("test_subcontroller1")
 initial_states2 = [1,1]
 final_states2 = [3,6] #(x, y, orientation)
 task2 = Objective(initial_states2, final_states2, observation_top, observation_width, observation_height)
-controller2 = SubtaskController(assign_controller_id(controller_id), task2.start_state, task2.goal_state, env_settings=env_settings,
+controller2 = SubtaskController(assign_controller_id(controller_id), task2.start_state, task2.goal_state, env=env,
                 observation_top=observation_top, observation_width=observation_width, observation_height=observation_height)
 controller2.learn(10000)
 controller2.save("test_subcontroller2")

@@ -6,6 +6,7 @@ import numpy as np
 from gym_minigrid.wrappers import *
 from gym_minigrid.window import Window
 from Environment import Environment
+from Environment_deterministic import Deterministic_Environment
 
 class Actions(IntEnum):
         up = 0
@@ -99,16 +100,16 @@ args = parser.parse_args()
 # %% Setup and create the environment
 env_settings = {
     'agent_start_states' : [1,1],
-    'goal_states': [11, 11],
+    'goal_states': [2, 18],
     'slip_p' : 0,
-    'width' : 13,
-    'height' : 13,
-    'obstacles_per_room': 1
+    'width' : 29,
+    'height' : 29,
+    'obstacles_per_room': 0
 }
-env = Environment(**env_settings)
-observation_top = [6, 0]
-observation_width = 7
-observation_height = 7
+env = Deterministic_Environment(**env_settings)
+observation_top = [0, 0]
+observation_width = 29
+observation_height = 22
 env.set_observation_size(observation_width, observation_height, observation_top)
 
 window = Window('gym_minigrid - Maze')
