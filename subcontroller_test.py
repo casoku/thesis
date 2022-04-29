@@ -1,17 +1,41 @@
 import gym
+from Environment_deterministic import Deterministic_Environment
+from Environment_test import Environment_test
 from Util.Objective import Objective
 from Environment import Environment
 from subtask_controller import SubtaskController
 
-env_settings = {
-    'agent_start_states' : [1,1],
-    'goal_states': [11, 11],
-    'slip_p' : 0,
-    'width' : 13,
-    'height' : 13
-}
-env = Environment(**env_settings)
+# env_settings = {
+#     'agent_start_states' : [1,1],
+#     'goal_states': [11, 11],
+#     'slip_p' : 0,
+#     'width' : 13,
+#     'height' : 13
+# }
+# env = Environment(**env_settings)
 #env = gym.make('MiniGrid-FourRooms-v0')
+
+env_settings = {
+    'agent_start_states' : [1, 1],
+    'goal_states': [7, 7],
+    'slip_p' : 0,
+    'width' : 8,
+    'height' : 8
+}
+env = Environment_test(**env_settings)
+
+# '''
+# Create environment in which the high-level-controller will be tested
+# '''
+# env_settings = {
+#     'agent_start_states' : [1,1],
+#     'goal_states': [2, 24],
+#     'slip_p' : 0,
+#     'width' : 29,
+#     'height' : 29,
+#     'obstacles_per_room': 0
+# }
+# env = Deterministic_Environment(**env_settings)
 
 controller_list = []
 controller_id = -1
@@ -22,23 +46,23 @@ def assign_controller_id(controller_id):
 
 # #--------First room controllers--------
 initial_state = [1,1]
-goal_state = [6,3]
+goal_state = [7,4]
 observation_top = [0, 0]
-observation_width = 7
-observation_height = 7
+observation_width = 8
+observation_height = 8
 #final_states = [11, 11]
 task1 = Objective(initial_state, goal_state, observation_top, observation_width, observation_height)
-controller = SubtaskController(assign_controller_id(controller_id), task1.start_state, task1.goal_state, env=env,
+controller = SubtaskController(assign_controller_id(controller_id), task1.start_state, task1.goal_state, env=env, verbose=1,
                 observation_top=observation_top, observation_width=observation_width, observation_height=observation_height)
-controller.learn(10000)
+controller.learn(15000)
 controller.save("test_subcontroller1")
 
 initial_states2 = [1,1]
-final_states2 = [3,6] #(x, y, orientation)
+final_states2 = [4,7] #(x, y, orientation)
 task2 = Objective(initial_states2, final_states2, observation_top, observation_width, observation_height)
-controller2 = SubtaskController(assign_controller_id(controller_id), task2.start_state, task2.goal_state, env=env,
+controller2 = SubtaskController(assign_controller_id(controller_id), task2.start_state, task2.goal_state, env=env, verbose=1,
                 observation_top=observation_top, observation_width=observation_width, observation_height=observation_height)
-controller2.learn(10000)
+controller2.learn(15000)
 controller2.save("test_subcontroller2")
 
 # #--------Second room controllers--------
@@ -83,22 +107,15 @@ controller = SubtaskController(load_dir="test_subcontroller1")
 controller.eval_performance(100)
 performance = controller.get_performance()
 print(performance)
-if(performance['performance_estimates']['avg_num_steps'] > 10):
-    controller.demonstrate_capabilities()
-print()
-controller.demonstrate_capabilities()
+#controller.demonstrate_capabilities()
 print()
 print("-------------Controller 2 performance----------------------")
 controller2 = None
 controller2 = SubtaskController(load_dir="test_subcontroller2")
-controller2.eval_performance()
+controller2.eval_performance(100)
 performance = controller2.get_performance()
 print(performance)
-print(performance['performance_estimates']['avg_num_steps'])
-if(performance['performance_estimates']['avg_num_steps'] > 10):
-    controller.demonstrate_capabilities()
-print()
-controller2.demonstrate_capabilities()
+#controller2.demonstrate_capabilities()
 # print("-------------Controller 3 performance----------------------")
 # controller3.eval_performance()
 # performance = controller3.get_performance()

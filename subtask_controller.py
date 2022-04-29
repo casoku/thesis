@@ -3,7 +3,6 @@ import pickle
 from stable_baselines3 import PPO
 
 from Util.subtask_controller_util import *
-from Environment import Environment
 
 
 class SubtaskController(object):
@@ -118,15 +117,7 @@ class SubtaskController(object):
     def _init_learning_alg(self, verbose=None):
         self.model = PPO("MlpPolicy", 
                     self.training_env, 
-                    verbose=verbose,
-                    n_steps=512,
-                    batch_size=64,
-                    gae_lambda=0.95,
-                    gamma=0.99,
-                    n_epochs=10,
-                    ent_coef=0.0,
-                    learning_rate=2.5e-3,
-                    clip_range=0.2)
+                    verbose=verbose)
     
     def eval_performance(self, n_episodes=400, n_steps=100, total_steps=0):
         """
@@ -146,7 +137,7 @@ class SubtaskController(object):
             for step_ind in range(n_steps):
                 num_steps = num_steps + 1
                 total_steps = total_steps + 1
-                action, _states = self.model.predict(obs, deterministic=True)
+                action, _states = self.model.predict(obs, deterministic=False)
                 obs, reward, done, info = self.training_env.step(action)
                 if done:
                     if info['task_complete']:
@@ -179,10 +170,12 @@ class SubtaskController(object):
         """
         for episode_ind in range(n_episodes):
             obs = self.training_env.reset()
+            #print(obs)
             self.training_env.render(highlight=False)
             for step in range(n_steps):
-                action, _states = self.model.predict(obs, deterministic=True)
+                action, _states = self.model.predict(obs, deterministic=False)
                 obs, reward, done, info = self.training_env.step(action)
+                #print(obs)
                 if render:
                     self.training_env.render(highlight=False)
                 if done:

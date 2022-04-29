@@ -1,4 +1,5 @@
 import random
+from turtle import width
 from gym_minigrid.minigrid import *
 from operator import add
 
@@ -67,6 +68,10 @@ def create_observation(environment=None):
     if agent_pos[1] - environment.observation_top[1] < obs_grid.height and agent_pos[1] - environment.observation_top[1] >= 0 and agent_pos[0] - environment.observation_top[0] < obs_grid.width and agent_pos[0] - environment.observation_top[0] >= 0:
         obs_out[(agent_pos[1] - environment.observation_top[1]) * obs_grid.width + agent_pos[0] - environment.observation_top[0]] = 'agent'
     
+    #Add goal to observation
+    if environment.sub_task_goal[0] < obs_grid.width and environment.sub_task_goal[1] < obs_grid.height:
+        obs_out[environment.sub_task_goal[1] * obs_grid.width + environment.sub_task_goal[0]] = 'goal'
+
     return obs_grid, obs_out
 
 def update_obstacles_positions(environment=None):

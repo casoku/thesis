@@ -7,6 +7,7 @@ from gym_minigrid.wrappers import *
 from gym_minigrid.window import Window
 from Environment import Environment
 from Environment_deterministic import Deterministic_Environment
+from Environment_test import Environment_test
 
 class Actions(IntEnum):
         up = 0
@@ -98,18 +99,23 @@ parser.add_argument(
 args = parser.parse_args()
 
 # %% Setup and create the environment
+goal_state = [7, 7] # The final goal state to reach in the complex environment
+start_state = [1,1]
+
 env_settings = {
-    'agent_start_states' : [1,1],
-    'goal_states': [2, 24],
+    'agent_start_states' : start_state,
+    'goal_states': goal_state,
     'slip_p' : 0,
-    'width' : 29,
-    'height' : 29,
-    'obstacles_per_room': 0
+    'width' : 9,
+    'height' : 9
 }
-env = Deterministic_Environment(**env_settings)
+#env = Environment(**env_settings)
+env = Environment_test(**env_settings)
+
 observation_top = [0, 0]
-observation_width = 29
-observation_height = 29
+observation_width = 9
+observation_height = 9
+env.sub_task_goal = [8, 4]
 env.set_observation_size(observation_width, observation_height, observation_top)
 
 window = Window('gym_minigrid - Maze')

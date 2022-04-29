@@ -7,7 +7,6 @@ import random
 
 from Util.State import State
 from Util.Edge import Edge
-from Environment import Environment
 from Util.high_level_model_util import *
 from subtask_controller import SubtaskController
 
@@ -37,9 +36,9 @@ class HLM:
         controller_id = 0
         print("start training " + str(len(self.objectives)) + " Controllers")
         for task in self.objectives:
-            controller = SubtaskController(controller_id, task.start_state, task.goal_state, env=self.env,
+            controller = SubtaskController(controller_id, task.start_state, task.goal_state, env=self.env, verbose=1,
                  observation_top=task.observation_top, observation_width=task.observation_width, observation_height=task.observation_height)
-            controller.learn(10000)
+            controller.learn(15000)
             self.controllers.append(controller)
             controller_id += 1
             print("controller" + str(controller_id) + " done")
