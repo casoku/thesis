@@ -1,4 +1,5 @@
 from Environment_deterministic import Deterministic_Environment
+from Environment_test import Environment_test
 from Util.Objective import Objective
 from high_level_model import HLM
 
@@ -16,6 +17,15 @@ env_settings = {
     'obstacles_per_room': 0
 }
 env = Deterministic_Environment(**env_settings)
+
+env_settings = {
+    'agent_start_states' : [1, 1],
+    'goal_states': [7, 7],
+    'slip_p' : 0,
+    'width' : 8,
+    'height' : 8
+}
+env = Environment_test(**env_settings)
 
 '''
 Create a list of sub-tasks in the environment that are used to generate a HLM
@@ -44,7 +54,7 @@ high_level_model.save('deterministic_HLM')
 high_level_model = None
 high_level_model = HLM(load_dir='deterministic_HLM')
 
-high_level_model.print_controllers_performance()
-#high_level_model.demonstrate_capabilities()
+#high_level_model.print_controllers_performance()
+high_level_model.demonstrate_capabilities()
 #high_level_model.generate_graph()
 

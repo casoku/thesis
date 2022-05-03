@@ -137,7 +137,7 @@ class SubtaskController(object):
             for step_ind in range(n_steps):
                 num_steps = num_steps + 1
                 total_steps = total_steps + 1
-                action, _states = self.model.predict(obs, deterministic=False)
+                action, _states = self.model.predict(obs, deterministic=True)
                 obs, reward, done, info = self.training_env.step(action)
                 if done:
                     if info['task_complete']:
@@ -173,7 +173,7 @@ class SubtaskController(object):
             #print(obs)
             self.training_env.render(highlight=False)
             for step in range(n_steps):
-                action, _states = self.model.predict(obs, deterministic=False)
+                action, _states = self.model.predict(obs, deterministic=True)
                 obs, reward, done, info = self.training_env.step(action)
                 #print(obs)
                 if render:

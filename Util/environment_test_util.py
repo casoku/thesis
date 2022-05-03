@@ -10,10 +10,12 @@ def generate_rooms(grid=None):
     assert grid is not None
 
     #generate wall room 1
-    grid.horz_wall(4,2,2)
-    grid.vert_wall(5,2,2)
-    grid.horz_wall(2,5,2)
-    grid.vert_wall(2,4,2)
+    # grid.horz_wall(4,2,2)
+    # grid.vert_wall(5,2,2)
+    # grid.horz_wall(2,5,2)
+    # grid.vert_wall(2,4,2)
+    grid.horz_wall(1,2,5)
+    grid.vert_wall(5,2,4)
 
 def generate_doors(environment=None):
     assert environment is not None
@@ -41,11 +43,10 @@ def place_obstacles(environment=None):
     assert environment is not None
 
     environment.obstacles = []
-    num_rooms_in_width = 2
-    for i in range(0, num_rooms_in_width):
-        for j in range(0, num_rooms_in_width):
-            environment.obstacles.append(Ball())
-            environment.place_obj(obj = environment.obstacles[i * num_rooms_in_width + j], top = (i * 6, j * 6), size = (5, 5), max_tries=100)
+    environment.obstacles.append(Ball())
+    #environment.obstacles.append(Ball())
+    environment.place_obj(obj = environment.obstacles[0], top = (0, 0), size = (8, 8), max_tries=100)
+    #environment.place_obj(obj = environment.obstacles[1], top = (0, 0), size = (8, 8), max_tries=100)
 
 def create_observation(environment=None):
     assert environment is not None

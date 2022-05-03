@@ -3,9 +3,9 @@ from random import randint
 from gym_minigrid.minigrid import *
 import numpy as np
 
-from Util.environment_deterministic_util import *
+from Util.environment_simple_util import *
 
-class Deterministic_Environment(MiniGridEnv):
+class Environment_simple(MiniGridEnv):
     """
     Grid Environment
 
@@ -22,7 +22,7 @@ class Deterministic_Environment(MiniGridEnv):
     def __init__(self, agent_start_states=[1, 1], goal_states=[18, 18], observation_width=20, observation_height=20, observation_top=[0, 0],slip_p=0.0, width=20, height=20, obstacles_per_room=1):
         self.width = width
         self.height = height
-        self.size = width*height
+        self.size = width* height
         self.agent_start_states = agent_start_states
         self.obstacles_per_room = obstacles_per_room
         self.obstacles = []
@@ -37,7 +37,7 @@ class Deterministic_Environment(MiniGridEnv):
         super().__init__(width=self.width, height=self.height, max_steps=4 * self.size)
 
         #Action enumeration for this environment
-        self.actions = Deterministic_Environment.Actions
+        self.actions = Environment_simple.Actions
 
         # Actions are discrete integer values
         self.action_space = spaces.Discrete(len(self.actions))
@@ -65,7 +65,7 @@ class Deterministic_Environment(MiniGridEnv):
 
         place_goal(self)
         place_agent(self)
-        #place_obstacles(self)
+        place_obstacles(self)
 
         self.mission = "get to the green goal square"
 

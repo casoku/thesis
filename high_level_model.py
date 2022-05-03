@@ -36,9 +36,9 @@ class HLM:
         controller_id = 0
         print("start training " + str(len(self.objectives)) + " Controllers")
         for task in self.objectives:
-            controller = SubtaskController(controller_id, task.start_state, task.goal_state, env=self.env, verbose=1,
+            controller = SubtaskController(controller_id, task.start_state, task.goal_state, env=self.env, verbose=0,
                  observation_top=task.observation_top, observation_width=task.observation_width, observation_height=task.observation_height)
-            controller.learn(15000)
+            controller.learn(10000)
             self.controllers.append(controller)
             controller_id += 1
             print("controller" + str(controller_id) + " done")
@@ -120,6 +120,7 @@ class HLM:
 
     def print_controllers_performance(self):
         for controller in self.controllers:
+            print("controller id: " + str(controller.id) + ", start_state: " + str(controller.start_state) + ", goal_state: " + str(controller.goal_state))
             print(controller.get_performance())
 
     def create_edges(self):
@@ -162,7 +163,8 @@ class HLM:
                     controller = edge.controller
                     break
             print("Demonstrating capabilities")
-
+            print("new controller = " + str(cur_edge.name))
+            print("new controller start: " + str(cur_edge.state1.to_string()) + ", goal: " + str(cur_edge.state2.to_string()))
             #reset environment
             self.env.set_observation_size(controller.observation_width, controller.observation_height, controller.observation_top)
             self.env.sub_task_goal = controller.goal_state
