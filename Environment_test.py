@@ -3,9 +3,9 @@ from random import randint
 from gym_minigrid.minigrid import *
 import numpy as np
 
-from Util.environment_util import *
+from Util.environment_test_util import *
 
-class Environment(MiniGridEnv):
+class Environment_test(MiniGridEnv):
     """
     Grid Environment
 
@@ -19,7 +19,7 @@ class Environment(MiniGridEnv):
             down = 2
             left = 3
 
-    def __init__(self, agent_start_states=[1, 1], goal_states=[18, 18], observation_width=20, observation_height=20, observation_top=[0, 0],slip_p=0.0, width=20, height=20, obstacles_per_room=1):
+    def __init__(self, agent_start_states=[1, 1], goal_states=[7, 7], observation_width=9, observation_height=9, observation_top=[0, 0],slip_p=0.0, width=9, height=9, obstacles_per_room=1):
         self.width = width
         self.height = height
         self.size = width* height
@@ -37,7 +37,7 @@ class Environment(MiniGridEnv):
         super().__init__(width=self.width, height=self.height, max_steps=4 * self.size)
 
         #Action enumeration for this environment
-        self.actions = Environment.Actions
+        self.actions = Environment_test.Actions
 
         # Actions are discrete integer values
         self.action_space = spaces.Discrete(len(self.actions))
@@ -63,9 +63,9 @@ class Environment(MiniGridEnv):
         generate_rooms(self.grid)
         generate_doors(self)
 
-        place_goal(self)
+        #place_goal(self)
         place_agent(self)
-        place_obstacles(self)
+        #place_obstacles(self)
 
         self.mission = "get to the green goal square"
 
@@ -121,6 +121,10 @@ class Environment(MiniGridEnv):
         # Update the agent's position
         agent_old_pos = self.agent_pos
         agent_new_pos = self.get_front_pos(action)
+        #print(agent_new_pos)
+        if(agent_new_pos[0] < 0 or agent_new_pos[0] >= self.width or agent_new_pos[1] < 0 or agent_new_pos[1] >= self.height):
+            agent_new_pos = agent_old_pos
+
         agent_new_cell = self.grid.get(*agent_new_pos)
 
         done, info, reward = update_environment(self, objects_old_pos, objects_new_pos, agent_old_pos, agent_new_pos, agent_new_cell)

@@ -1,3 +1,4 @@
+import copy
 import os
 import pickle
 import networkx as nx
@@ -6,13 +7,12 @@ import random
 
 from Util.State import State
 from Util.Edge import Edge
-from Environment import Environment
 from Util.high_level_model_util import *
 from subtask_controller import SubtaskController
 
 
 class HLM:
-    def __init__(self, objectives =None, start_state=None, goal_state=None, env_settings=None, load_dir = None):
+    def __init__(self, objectives =None, start_state=None, goal_state=None, env=None, load_dir = None):
         self.controllers = []
         self.success_probabilities = []
         self.cost = []
@@ -20,8 +20,7 @@ class HLM:
         self.edges = []
 
         if load_dir is None:
-            self.env_settings = env_settings
-            self.env = Environment(**env_settings)
+            self.env = copy.deepcopy(env)
             self.objectives = objectives
             self.start_state = start_state
             self.goal_state = goal_state
@@ -37,7 +36,7 @@ class HLM:
         controller_id = 0
         print("start training " + str(len(self.objectives)) + " Controllers")
         for task in self.objectives:
-            controller = SubtaskController(controller_id, task.start_state, task.goal_state, env_settings=self.env_settings,
+            controller = SubtaskController(controller_id, task.start_state, task.goal_state, env=self.env, verbose=0,
                  observation_top=task.observation_top, observation_width=task.observation_width, observation_height=task.observation_height)
             controller.learn(10000)
             self.controllers.append(controller)
@@ -63,7 +62,7 @@ class HLM:
             'objectives': self.objectives,
             'start_state': self.start_state,
             'goal_state': self.goal_state,
-            'env_settings': self.env_settings
+            'env': self.env
         }
 
         with open(model_file, 'wb') as pickleFile:
@@ -82,8 +81,7 @@ class HLM:
         self.objectives = model_data['objectives']
         self.start_state = model_data['start_state']
         self.goal_state = model_data['goal_state']
-        self.env_settings = model_data['env_settings']
-        self.env = Environment(**self.env_settings)
+        self.env = model_data['env']
 
         #Load subcontrollers
         controllers_path = os.path.join(load_path, 'Subcontrollers')
@@ -119,6 +117,11 @@ class HLM:
                 id += 1
             
         print('Done creating state of HLM')
+
+    def print_controllers_performance(self):
+        for controller in self.controllers:
+            print("controller id: " + str(controller.id) + ", start_state: " + str(controller.start_state) + ", goal_state: " + str(controller.goal_state))
+            print(controller.get_performance())
 
     def create_edges(self):
         '''
@@ -160,7 +163,8 @@ class HLM:
                     controller = edge.controller
                     break
             print("Demonstrating capabilities")
-
+            print("new controller = " + str(cur_edge.name))
+            print("new controller start: " + str(cur_edge.state1.to_string()) + ", goal: " + str(cur_edge.state2.to_string()))
             #reset environment
             self.env.set_observation_size(controller.observation_width, controller.observation_height, controller.observation_top)
             self.env.sub_task_goal = controller.goal_state

@@ -14,10 +14,6 @@ def generate_rooms(grid=None):
         for j in range(0, num_rooms_in_width):
             grid.wall_rect(j*7, i*7, 8, 8)
     
-    #place walls in down
-    #  left room
-    grid.horz_wall(2,9,5)
-    grid.vert_wall(2,9,4)
 
 def generate_doors(environment=None):
     assert environment is not None
@@ -49,20 +45,11 @@ def place_obstacles(environment=None):
 
     environment.obstacles = []
 
-    # 2 obstacles in top right room
-    environment.obstacles.append(Ball())
-    environment.obstacles.append(Ball())
-    environment.place_obj(obj = environment.obstacles[0], top = (8,0), size = (6, 6), max_tries=100)
-    environment.place_obj(obj = environment.obstacles[1], top = (8,0), size = (6, 6), max_tries=100)
-
-    #1 obstacle in bottom left room
-    environment.obstacles.append(Ball())
-    environment.place_obj(obj = environment.obstacles[2], top = (8,8), size = (6, 6), max_tries=100)
-    # num_rooms_in_width = 2
-    # for i in range(0, num_rooms_in_width):
-    #     for j in range(0, num_rooms_in_width):
-    #         environment.obstacles.append(Ball())
-    #         environment.place_obj(obj = environment.obstacles[i * num_rooms_in_width + j], top = (i * 7, j * 7), size = (6, 6), max_tries=100)
+    num_rooms_in_width = 2
+    for i in range(0, num_rooms_in_width):
+        for j in range(0, num_rooms_in_width):
+            environment.obstacles.append(Ball())
+            environment.place_obj(obj = environment.obstacles[i * num_rooms_in_width + j], top = (i * 7, j * 7), size = (6, 6), max_tries=100)
 
 def create_observation(environment=None):
     assert environment is not None
