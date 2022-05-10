@@ -1,13 +1,16 @@
 import copy
 import os
 import pickle
+from xml import dom
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
+from Util.Label import Label
 
 from Util.State import State
 from Util.Edge import Edge
 from Util.high_level_model_util import *
+from Util.martins_util import order_lexicographically
 from subtask_controller import SubtaskController
 
 
@@ -146,6 +149,7 @@ class HLM:
             name = 'E' + str(id)
             edge = Edge(name, edge_controller, start_state, end_state, success_probability, cost)
             self.edges.append(edge)
+            start_state.add_edge(edge)
         print('Done creating edges for HLM')
 
     def demonstrate_capabilities(self, n_episodes=8, n_steps=100, render=True):
@@ -208,6 +212,69 @@ class HLM:
                             print("sub task failed :(")
                             finished = True
                             break
+    
+    def martins_algorithm(self):
+        print("TODO")
+        temporary_labels = []
+
+        #Set start label and make permanent
+        cur_state = get_state(self, self.start_state)   
+        label = Label(1, 0, None, cur_state, 0)
+        cur_state.add_temporary_label(label)
+        temporary_labels.append(label)
+
+        while temporary_labels:
+            temporary_labels = order_lexicographically(temporary_labels)
+
+            print("------------------------------")
+            for i in range(len(temporary_labels)):
+                print(str(i) + ": " + temporary_labels[i].to_string())
+            print("------------------------------")
+
+            cur_label = temporary_labels[0]
+            print("cur label:" + cur_label.to_string())
+            print("cur state: " + cur_label.state().to_string())
+            cur_label.make_permanent()
+            temporary_labels.remove(cur_label)
+
+            for edge in cur_label.state().edges:
+                print(edge.to_string())
+                probability = cur_label.probability * edge.probability
+                cost = cur_label.cost + edge.cost
+                predecessor = get_state(self, edge.state1)
+                current = get_state(self, edge.state2)
+
+                label = Label(probability, cost, predecessor, current, 0)
+                print(label.to_string())
+                #check if new label is dominated or not, if not add to temporary labels
+                dominated = False
+                for permanent_label in current.permanent_labels:
+                    print(permanent_label.to_string())
+                    if permanent_label.dominate(label) == 1:
+                        dominated = True
+
+                for temporary_label in current.temporary_labels:
+                    if temporary_label.dominate(label) == 1:
+                        dominated = True
+                    
+                    if temporary_label.dominate(label) == -1:
+                        current.temporary_labels.remove(temporary_label)
+                        temporary_labels.remove(temporary_label)
+
+                print(dominated)
+
+                if not dominated:
+                    current.add_temporary_label(label)
+                    temporary_labels.append(label)
+
+                #add label to next edge node temporary labels
+
+                
+                #see which temporary labels can be deleted 
+
+        #Print permanent labels of final node
+        for label in get_state(self, self.goal_state).permanent_labels:
+            print(label.to_string())
 
 
     def generate_graph(self):

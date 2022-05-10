@@ -10,3 +10,6 @@ class Edge:
     def __eq__(self, other):
         if isinstance(other, Edge):
             return self.state1 == other.state2 and self.state2 == other.state2
+
+    def to_string(self):
+        return str(self.name) + ", " + str(self.state1.name) + ", " + str(self.state2.name) + ", " + str(self.probability) + ", " + str(self.cost)

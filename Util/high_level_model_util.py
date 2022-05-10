@@ -17,6 +17,16 @@ def find_controller(HLM, start_state, end_state):
         if controller.start_state == start_state and controller.goal_state == end_state:
             return controller
 
+def get_state(HLM, state):
+    vertex = None
+    for cur_state in HLM.states:
+        if(cur_state == state):
+            vertex = cur_state
+            break
+    
+    return vertex
+
+
 def create_HLM_save_files(save_dir):
     #Create path and folder to save HLM in
     save_path = os.path.join('Models', save_dir)
