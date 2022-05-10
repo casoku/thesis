@@ -16,10 +16,13 @@ class Label:
         self.current.permanent_labels.append(self)
 
     def dominate(self, other):
-        if(self.probability > other.probability and self.cost < other.cost):
+        if(self.probability == other.probability and self.cost == other.cost):
+            return 0
+
+        if(self.probability >= other.probability and self.cost <= other.cost):
             return 1
 
-        if(self.probability < other.probability and self.cost > other.cost):
+        if(self.probability <= other.probability and self.cost >= other.cost):
             return -1
 
         return 0

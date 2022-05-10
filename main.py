@@ -77,4 +77,9 @@ high_level_model = HLM(load_dir='full_HLM')
 #high_level_model.generate_graph()
 #high_level_model.print_controllers_performance()
 high_level_model.martins_algorithm()
+high_level_model.print_edges()
+
+for state in high_level_model.states:
+    for label in state.permanent_labels:
+        print(label.to_string())
 

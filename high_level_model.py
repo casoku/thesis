@@ -276,6 +276,9 @@ class HLM:
         for label in get_state(self, self.goal_state).permanent_labels:
             print(label.to_string())
 
+    def print_edges(self):
+        for edge in self.edges:
+            print(edge.to_string())
 
     def generate_graph(self):
         '''
@@ -303,13 +306,3 @@ class HLM:
         nx.draw_networkx_labels(G, pos)
         nx.draw_networkx_edges(G, pos, edgelist=black_edges, arrows=True, width=2)
         plt.show()
-            
-
-
-        
-
-
-
-        
-
-        
