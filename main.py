@@ -74,7 +74,6 @@ high_level_model = None
 high_level_model = HLM(load_dir='full_HLM')
 
 #high_level_model.demonstrate_capabilities()
-#high_level_model.generate_graph()
 #high_level_model.print_controllers_performance()
 high_level_model.martins_algorithm()
 high_level_model.print_edges()
@@ -82,4 +81,10 @@ high_level_model.print_edges()
 for state in high_level_model.states:
     for label in state.permanent_labels:
         print(label.to_string())
+
+paths = high_level_model.find_optimal_paths()
+print(paths)
+#high_level_model.demonstrate_capabilities()
+high_level_model.demonstrate_HLC(path=paths[0])
+#high_level_model.generate_graph()
 

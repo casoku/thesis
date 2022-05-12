@@ -6,6 +6,7 @@ import numpy as np
 from gym_minigrid.wrappers import *
 from gym_minigrid.window import Window
 from Environment import Environment
+from Environment_9_rooms import Environment_9_rooms
 from Environment_simple import Environment_simple
 from Environment_test import Environment_test
 
@@ -111,14 +112,23 @@ args = parser.parse_args()
 # }
 # env = Environment_test(**env_settings)
 
+# env_settings = {
+#     'agent_start_states' : [1, 1],
+#     'goal_states': [13, 13],
+#     'slip_p' : 0,
+#     'width' : 15,
+#     'height' : 15
+# }
+# env = Environment_simple(**env_settings)
+
 env_settings = {
     'agent_start_states' : [1, 1],
-    'goal_states': [13, 13],
+    'goal_states': [20, 20],
     'slip_p' : 0,
-    'width' : 15,
-    'height' : 15
+    'width' : 22,
+    'height' : 22
 }
-env = Environment_simple(**env_settings)
+env = Environment_9_rooms(**env_settings)
 
 observation_top = [0, 0]
 observation_width = 8
