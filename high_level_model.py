@@ -42,7 +42,7 @@ class HLM:
             print(task.to_string())
             controller = SubtaskController(controller_id, task.start_state, task.goal_state, env=self.env, verbose=0,
                  observation_top=task.observation_top, observation_width=task.observation_width, observation_height=task.observation_height)
-            controller.learn(10000)
+            controller.learn(30000)
             self.controllers.append(controller)
             controller_id += 1
             print("controller" + str(controller_id) + " done")
@@ -160,7 +160,7 @@ class HLM:
         '''
         for episodes in range(n_episodes):
             # select start controller
-            cur_edge = path[0]
+            cur_edge = path["edges"][0]
             controller = cur_edge.controller
             print("Demonstrating capabilities")
             print("new controller = " + str(cur_edge.name))
@@ -191,7 +191,7 @@ class HLM:
                                 break
                             
                             #Select next controller at random
-                            edge = path[next_edge_index]
+                            edge = path["edges"][next_edge_index]
                             controller = edge.controller
                             self.env.set_observation_size(controller.observation_width, controller.observation_height, controller.observation_top)
                             self.env.sub_task_goal = controller.goal_state
@@ -268,7 +268,6 @@ class HLM:
                             break
     
     def martins_algorithm(self):
-        print("TODO")
         temporary_labels = []
 
         #Set start label and make permanent
@@ -280,30 +279,30 @@ class HLM:
         while temporary_labels:
             temporary_labels = order_lexicographically(temporary_labels)
 
-            print("------------------------------")
-            for i in range(len(temporary_labels)):
-                print(str(i) + ": " + temporary_labels[i].to_string())
-            print("------------------------------")
+            # print("------------------------------")
+            # for i in range(len(temporary_labels)):
+            #     print(str(i) + ": " + temporary_labels[i].to_string())
+            # print("------------------------------")
 
             cur_label = temporary_labels[0]
-            print("cur label:" + cur_label.to_string())
-            print("cur state: " + cur_label.state().to_string())
+            # print("cur label:" + cur_label.to_string())
+            # print("cur state: " + cur_label.state().to_string())
             cur_label.make_permanent()
             temporary_labels.remove(cur_label)
 
             for edge in cur_label.state().edges:
-                print(edge.to_string())
+                #print(edge.to_string())
                 probability = cur_label.probability * edge.probability
                 cost = cur_label.cost + edge.cost
                 predecessor = get_state(self, edge.state1)
                 current = get_state(self, edge.state2)
 
                 label = Label(probability, cost, predecessor, current, 0)
-                print(label.to_string())
+                #print(label.to_string())
                 #check if new label is dominated or not, if not add to temporary labels
                 dominated = False
                 for permanent_label in current.permanent_labels:
-                    print(permanent_label.to_string())
+                    #print(permanent_label.to_string())
                     if permanent_label.dominate(label) == 1:
                         dominated = True
 
@@ -315,7 +314,7 @@ class HLM:
                         current.temporary_labels.remove(temporary_label)
                         temporary_labels.remove(temporary_label)
 
-                print(dominated)
+                #print(dominated)
 
                 if not dominated:
                     current.add_temporary_label(label)
@@ -326,12 +325,9 @@ class HLM:
                 
                 #see which temporary labels can be deleted 
         
-        print(self.goal_state)
+        #print(self.goal_state)
         #Print permanent labels of final node
         for label in get_state(self, self.goal_state).permanent_labels:
-            # if label is None:
-            #     print("None")
-            # else:
             print(label.to_string())
 
     def find_optimal_paths(self):
@@ -351,11 +347,12 @@ class HLM:
                     filtered_permanent_labels.append(label)
             
             filtered_states[str(state.name)] = filtered_permanent_labels
-
+        print("---------------------------------------------------")
         for key in filtered_states:
             for item in filtered_states[key]:
                 print(item.to_string())
-        
+        print("---------------------------------------------------")
+
         return self.printAllPaths(get_state(self, self.goal_state).name, get_state(self, self.start_state).name, filtered_states, paths)
     
     def printAllPathsUtil(self, u, d, visited, path, filtered_states, paths):
@@ -375,7 +372,22 @@ class HLM:
                 edge = find_edge_by_states(self, get_state_by_name(self, path[i]), get_state_by_name(self, path[i + 1]))
                 edges.append(edge)
             
-            paths.append(edges)
+            #calculate total cost and probability per path
+            probability = 1
+            cost = 0
+
+            for i in range(len(edges)):
+                probability *= edges[i].probability
+                cost += edges[i].cost
+
+            insert = True
+            for p in paths:
+                if(p["probability"] > probability and p["cost"] < cost):
+                    insert = False
+
+            if insert:
+                paths.append({"edges": edges, "probability": probability, "cost": cost})
+            
             for edge in edges:
                 print(edge.to_string())
 

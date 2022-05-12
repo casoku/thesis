@@ -178,6 +178,7 @@ for state in high_level_model.states:
 
 paths = high_level_model.find_optimal_paths()
 print(paths)
+print(len(paths))
 high_level_model.demonstrate_HLC(path=paths[0])
 #high_level_model.demonstrate_capabilities()
 #high_level_model.generate_graph()
