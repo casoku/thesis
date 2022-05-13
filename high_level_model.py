@@ -5,6 +5,8 @@ from xml import dom
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
+
+import numpy as np
 from Util.Label import Label
 
 from Util.State import State
@@ -158,7 +160,12 @@ class HLM:
         Dummy method, currently it just selects the first controller who's starting state is 
         equal to the finish of the previous task. Should use the higher level planning synthesized with planning
         '''
+        total_cost = []
+        total_successes = []
+
         for episodes in range(n_episodes):
+            cost = 0
+
             # select start controller
             cur_edge = path["edges"][0]
             controller = cur_edge.controller
@@ -177,6 +184,7 @@ class HLM:
                 for step in range(n_steps):
                     action, _states = controller.model.predict(obs, deterministic=True)
                     obs, reward, done, info = self.env.step(action)
+                    cost += 1
                     if render:
                         self.env.render(highlight=False)
                     if done:
@@ -188,6 +196,8 @@ class HLM:
                             if cur_edge.state2 == self.goal_state:
                                 print("goal reached! :)")
                                 finished = True
+                                total_cost.append(cost)
+                                total_successes.append(1)
                                 break
                             
                             #Select next controller at random
@@ -204,7 +214,13 @@ class HLM:
                         else:
                             print("sub task failed :(")
                             finished = True
+                            total_successes.append(0)
                             break
+        
+        print("calculated pareto cost: " + str(path["cost"]))
+        print("average cost: " + str(np.average(total_cost)))
+        print("calculated pareto probability: " + str(path["probability"]))
+        print("success rate: " + str(np.sum(total_successes)/len(total_successes)))
 
     def demonstrate_capabilities(self, n_episodes=8, n_steps=100, render=True):
         '''
@@ -382,7 +398,7 @@ class HLM:
 
             insert = True
             for p in paths:
-                if(p["probability"] > probability and p["cost"] < cost):
+                if(p["probability"] >= probability and p["cost"] <= cost):
                     insert = False
 
             if insert:
