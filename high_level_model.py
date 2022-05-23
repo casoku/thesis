@@ -155,7 +155,7 @@ class HLM:
             start_state.add_edge(edge)
         print('Done creating edges for HLM')
 
-    def demonstrate_HLC(self, path, n_episodes=8, n_steps=100, render=True):
+    def demonstrate_HLC(self, path, n_episodes=2, n_steps=100, render=True):
         '''
         Dummy method, currently it just selects the first controller who's starting state is 
         equal to the finish of the previous task. Should use the higher level planning synthesized with planning
