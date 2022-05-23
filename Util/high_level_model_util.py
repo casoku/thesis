@@ -12,10 +12,34 @@ def find_edge_states(HLM, task):
 
     return start_state, end_state 
 
+def find_edge_by_states(HLM, start_state, end_state):
+    for edge in HLM.edges:
+        if edge.state1 == start_state and edge.state2 == end_state:
+            return edge
+    
+    return None
+
 def find_controller(HLM, start_state, end_state):
     for controller in HLM.controllers:
         if controller.start_state == start_state and controller.goal_state == end_state:
             return controller
+
+def get_state_by_name(HLM, name):
+    for state in HLM.states:
+        if(state.name == name):
+            return state
+
+    return None
+
+def get_state(HLM, state):
+    vertex = None
+    for cur_state in HLM.states:
+        if(cur_state == state):
+            vertex = cur_state
+            break
+    
+    return vertex
+
 
 def create_HLM_save_files(save_dir):
     #Create path and folder to save HLM in

@@ -5,3 +5,6 @@ class Objective:
         self.observation_top = observation_top
         self.observation_width = observation_width
         self.observation_height = observation_height
+
+    def to_string(self):
+        return "(" + str(self.start_state) + ", " + str(self.goal_state) + ")"
