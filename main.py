@@ -1,7 +1,9 @@
 from Environment_simple import Environment_simple
 from Util.Objective import Objective
+from Util.automata_util import * 
 from Environment import Environment
 from high_level_model import HLM
+import spot
 
 goal_state = [13, 13] # The final goal state to reach in the complex environment
 start_state = [1,1]
@@ -85,6 +87,8 @@ for state in high_level_model.states:
 paths = high_level_model.find_optimal_paths()
 print(paths)
 #high_level_model.demonstrate_capabilities()
-high_level_model.demonstrate_HLC(path=paths[0])
+#high_level_model.demonstrate_HLC(path=paths[0])
 #high_level_model.generate_graph()
 
+automata = LTL_to_automata('F(b & F o)')
+show_automata(automata)

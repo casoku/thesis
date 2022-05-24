@@ -37,6 +37,10 @@ def custom_print(aut):
             print("    label =", spot.bdd_format_formula(bdict, t.cond))
             print("    acc sets =", t.acc)
 
+def LTL_to_automata(ltl_string):
+    automata = spot.translate(ltl_string, 'Buchi', 'state-based', 'small')
+    return automata
+
 def show_automata(automata_svg):
     spot.setup()
     svg2png(bytestring=automata_svg.show().__dict__["data"], write_to='output.png')

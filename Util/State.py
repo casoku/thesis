@@ -2,10 +2,11 @@ from Util.martins_util import order_lexicographically
 
 
 class State:
-    def __init__(self, name, low_level_state):
+    def __init__(self, name, low_level_state, labels = []):
         self.name = name
         self.low_level_state = low_level_state
         self.edges = []
+        self.labels = labels
         self.permanent_labels = []
         self.temporary_labels = []
 
@@ -28,4 +29,4 @@ class State:
 
 
     def to_string(self):
-        return "name: " +  self.name + ", low_level: " + str(self.low_level_state)
+        return "name: " +  self.name + ", low_level: " + str(self.low_level_state) + ", labels: " + str(self.labels)
