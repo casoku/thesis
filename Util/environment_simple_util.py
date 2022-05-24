@@ -27,8 +27,15 @@ def generate_doors(environment=None):
 def place_goal(environment=None):
     assert environment is not None
 
-    goal_state = environment.goal_states
-    environment.put_obj(Goal(), goal_state[0], goal_state[1])
+    for goal_state in environment.goal_states:
+        goal = Goal()
+        goal.color = goal_state['color']
+        goal_location = goal_state['state']
+        environment.put_obj(goal, goal_location[0], goal_location[1])
+
+    # goal_2 = Goal()
+    # goal_2.color = 'purple'
+    # environment.put_obj(goal_2, 13, 1)
 
 def place_agent(environment=None):
     assert environment is not None
@@ -71,6 +78,7 @@ def create_observation(environment=None):
         obs_out[(agent_pos[1] - environment.observation_top[1]) * obs_grid.width + agent_pos[0] - environment.observation_top[0]] = 'agent'
     
     #Add goal to observation
+    print(environment.sub_task_goal)
     if environment.sub_task_goal[0] < obs_grid.width and environment.sub_task_goal[1] < obs_grid.height:
         obs_out[environment.sub_task_goal[1] * obs_grid.width + environment.sub_task_goal[0]] = 'goal'
 

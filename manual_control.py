@@ -112,23 +112,31 @@ args = parser.parse_args()
 # }
 # env = Environment_test(**env_settings)
 
-# env_settings = {
-#     'agent_start_states' : [1, 1],
-#     'goal_states': [13, 13],
-#     'slip_p' : 0,
-#     'width' : 15,
-#     'height' : 15
-# }
-# env = Environment_simple(**env_settings)
+goal_state = [13, 13] # The final goal state to reach in the complex environment
+goal_1 = {'state': [13, 13], 'color': 'green'}
+goal_2 = {'state': [13, 1], 'color': 'purple'}
+goal_states = []
+goal_states.append(goal_1)
+goal_states.append(goal_2)
+start_state = [1,1]
 
 env_settings = {
     'agent_start_states' : [1, 1],
-    'goal_states': [20, 20],
+    'goal_states': goal_states,
     'slip_p' : 0,
-    'width' : 22,
-    'height' : 22
+    'width' : 15,
+    'height' : 15
 }
-env = Environment_9_rooms(**env_settings)
+env = Environment_simple(**env_settings)
+
+# env_settings = {
+#     'agent_start_states' : [1, 1],
+#     'goal_states': [20, 20],
+#     'slip_p' : 0,
+#     'width' : 22,
+#     'height' : 22
+# }
+# env = Environment_9_rooms(**env_settings)
 
 observation_top = [0, 0]
 observation_width = 8

@@ -27,7 +27,7 @@ class Environment_simple(MiniGridEnv):
         self.obstacles_per_room = obstacles_per_room
         self.obstacles = []
         self.goal_states = goal_states
-        self.sub_task_goal = goal_states
+        self.sub_task_goal = [0, 0]
         self.agent_start_dir = 0 # Minigrid requires a direction, however it is not used. 
 
         #Set observation size

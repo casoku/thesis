@@ -6,13 +6,18 @@ from high_level_model import HLM
 import spot
 
 goal_state = [13, 13] # The final goal state to reach in the complex environment
+goal_1 = {'state': [13, 13], 'color': 'green'}
+goal_2 = {'state': [13, 1], 'color': 'purple'}
+goal_states = []
+goal_states.append(goal_1)
+goal_states.append(goal_2)
 start_state = [1,1]
 '''
 Create environment in which the high-level-controller will be tested
 '''
 env_settings = {
     'agent_start_states' : start_state,
-    'goal_states': goal_state,
+    'goal_states': goal_states,
     'slip_p' : 0,
     'width' : 15,
     'height' : 15
@@ -45,6 +50,14 @@ objective3 = Objective([7,3], [10,7], [7,0], 8, 8)
 objectives.append(objective3)
 objective3r = Objective([10,7], [7,3], [7,0], 8, 8)
 objectives.append(objective3r)
+objectiveP1 = Objective([7,3], [13,1], [7,0], 8, 8)
+objectives.append(objectiveP1)
+objectiveP1r = Objective([13,1], [7,3], [7,0], 8, 8)
+objectives.append(objectiveP1r)
+objectiveP2 = Objective([10,7], [13,1], [7,0], 8, 8)
+objectives.append(objectiveP2)
+objectiveP2r = Objective([13,1], [10,7], [7,0], 8, 8)
+objectives.append(objectiveP2r)
 
 #Room Bottom-left objectives
 objective4 = Objective([3,7], [7,10], [0,7], 8, 8)
@@ -87,8 +100,8 @@ for state in high_level_model.states:
 paths = high_level_model.find_optimal_paths()
 print(paths)
 #high_level_model.demonstrate_capabilities()
-#high_level_model.demonstrate_HLC(path=paths[0])
+high_level_model.demonstrate_HLC(path=paths[0])
 #high_level_model.generate_graph()
 
-automata = LTL_to_automata('F(b & F o)')
-show_automata(automata)
+#automata = LTL_to_automata('F(b & F o)')
+#show_automata(automata)
