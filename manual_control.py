@@ -36,7 +36,7 @@ def reset():
 
 def step(action):
     obs, reward, done, info = env.step(action)
-    print(obs)
+    #print(obs)
     print('step=%s, reward=%.2f' % (env.step_count, reward))
 
     if done:

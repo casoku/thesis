@@ -44,7 +44,7 @@ class HLM:
             print(task.to_string())
             controller = SubtaskController(controller_id, task.start_state, task.goal_state, env=self.env, verbose=0,
                  observation_top=task.observation_top, observation_width=task.observation_width, observation_height=task.observation_height)
-            controller.learn(30000)
+            controller.learn(10000)
             self.controllers.append(controller)
             controller_id += 1
             print("controller" + str(controller_id) + " done")
@@ -191,7 +191,7 @@ class HLM:
                         print(info)
                         if info['task_complete']:
                             print(cur_edge.state2.to_string())
-                            print(self.goal_state)
+                            #print(self.goal_state)
                             #Goal reached
                             if cur_edge.state2 == self.goal_state:
                                 print("goal reached! :)")
@@ -256,7 +256,7 @@ class HLM:
                         print(info)
                         if info['task_complete']:
                             print(cur_edge.state2.to_string())
-                            print(self.goal_state)
+                            #print(self.goal_state)
                             #Goal reached
                             if cur_edge.state2 == self.goal_state:
                                 print("goal reached! :)")

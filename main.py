@@ -81,9 +81,9 @@ objectives.append(objective8)
 objective8r = Objective([7, 10], [10, 7], [7,7], 8, 8)
 objectives.append(objective8r)
 
-# high_level_model = HLM(objectives, start_state, goal_state, env)
-# high_level_model.train_subcontrollers()
-# high_level_model.save('full_HLM')
+high_level_model = HLM(objectives, start_state, goal_state, env)
+high_level_model.train_subcontrollers()
+high_level_model.save('full_HLM')
 
 high_level_model = None
 high_level_model = HLM(load_dir='full_HLM')

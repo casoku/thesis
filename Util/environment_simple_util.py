@@ -78,7 +78,7 @@ def create_observation(environment=None):
         obs_out[(agent_pos[1] - environment.observation_top[1]) * obs_grid.width + agent_pos[0] - environment.observation_top[0]] = 'agent'
     
     #Add goal to observation
-    print(environment.sub_task_goal)
+    #print(environment.sub_task_goal)
     if environment.sub_task_goal[0] < obs_grid.width and environment.sub_task_goal[1] < obs_grid.height:
         obs_out[environment.sub_task_goal[1] * obs_grid.width + environment.sub_task_goal[0]] = 'goal'
 

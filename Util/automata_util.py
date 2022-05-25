@@ -47,7 +47,7 @@ def show_automata(automata_svg):
     image = Image.open('output.png')
     image.show()
 
-# automata = spot.translate('F(a & F b)', 'Buchi', 'state-based', 'small')
+# automata = spot.translate('F((F c & F d) & F s)', 'Buchi', 'state-based', 'small')
 # custom_print(automata)
 # show_automata(automata)
 #print(spot.translate('F(a & F b)', 'Buchi', 'state-based', 'small').show())
