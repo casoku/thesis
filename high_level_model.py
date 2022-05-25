@@ -109,7 +109,7 @@ class HLM:
         id = 1
         for task in self.objectives:
             name = "S" + str(id)
-            S1 = State(name, task.start_state)
+            S1 = State(name, task.start_state, task.labels)
             
             if S1 not in self.states:
                 self.states.append(S1)
@@ -150,7 +150,7 @@ class HLM:
             #create edge
             id += 1
             name = 'E' + str(id)
-            edge = Edge(name, edge_controller, start_state, end_state, success_probability, cost)
+            edge = Edge(name, edge_controller, start_state, end_state, success_probability, cost, task.labels)
             self.edges.append(edge)
             start_state.add_edge(edge)
         print('Done creating edges for HLM')
@@ -437,6 +437,10 @@ class HLM:
     def print_edges(self):
         for edge in self.edges:
             print(edge.to_string())
+
+    def print_states(self):
+        for state in self.states:
+            print(state.to_string())
 
     def generate_graph(self):
         '''

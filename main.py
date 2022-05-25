@@ -1,3 +1,4 @@
+from Util.State import State
 from Environment_simple import Environment_simple
 from Util.Objective import Objective
 from Util.automata_util import * 
@@ -22,7 +23,8 @@ env_settings = {
     'width' : 15,
     'height' : 15
 }
-env = Environment_simple(**env_settings)
+
+#env = Environment_simple(**env_settings)
 
 '''
 Create a list of sub-tasks in the environment that are used to generate a HLM
@@ -50,11 +52,11 @@ objective3 = Objective([7,3], [10,7], [7,0], 8, 8)
 objectives.append(objective3)
 objective3r = Objective([10,7], [7,3], [7,0], 8, 8)
 objectives.append(objective3r)
-objectiveP1 = Objective([7,3], [13,1], [7,0], 8, 8)
+objectiveP1 = Objective([7,3], [13,1], [7,0], 8, 8, ['p'])
 objectives.append(objectiveP1)
 objectiveP1r = Objective([13,1], [7,3], [7,0], 8, 8)
 objectives.append(objectiveP1r)
-objectiveP2 = Objective([10,7], [13,1], [7,0], 8, 8)
+objectiveP2 = Objective([10,7], [13,1], [7,0], 8, 8, ['p'])
 objectives.append(objectiveP2)
 objectiveP2r = Objective([13,1], [10,7], [7,0], 8, 8)
 objectives.append(objectiveP2r)
@@ -66,12 +68,12 @@ objective4r = Objective([7,10], [3,7], [0,7], 8, 8)
 objectives.append(objective4r)
 
 #Room Bottom-right objectives
-objective5 = Objective([7,10], [13,13], [7,7], 8, 8)
+objective5 = Objective([7,10], [13,13], [7,7], 8, 8, ['g'])
 objectives.append(objective5)
 objective5r = Objective([13,13], [7,10], [7,7], 8, 8)
 objectives.append(objective5r)
 
-objective6 = Objective([10,7], [13,13], [7,7], 8, 8)
+objective6 = Objective([10,7], [13,13], [7,7], 8, 8, ['g'])
 objectives.append(objective6)
 objective6r = Objective([13,13], [10,7], [7,7], 8, 8)
 objectives.append(objective6r)
@@ -81,27 +83,68 @@ objectives.append(objective8)
 objective8r = Objective([7, 10], [10, 7], [7,7], 8, 8)
 objectives.append(objective8r)
 
-high_level_model = HLM(objectives, start_state, goal_state, env)
-high_level_model.train_subcontrollers()
-high_level_model.save('full_HLM')
+# high_level_model = HLM(objectives, start_state, goal_state, env)
+# high_level_model.train_subcontrollers()
+# high_level_model.save('full_HLM')
 
 high_level_model = None
 high_level_model = HLM(load_dir='full_HLM')
 
-#high_level_model.demonstrate_capabilities()
 #high_level_model.print_controllers_performance()
-high_level_model.martins_algorithm()
-high_level_model.print_edges()
+#high_level_model.martins_algorithm()
 
-for state in high_level_model.states:
-    for label in state.permanent_labels:
-        print(label.to_string())
+# for state in high_level_model.states:
+#     for label in state.permanent_labels:
+#         print(label.to_string())
 
-paths = high_level_model.find_optimal_paths()
-print(paths)
+# paths = high_level_model.find_optimal_paths()
+# print(paths)
 #high_level_model.demonstrate_capabilities()
-high_level_model.demonstrate_HLC(path=paths[0])
+#high_level_model.demonstrate_HLC(path=paths[0])
 #high_level_model.generate_graph()
 
-#automata = LTL_to_automata('F(b & F o)')
-#show_automata(automata)
+high_level_model.print_edges()
+high_level_model.print_states()
+
+automata = LTL_to_automata('F(p & F g)')
+custom_print(automata)
+
+show_automata(automata)
+
+
+#Create product automata
+stateset = []
+edgeset = []
+
+# - Create Product state set 
+for stateHLM in high_level_model.states:
+    for s in range(0, automata.num_states()):
+        name = stateHLM.name + "b" + str(s)
+        s = State(name, stateHLM.low_level_state)
+        stateset.append(s)
+
+for state in stateset:
+    print(state.to_string())
+
+# - Create Product edge set
+for edgeHLM in high_level_model.edges:
+    for s in range(0, automata.num_states()):
+        for edgeAut in automata.out(s):
+            startState = edgeHLM.state1.name + "b" + str(edgeAut.src)
+            endState = edgeHLM.state2.name + "b" + str(edgeAut.dst)
+            bdict = automata.get_dict()
+
+            #TODO: evaluate if an edge should be added via boolean logic (i.e. is this edge ever gonna happen?)
+            # If not, there is no need to add to the combined model
+
+            edge = {"start": startState, "end": endState, "label": spot.bdd_format_formula(bdict, edgeAut.cond)}            
+            edgeset.append(edge)
+
+for edge in edgeset:
+    print(edge)
+
+print(len(edgeset))
+# - Connect Correct states and edges
+
+# - Highlight start state and goal states
+
