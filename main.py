@@ -1,4 +1,6 @@
+from copy import deepcopy
 from Util.Edge import Edge
+from Util.Graph import Graph
 from Util.State import State
 from Environment_simple import Environment_simple
 from Util.Objective import Objective
@@ -121,19 +123,30 @@ bdict = automata.get_dict()
 
 custom_print(automata)
 
-show_automata(automata)
+#show_automata(automata)
 
 
 #Create product automata
 stateset = []
+final_stateset = []
+start_state_g = None
 edgeset = []
 edgeset2 = []
+
+acceptance = str(automata.get_acceptance())
 # - Create Product state set 
 for stateHLM in high_level_model.states:
     for s in range(0, automata.num_states()):
         name = stateHLM.name + "b" + str(s)
-        s = State(name, stateHLM.low_level_state)
-        stateset.append(s)
+        sp = State(name, stateHLM.low_level_state)
+        stateset.append(sp)
+
+        if stateHLM == start_state and str(s) in str(automata.get_init_state_number()):
+            print("guuyyyy")
+            start_state_g = deepcopy(sp)
+
+        if(str(s) in acceptance):
+            final_stateset.append(sp)
 
 for state in stateset:
     print(state.to_string())
@@ -166,14 +179,12 @@ for edge in edgeset:
     print(edge)
 
 print(len(edgeset))
-
+print(final_stateset)
+print(start_state_g)
 #TODO prune unreachable edges, except start state
 
 # - Connect Correct states and edges
-hlm = HLM()
-hlm.edges = edgeset2
-hlm.states = stateset
+graph = Graph(stateset, start_state_g, final_stateset, edgeset2)
 
-hlm.martins_algorithm()
-
+graph.show_graph()
 # - Highlight start state and goal states
