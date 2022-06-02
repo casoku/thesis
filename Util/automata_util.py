@@ -51,3 +51,31 @@ def show_automata(automata_svg):
 # custom_print(automata)
 # show_automata(automata)
 #print(spot.translate('F(a & F b)', 'Buchi', 'state-based', 'small').show())
+
+def solve_edge_bool_expression(bdict, automata_edge, map_edge, variables):
+
+    #TODO: evaluate if an edge should be added via boolean logic (i.e. is this edge ever gonna happen?)
+    # If not, there is no need to add to the combined model
+    print("mapLabel: " + str(map_edge.labels))
+    print("automataLabel: " + str(spot.bdd_format_formula(bdict, automata_edge.cond)))
+
+    # rewrite to python logic
+    expression = str(spot.bdd_format_formula(bdict, automata_edge.cond)).replace('&', 'and').replace('||', 'or').replace('!', 'not ')
+
+    variables_copy = variables.copy()
+    #Replace labels with "True"
+    for label in map_edge.labels:
+        print("label to replace: " + label)
+        if str(label) in variables_copy: 
+            variables_copy.remove(str(label))
+        expression = str(expression.replace((str(label)) , 'True'))
+
+    #Replace unassigned values with "False"
+    for variable in variables_copy:
+        print("variable to replace: " + variable)
+        expression = str(expression.replace((str(variable)) , 'False'))
+
+    print("expression: " + expression)
+    #evaluate expression:
+    return bool(eval(expression))
+

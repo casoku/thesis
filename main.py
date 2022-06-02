@@ -1,3 +1,4 @@
+from Util.Edge import Edge
 from Util.State import State
 from Environment_simple import Environment_simple
 from Util.Objective import Objective
@@ -5,6 +6,15 @@ from Util.automata_util import *
 from Environment import Environment
 from high_level_model import HLM
 import spot
+
+def get_state_by_name(states, name):
+    vertex = None
+    for cur_state in states:
+        if(cur_state.name == name):
+            vertex = cur_state
+            break
+    
+    return vertex
 
 goal_state = [13, 13] # The final goal state to reach in the complex environment
 goal_1 = {'state': [13, 13], 'color': 'green'}
@@ -107,6 +117,8 @@ high_level_model.print_edges()
 high_level_model.print_states()
 
 automata = LTL_to_automata('F(p & F g)')
+bdict = automata.get_dict()
+
 custom_print(automata)
 
 show_automata(automata)
@@ -115,7 +127,7 @@ show_automata(automata)
 #Create product automata
 stateset = []
 edgeset = []
-
+edgeset2 = []
 # - Create Product state set 
 for stateHLM in high_level_model.states:
     for s in range(0, automata.num_states()):
@@ -126,25 +138,42 @@ for stateHLM in high_level_model.states:
 for state in stateset:
     print(state.to_string())
 
+#Create list of variables
+variables = []
+for ap in automata.ap():
+    variables.append(str(ap))
+print(str(variables))
+
+index = 0
 # - Create Product edge set
 for edgeHLM in high_level_model.edges:
     for s in range(0, automata.num_states()):
         for edgeAut in automata.out(s):
             startState = edgeHLM.state1.name + "b" + str(edgeAut.src)
             endState = edgeHLM.state2.name + "b" + str(edgeAut.dst)
-            bdict = automata.get_dict()
+            
+            expression = solve_edge_bool_expression(bdict, edgeAut, edgeHLM, variables)
 
-            #TODO: evaluate if an edge should be added via boolean logic (i.e. is this edge ever gonna happen?)
-            # If not, there is no need to add to the combined model
-
-            edge = {"start": startState, "end": endState, "label": spot.bdd_format_formula(bdict, edgeAut.cond)}            
-            edgeset.append(edge)
+            if(expression):
+                edge = {"start": startState, "end": endState, "label": spot.bdd_format_formula(bdict, edgeAut.cond), "probability": edgeHLM.probability, "cost":edgeHLM.cost} 
+                edgeE = Edge('E' + str(index), edgeHLM.controller, get_state_by_name(stateset, startState), get_state_by_name(stateset, endState), edgeHLM.cost, edgeHLM.probability, edgeHLM.labels)  
+                edgeset2.append(edgeE)
+                print(edgeE.to_string())         
+                edgeset.append(edge)
+                index += 1
 
 for edge in edgeset:
     print(edge)
 
 print(len(edgeset))
+
+#TODO prune unreachable edges, except start state
+
 # - Connect Correct states and edges
+hlm = HLM()
+hlm.edges = edgeset2
+hlm.states = stateset
+
+hlm.martins_algorithm()
 
 # - Highlight start state and goal states
-

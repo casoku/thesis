@@ -1,5 +1,4 @@
 import gym
-from Environment_deterministic import Deterministic_Environment
 from Environment_simple import Environment_simple
 from Environment_test import Environment_test
 from Util.Objective import Objective
@@ -17,17 +16,23 @@ from subtask_controller import SubtaskController
 #env = gym.make('MiniGrid-FourRooms-v0')
 
 goal_state = [13, 13] # The final goal state to reach in the complex environment
+goal_1 = {'state': [13, 13], 'color': 'green'}
+goal_2 = {'state': [13, 1], 'color': 'purple'}
+goal_states = []
+goal_states.append(goal_1)
+goal_states.append(goal_2)
 start_state = [1,1]
 '''
 Create environment in which the high-level-controller will be tested
 '''
 env_settings = {
     'agent_start_states' : start_state,
-    'goal_states': goal_state,
+    'goal_states': goal_states,
     'slip_p' : 0,
     'width' : 15,
     'height' : 15
 }
+
 env = Environment_simple(**env_settings)
 
 # '''
@@ -107,7 +112,7 @@ def assign_controller_id(controller_id):
 # controller6.learn()
 
 task14 = Objective([7,10], [3,7], [0,7], 8, 8)
-controller14 = SubtaskController(controller_id, task14.start_state, task14.goal_state, env=env, verbose=0,
+controller14 = SubtaskController(controller_id, task14.start_state, task14.goal_state, env=env, verbose=1,
                  observation_top=task14.observation_top, observation_width=task14.observation_width, observation_height=task14.observation_height)
 controller14.learn(50000)
 controller14.save("test_subcontroller14")
