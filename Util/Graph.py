@@ -94,10 +94,6 @@ class Graph:
 
             
             f.node(state.name)
-        # f.node('LR_0')
-        # f.node('LR_3')
-        # f.node('LR_4')
-        # f.node('LR_8')
 
         f.attr('node', shape='circle')
         for edge in self.edges:

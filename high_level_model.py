@@ -1,16 +1,18 @@
 import copy
 import os
 import pickle
-from xml import dom
 import networkx as nx
 import matplotlib.pyplot as plt
 import random
+import spot
 
 import numpy as np
+from Util.Graph import Graph
 from Util.Label import Label
 
 from Util.State import State
 from Util.Edge import Edge
+from Util.automata_util import LTL_to_automata, solve_edge_bool_expression
 from Util.high_level_model_util import *
 from Util.martins_util import order_lexicographically
 from subtask_controller import SubtaskController
@@ -283,6 +285,81 @@ class HLM:
                             finished = True
                             break
     
+    def create_product_graph(self, LTL_string):
+        automata = LTL_to_automata(LTL_string)
+        bdict = automata.get_dict()
+
+        #Create product automata
+        stateset = []
+        final_stateset = []
+        start_state_g = None
+        edgeset = []
+        edgeset2 = []
+
+        acceptance = str(automata.get_acceptance())
+        # - Create Product state set 
+        for stateHLM in self.states:
+            for s in range(0, automata.num_states()):
+                name = stateHLM.name + "b" + str(s)
+                sp = State(name, stateHLM.low_level_state)
+                stateset.append(sp)
+
+                if stateHLM == self.start_state and str(s) in str(automata.get_init_state_number()):
+                    print("guuyyyy")
+                    start_state_g = copy.deepcopy(sp)
+
+                if(str(s) in acceptance):
+                    final_stateset.append(sp)
+
+        for state in stateset:
+            print(state.to_string())
+
+        #Create list of variables
+        variables = []
+        for ap in automata.ap():
+            variables.append(str(ap))
+        print(str(variables))
+
+        index = 0
+        # - Create Product edge set
+
+        def get_state_by_name_from_array(states, name):
+            vertex = None
+            for cur_state in states:
+                if(cur_state.name == name):
+                    vertex = cur_state
+                    break
+    
+            return vertex
+
+        for edgeHLM in self.edges:
+            for s in range(0, automata.num_states()):
+                for edgeAut in automata.out(s):
+                    startState = edgeHLM.state1.name + "b" + str(edgeAut.src)
+                    endState = edgeHLM.state2.name + "b" + str(edgeAut.dst)
+                    
+                    expression = solve_edge_bool_expression(bdict, edgeAut, edgeHLM, variables)
+
+                    if(expression):
+                        edge = {"start": startState, "end": endState, "label": spot.bdd_format_formula(bdict, edgeAut.cond), "probability": edgeHLM.probability, "cost":edgeHLM.cost} 
+                        edgeE = Edge('E' + str(index), edgeHLM.controller, get_state_by_name_from_array(stateset, startState), get_state_by_name_from_array(stateset, endState), edgeHLM.cost, edgeHLM.probability, edgeHLM.labels)  
+                        edgeset2.append(edgeE)
+                        print(edgeE.to_string())         
+                        edgeset.append(edge)
+                        index += 1
+
+        for edge in edgeset:
+            print(edge)
+
+        print(len(edgeset))
+        print(final_stateset)
+        print(start_state_g)
+        #TODO prune unreachable edges, except start state
+
+        # - Connect Correct states and edges
+        graph = Graph(stateset, start_state_g, final_stateset, edgeset2)
+        return graph
+
     def martins_algorithm(self):
         temporary_labels = []
 
@@ -446,29 +523,9 @@ class HLM:
         '''
         Generate a graph displaying the model
         '''
-
-        G = nx.DiGraph()
-
-        #generate edges
-        graph_edges = []
-        labels = {}
-        for edge in self.edges:
-            graph_edge = (str(edge.state1.name), str(edge.state2.name))
-            labels[(edge.state1.name, edge.state2.name)] = "(" + "{:.2f}".format(edge.probability) + ", " + "{:.2f}".format(edge.cost)  + ")"
-            graph_edges.append(graph_edge)
-
-        G.add_edges_from(
-            graph_edges)
-
-        # Specify the edges you want here
-        black_edges = [edge for edge in G.edges()]
-
-        print(len(labels))
-        # Need to create a layout when doing
-        # separate calls to draw nodes and edges
-        pos = nx.circular_layout(G)
-        nx.draw_networkx_nodes(G, pos, cmap=plt.get_cmap('jet'), node_size = 500)
-        nx.draw_networkx_labels(G, pos)
-        nx.draw_networkx_edges(G, pos, edgelist=black_edges, arrows=True, width=1)
-        #nx.draw_networkx_edge_labels(G,pos,edge_labels=labels, verticalalignment="bottom", font_size=10)
-        plt.show()
+        
+        final_states = []
+        final_states.append(get_state(self, self.goal_state))
+        g = Graph(self.states, get_state(self, self.start_state), final_states, self.edges)
+        
+        g.show_graph()

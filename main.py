@@ -117,13 +117,14 @@ high_level_model = HLM(load_dir='full_HLM')
 
 high_level_model.print_edges()
 high_level_model.print_states()
-
-automata = LTL_to_automata('F(p & F g)')
+# LTL = 'F(p & F g)'
+LTL = 'G F (g && ! p)'
+automata = LTL_to_automata(LTL)
 bdict = automata.get_dict()
 
 custom_print(automata)
 
-#show_automata(automata)
+show_automata(automata)
 
 
 #Create product automata
@@ -184,7 +185,8 @@ print(start_state_g)
 #TODO prune unreachable edges, except start state
 
 # - Connect Correct states and edges
-graph = Graph(stateset, start_state_g, final_stateset, edgeset2)
-
-graph.show_graph()
+#graph = Graph(stateset, start_state_g, final_stateset, edgeset2)
+#graph = high_level_model.create_product_graph(LTL)
+#graph.show_graph()
+high_level_model.generate_graph()
 # - Highlight start state and goal states
