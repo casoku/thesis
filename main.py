@@ -118,7 +118,7 @@ high_level_model = HLM(load_dir='full_HLM')
 high_level_model.print_edges()
 high_level_model.print_states()
 # LTL = 'F(p & F g)'
-LTL = 'G F (g && ! p)'
+LTL = 'G !p & F g'
 automata = LTL_to_automata(LTL)
 bdict = automata.get_dict()
 
@@ -126,67 +126,11 @@ custom_print(automata)
 
 show_automata(automata)
 
-
-#Create product automata
-stateset = []
-final_stateset = []
-start_state_g = None
-edgeset = []
-edgeset2 = []
-
-acceptance = str(automata.get_acceptance())
-# - Create Product state set 
-for stateHLM in high_level_model.states:
-    for s in range(0, automata.num_states()):
-        name = stateHLM.name + "b" + str(s)
-        sp = State(name, stateHLM.low_level_state)
-        stateset.append(sp)
-
-        if stateHLM == start_state and str(s) in str(automata.get_init_state_number()):
-            print("guuyyyy")
-            start_state_g = deepcopy(sp)
-
-        if(str(s) in acceptance):
-            final_stateset.append(sp)
-
-for state in stateset:
-    print(state.to_string())
-
-#Create list of variables
-variables = []
-for ap in automata.ap():
-    variables.append(str(ap))
-print(str(variables))
-
-index = 0
-# - Create Product edge set
-for edgeHLM in high_level_model.edges:
-    for s in range(0, automata.num_states()):
-        for edgeAut in automata.out(s):
-            startState = edgeHLM.state1.name + "b" + str(edgeAut.src)
-            endState = edgeHLM.state2.name + "b" + str(edgeAut.dst)
-            
-            expression = solve_edge_bool_expression(bdict, edgeAut, edgeHLM, variables)
-
-            if(expression):
-                edge = {"start": startState, "end": endState, "label": spot.bdd_format_formula(bdict, edgeAut.cond), "probability": edgeHLM.probability, "cost":edgeHLM.cost} 
-                edgeE = Edge('E' + str(index), edgeHLM.controller, get_state_by_name(stateset, startState), get_state_by_name(stateset, endState), edgeHLM.cost, edgeHLM.probability, edgeHLM.labels)  
-                edgeset2.append(edgeE)
-                print(edgeE.to_string())         
-                edgeset.append(edge)
-                index += 1
-
-for edge in edgeset:
-    print(edge)
-
-print(len(edgeset))
-print(final_stateset)
-print(start_state_g)
 #TODO prune unreachable edges, except start state
 
 # - Connect Correct states and edges
 #graph = Graph(stateset, start_state_g, final_stateset, edgeset2)
-#graph = high_level_model.create_product_graph(LTL)
-#graph.show_graph()
+graph = high_level_model.create_product_graph(LTL)
+graph.show_graph('product graph')
 high_level_model.generate_graph()
 # - Highlight start state and goal states

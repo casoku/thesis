@@ -79,8 +79,8 @@ class Graph:
 
         return False
 
-    def show_graph(self):
-        f = graphviz.Digraph('finite_state_machine', filename='fsm.gv')
+    def show_graph(self, name = 'fsm.gv'):
+        f = graphviz.Digraph('finite_state_machine', filename=name)
         f.attr(rankdir='LR', size='8,5')
 
         for state in self.states:

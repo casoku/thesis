@@ -38,6 +38,7 @@ def custom_print(aut):
             print("    acc sets =", t.acc)
 
 def LTL_to_automata(ltl_string):
+    #Change small to complete to also show terminating transitions
     automata = spot.translate(ltl_string, 'Buchi', 'state-based', 'small')
     return automata
 
@@ -60,7 +61,7 @@ def solve_edge_bool_expression(bdict, automata_edge, map_edge, variables):
     print("automataLabel: " + str(spot.bdd_format_formula(bdict, automata_edge.cond)))
 
     # rewrite to python logic
-    expression = str(spot.bdd_format_formula(bdict, automata_edge.cond)).replace('&', 'and').replace('||', 'or').replace('!', 'not ')
+    expression = str(spot.bdd_format_formula(bdict, automata_edge.cond)).replace('&', 'and').replace('|', 'or').replace('!', 'not ')
 
     variables_copy = variables.copy()
     #Replace labels with "True"

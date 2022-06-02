@@ -528,4 +528,4 @@ class HLM:
         final_states.append(get_state(self, self.goal_state))
         g = Graph(self.states, get_state(self, self.start_state), final_states, self.edges)
         
-        g.show_graph()
+        g.show_graph('high level model')
