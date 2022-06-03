@@ -305,11 +305,12 @@ class HLM:
                 stateset.append(sp)
 
                 if stateHLM == self.start_state and str(s) in str(automata.get_init_state_number()):
-                    print("guuyyyy")
                     start_state_g = copy.deepcopy(sp)
 
-                if(str(s) in acceptance):
-                    final_stateset.append(sp)
+                for t in automata.out(s):
+                    print("    acc sets =", t.acc)
+                    if(len(str(t.acc)) > 2):
+                        final_stateset.append(sp)
 
         for state in stateset:
             print(state.to_string())
@@ -344,14 +345,14 @@ class HLM:
                         edge = {"start": startState, "end": endState, "label": spot.bdd_format_formula(bdict, edgeAut.cond), "probability": edgeHLM.probability, "cost":edgeHLM.cost} 
                         edgeE = Edge('E' + str(index), edgeHLM.controller, get_state_by_name_from_array(stateset, startState), get_state_by_name_from_array(stateset, endState), edgeHLM.cost, edgeHLM.probability, edgeHLM.labels)  
                         edgeset2.append(edgeE)
-                        print(edgeE.to_string())         
+                        #print(edgeE.to_string())         
                         edgeset.append(edge)
                         index += 1
 
-        for edge in edgeset:
-            print(edge)
+        # for edge in edgeset:
+        #     print(edge)
 
-        print(len(edgeset))
+        #print(len(edgeset))
         print(final_stateset)
         print(start_state_g)
         #TODO prune unreachable edges, except start state

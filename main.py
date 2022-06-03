@@ -117,7 +117,8 @@ high_level_model = HLM(load_dir='full_HLM')
 
 high_level_model.print_edges()
 high_level_model.print_states()
-# LTL = 'F(p & F g)'
+#LTL = 'F(p & F g)'
+#LTL = 'F (p & F g)'
 LTL = 'G !p & F g'
 automata = LTL_to_automata(LTL)
 bdict = automata.get_dict()

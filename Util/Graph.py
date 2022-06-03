@@ -81,7 +81,8 @@ class Graph:
 
     def martins_algorithm(self):
         #TODO write martins algorithm for a graph, so it can be generalized
-
+        return 
+        
     def show_graph(self, name = 'fsm.gv'):
         f = graphviz.Digraph('finite_state_machine', filename=name)
         f.attr(rankdir='LR', size='8,5')
