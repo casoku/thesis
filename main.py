@@ -109,29 +109,33 @@ high_level_model = HLM(load_dir='full_HLM')
 #     for label in state.permanent_labels:
 #         print(label.to_string())
 
-# paths = high_level_model.find_optimal_paths()
-# print(paths)
+#paths = high_level_model.find_optimal_paths()
+#print(paths)
 #high_level_model.demonstrate_capabilities()
 #high_level_model.demonstrate_HLC(path=paths[0])
 #high_level_model.generate_graph()
 
-high_level_model.print_edges()
-high_level_model.print_states()
+#high_level_model.print_edges()
+#high_level_model.print_states()
 #LTL = 'F(p & F g)'
-#LTL = 'F (p & F g)'
-LTL = 'G !p & F g'
+LTL = 'F (g & F p)'
+#LTL = 'G !p & F g'
 automata = LTL_to_automata(LTL)
 bdict = automata.get_dict()
 
-custom_print(automata)
+#custom_print(automata)
 
-show_automata(automata)
+#show_automata(automata)
 
 #TODO prune unreachable edges, except start state
 
 # - Connect Correct states and edges
 #graph = Graph(stateset, start_state_g, final_stateset, edgeset2)
 graph = high_level_model.create_product_graph(LTL)
+graph.martins_algorithm()
+paths = graph.find_optimal_paths()
+print(paths)
 graph.show_graph('product graph')
-high_level_model.generate_graph()
+high_level_model.demonstrate_HLC(path=paths[0])
+#high_level_model.generate_graph()
 # - Highlight start state and goal states

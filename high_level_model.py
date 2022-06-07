@@ -195,7 +195,7 @@ class HLM:
                             print(cur_edge.state2.to_string())
                             #print(self.goal_state)
                             #Goal reached
-                            if cur_edge.state2 == self.goal_state:
+                            if cur_edge.state2.name == path["edges"][-1].state2.name:
                                 print("goal reached! :)")
                                 finished = True
                                 total_cost.append(cost)
@@ -328,9 +328,8 @@ class HLM:
             vertex = None
             for cur_state in states:
                 if(cur_state.name == name):
-                    vertex = cur_state
-                    break
-    
+                    return cur_state
+                      
             return vertex
 
         for edgeHLM in self.edges:
@@ -343,19 +342,25 @@ class HLM:
 
                     if(expression):
                         edge = {"start": startState, "end": endState, "label": spot.bdd_format_formula(bdict, edgeAut.cond), "probability": edgeHLM.probability, "cost":edgeHLM.cost} 
-                        edgeE = Edge('E' + str(index), edgeHLM.controller, get_state_by_name_from_array(stateset, startState), get_state_by_name_from_array(stateset, endState), edgeHLM.cost, edgeHLM.probability, edgeHLM.labels)  
+                        edgeE = Edge('E' + str(index), edgeHLM.controller, get_state_by_name_from_array(stateset, startState), get_state_by_name_from_array(stateset, endState), edgeHLM.probability, edgeHLM.cost, edgeHLM.labels)  
                         edgeset2.append(edgeE)
-                        #print(edgeE.to_string())         
+                        print(edgeE.to_string())         
                         edgeset.append(edge)
+                        startStateS = get_state_by_name_from_array(stateset, startState)
+                        print(startStateS.to_string())
+                        startStateS.add_edge(edgeE)
                         index += 1
 
         # for edge in edgeset:
         #     print(edge)
 
         #print(len(edgeset))
-        print(final_stateset)
-        print(start_state_g)
+        #print(final_stateset)
+        #print(start_state_g)
         #TODO prune unreachable edges, except start state
+
+        for state in stateset:
+            print(str(state.edges))
 
         # - Connect Correct states and edges
         graph = Graph(stateset, start_state_g, final_stateset, edgeset2)
@@ -449,6 +454,22 @@ class HLM:
 
         return self.printAllPaths(get_state(self, self.goal_state).name, get_state(self, self.start_state).name, filtered_states, paths)
     
+    # Prints all paths from 's' to 'd'
+    def printAllPaths(self, s, d, filtered_states, paths):
+ 
+        # Mark all the vertices as not visited
+        visited ={}
+        for state in self.states:
+            visited[str(state.name)] = False
+ 
+        # Create an array to store paths
+        path = []
+
+        # Call the recursive helper function to print all paths
+        self.printAllPathsUtil(s, d, visited, copy.deepcopy(path), filtered_states, paths)  
+
+        return paths     
+
     def printAllPathsUtil(self, u, d, visited, path, filtered_states, paths):
  
         # Mark the current node as visited and store in path
@@ -462,6 +483,7 @@ class HLM:
 
             #find edges
             edges = []
+            print(path)
             for i in range(len(path)-1):
                 edge = find_edge_by_states(self, get_state_by_name(self, path[i]), get_state_by_name(self, path[i + 1]))
                 edges.append(edge)
@@ -495,22 +517,6 @@ class HLM:
         # Remove current vertex from path[] and mark it as unvisited
         path.pop()
         visited[u]= False
-
-    # Prints all paths from 's' to 'd'
-    def printAllPaths(self, s, d, filtered_states, paths):
- 
-        # Mark all the vertices as not visited
-        visited ={}
-        for state in self.states:
-            visited[str(state.name)] = False
- 
-        # Create an array to store paths
-        path = []
- 
-        # Call the recursive helper function to print all paths
-        self.printAllPathsUtil(s, d, visited, copy.deepcopy(path), filtered_states, paths)  
-
-        return paths     
 
     def print_edges(self):
         for edge in self.edges:

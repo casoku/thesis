@@ -1,8 +1,12 @@
+import copy
 from matplotlib import pyplot as plt
+from Util.Label import Label
 from Util.State import State
 from Util.Edge import Edge
 import networkx as nx
 import graphviz
+
+from Util.martins_util import order_lexicographically
 
 class Graph:
     def __init__(self, states = [], start_state = None, final_states = [], edges = []):
@@ -32,6 +36,13 @@ class Graph:
             if edge.name == name:
                 return edge
 
+        return None
+
+    def get_edge_by_states(self, start_state, end_state):
+        for edge in self.edges:
+            if edge.state1 == start_state and edge.state2 == end_state:
+                return edge
+        
         return None
 
     def add_state(self, state):
@@ -81,7 +92,169 @@ class Graph:
 
     def martins_algorithm(self):
         #TODO write martins algorithm for a graph, so it can be generalized
-        return 
+        temporary_labels = []
+
+        #Set start label and make permanent
+        cur_state = self.get_state_by_name(self.start_state.name) 
+        label = Label(1, 0, None, cur_state, 0)
+        cur_state.add_temporary_label(label)
+        temporary_labels.append(label)
+
+        while temporary_labels:
+            temporary_labels = order_lexicographically(temporary_labels)
+
+            print("------------------------------")
+            for i in range(len(temporary_labels)):
+                print(str(i) + ": " + temporary_labels[i].to_string())
+            print("------------------------------")
+
+            cur_label = temporary_labels[0]
+            print("cur label:" + cur_label.to_string())
+            print("cur state: " + cur_label.state().to_string())
+            print("cur edges:" + str(cur_label.state().edges))
+            cur_label.make_permanent()
+            temporary_labels.remove(cur_label)
+
+            for edge in cur_label.state().edges:
+                print(edge.to_string())
+                probability = cur_label.probability * edge.probability
+                cost = cur_label.cost + edge.cost
+                predecessor = edge.state1
+                current = edge.state2
+
+                label = Label(probability, cost, predecessor, current, 0)
+                print(label.to_string())
+                #check if new label is dominated or not, if not add to temporary labels
+                dominated = False
+                for permanent_label in current.permanent_labels:
+                    print(permanent_label.to_string())
+                    if permanent_label.dominate(label) == 1:
+                        dominated = True
+
+                for temporary_label in current.temporary_labels:
+                    if temporary_label.dominate(label) == 1:
+                        dominated = True
+                    
+                    if temporary_label.dominate(label) == -1:
+                        current.temporary_labels.remove(temporary_label)
+                        temporary_labels.remove(temporary_label)
+
+                print(dominated)
+
+                if not dominated:
+                    current.add_temporary_label(label)
+                    temporary_labels.append(label)
+
+                #add label to next edge node temporary labels
+
+                
+                #see which temporary labels can be deleted 
+        
+        #print(self.goal_state)
+        #Print permanent labels of final node
+        for goal_state in self.final_states:
+            for label in goal_state.permanent_labels:
+                print(label.to_string())
+    
+    def find_optimal_paths(self):
+        paths = []
+
+        #Filter on unique labels in all states, to prevent duplicate paths
+        filtered_states = {}
+        for state in self.states:
+            filtered_permanent_labels = []
+            for label in state.permanent_labels:
+                insert = True
+                for filtered_label in filtered_permanent_labels:
+                    if label.predecessor == filtered_label.predecessor:
+                        insert = False
+                
+                if insert:
+                    filtered_permanent_labels.append(label)
+            
+            filtered_states[str(state.name)] = filtered_permanent_labels
+                
+        print("---------------------------------------------------")
+        for key in filtered_states:
+            for item in filtered_states[key]:
+                print(item.to_string())
+        print("---------------------------------------------------")
+
+        all_paths = []
+
+        return self.printAllPaths(self.start_state.name, self.final_states[0].name, filtered_states, paths)
+        # for stateF in self.final_states:
+        #     all_paths.append(self.printAllPaths(state.name, stateF.name, filtered_states, paths))
+
+        # return all_paths
+    
+    # Prints all paths from 's' to 'd'
+    def printAllPaths(self, s, d, filtered_states, paths):
+ 
+        # Mark all the vertices as not visited
+        visited ={}
+        for state in self.states:
+            visited[str(state.name)] = False
+ 
+        # Create an array to store paths
+        path = []
+ 
+        print("start: " + s)
+        print("destination: " + d)
+        # Call the recursive helper function to print all paths
+        self.printAllPathsUtil(d, s, visited, copy.deepcopy(path), filtered_states, paths)  
+
+        return paths   
+
+    def printAllPathsUtil(self, u, d, visited, path, filtered_states, paths):
+ 
+        # Mark the current node as visited and store in path
+        visited[u]= True
+        path.append(u)
+        # If current vertex is same as destination, then print
+        # current path[]
+        if u == d:
+            path.reverse()
+            print(path)
+
+            #find edges
+            edges = []
+            for i in range(len(path)-1):
+                edge = self.get_edge_by_states(self.get_state_by_name(path[i]), self.get_state_by_name(path[i + 1]))
+                edges.append(edge)
+            
+            #calculate total cost and probability per path
+            probability = 1
+            cost = 0
+
+            for i in range(len(edges)):
+                probability *= edges[i].probability
+                cost += edges[i].cost
+
+            insert = True
+            for p in paths:
+                if(p["probability"] >= probability and p["cost"] <= cost):
+                    insert = False
+
+            if insert:
+                paths.append({"edges": edges, "probability": probability, "cost": cost})
+            
+            for edge in edges:
+                print(edge.to_string())
+
+        else:
+            # If current vertex is not destination
+            # Recur for all the vertices adjacent to this vertex
+            print(u)
+            print(filtered_states)
+            for i in filtered_states[u]:
+                print(i.to_string())
+                if visited[i.predecessor.name]== False:
+                    self.printAllPathsUtil(i.predecessor.name, d, visited, copy.deepcopy(path),filtered_states, paths)
+                     
+        # Remove current vertex from path[] and mark it as unvisited
+        path.pop()
+        visited[u]= False
         
     def show_graph(self, name = 'fsm.gv'):
         f = graphviz.Digraph('finite_state_machine', filename=name)
@@ -91,7 +264,6 @@ class Graph:
             if state.name == self.start_state.name:
                 f.attr('node', shape='Mdiamond')
             elif self.is_final_state(state):
-                print("hihi")
                 f.attr('node', shape='doublecircle')
             else:
                 f.attr('node', shape='circle')

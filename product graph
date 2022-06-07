@@ -2,67 +2,105 @@ digraph finite_state_machine {
 	rankdir=LR size="8,5"
 	node [shape=doublecircle]
 	S1b0
-	node [shape=Mdiamond]
+	node [shape=circle]
 	S1b1
+	node [shape=Mdiamond]
+	S1b2
 	node [shape=doublecircle]
 	S2b0
 	node [shape=circle]
 	S2b1
+	node [shape=circle]
+	S2b2
 	node [shape=doublecircle]
 	S3b0
 	node [shape=circle]
 	S3b1
+	node [shape=circle]
+	S3b2
 	node [shape=doublecircle]
 	S4b0
 	node [shape=circle]
 	S4b1
+	node [shape=circle]
+	S4b2
 	node [shape=doublecircle]
 	S5b0
 	node [shape=circle]
 	S5b1
+	node [shape=circle]
+	S5b2
 	node [shape=doublecircle]
 	S6b0
 	node [shape=circle]
 	S6b1
+	node [shape=circle]
+	S6b2
 	node [shape=doublecircle]
 	S7b0
 	node [shape=circle]
 	S7b1
 	node [shape=circle]
+	S7b2
+	node [shape=circle]
 	S1b0 -> S2b0 [label="[]"]
 	S1b1 -> S2b1 [label="[]"]
+	S1b2 -> S2b2 [label="[]"]
 	S2b0 -> S1b0 [label="[]"]
 	S2b1 -> S1b1 [label="[]"]
+	S2b2 -> S1b2 [label="[]"]
 	S1b0 -> S3b0 [label="[]"]
 	S1b1 -> S3b1 [label="[]"]
+	S1b2 -> S3b2 [label="[]"]
 	S3b0 -> S1b0 [label="[]"]
 	S3b1 -> S1b1 [label="[]"]
+	S3b2 -> S1b2 [label="[]"]
 	S3b0 -> S2b0 [label="[]"]
 	S3b1 -> S2b1 [label="[]"]
+	S3b2 -> S2b2 [label="[]"]
 	S2b0 -> S3b0 [label="[]"]
 	S2b1 -> S3b1 [label="[]"]
+	S2b2 -> S3b2 [label="[]"]
 	S2b0 -> S4b0 [label="[]"]
 	S2b1 -> S4b1 [label="[]"]
+	S2b2 -> S4b2 [label="[]"]
 	S4b0 -> S2b0 [label="[]"]
 	S4b1 -> S2b1 [label="[]"]
+	S4b2 -> S2b2 [label="[]"]
+	S2b0 -> S5b0 [label="['p']"]
+	S2b1 -> S5b0 [label="['p']"]
+	S2b2 -> S5b2 [label="['p']"]
 	S5b0 -> S2b0 [label="[]"]
 	S5b1 -> S2b1 [label="[]"]
+	S5b2 -> S2b2 [label="[]"]
+	S4b0 -> S5b0 [label="['p']"]
+	S4b1 -> S5b0 [label="['p']"]
+	S4b2 -> S5b2 [label="['p']"]
 	S5b0 -> S4b0 [label="[]"]
 	S5b1 -> S4b1 [label="[]"]
+	S5b2 -> S4b2 [label="[]"]
 	S3b0 -> S6b0 [label="[]"]
 	S3b1 -> S6b1 [label="[]"]
+	S3b2 -> S6b2 [label="[]"]
 	S6b0 -> S3b0 [label="[]"]
 	S6b1 -> S3b1 [label="[]"]
+	S6b2 -> S3b2 [label="[]"]
 	S6b0 -> S7b0 [label="['g']"]
-	S6b1 -> S7b0 [label="['g']"]
+	S6b1 -> S7b1 [label="['g']"]
+	S6b2 -> S7b1 [label="['g']"]
 	S7b0 -> S6b0 [label="[]"]
 	S7b1 -> S6b1 [label="[]"]
+	S7b2 -> S6b2 [label="[]"]
 	S4b0 -> S7b0 [label="['g']"]
-	S4b1 -> S7b0 [label="['g']"]
+	S4b1 -> S7b1 [label="['g']"]
+	S4b2 -> S7b1 [label="['g']"]
 	S7b0 -> S4b0 [label="[]"]
 	S7b1 -> S4b1 [label="[]"]
+	S7b2 -> S4b2 [label="[]"]
 	S4b0 -> S6b0 [label="[]"]
 	S4b1 -> S6b1 [label="[]"]
+	S4b2 -> S6b2 [label="[]"]
 	S6b0 -> S4b0 [label="[]"]
 	S6b1 -> S4b1 [label="[]"]
+	S6b2 -> S4b2 [label="[]"]
 }
