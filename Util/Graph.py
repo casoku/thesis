@@ -1,4 +1,5 @@
 import copy
+from importlib.resources import path
 from matplotlib import pyplot as plt
 from Util.Label import Label
 from Util.State import State
@@ -182,11 +183,38 @@ class Graph:
 
         all_paths = []
 
-        return self.printAllPaths(self.start_state.name, self.final_states[0].name, filtered_states, paths)
-        # for stateF in self.final_states:
-        #     all_paths.append(self.printAllPaths(state.name, stateF.name, filtered_states, paths))
+        #return self.printAllPaths(self.start_state.name, self.final_states[0].name, filtered_states, paths)
+        for stateF in self.final_states:
+            tempPaths = self.printAllPaths(self.start_state.name, stateF.name, filtered_states, paths)
+            for p in tempPaths:
+                all_paths.append(p)
 
-        # return all_paths
+        def dominate(dict1, other):
+            if(dict1["probability"] == other["probability"] and dict1["cost"] == other["cost"]):
+                return 0
+
+            if(dict1["probability"] >= other["probability"] and dict1["cost"] <= other["cost"]):
+                return 1
+
+            if(dict1["probability"] <= other["probability"] and dict1["cost"] >= other["cost"]):
+                return -1
+
+            return 0
+        #filter out not pareto-optimal paths
+        all_paths_copy = copy.deepcopy(all_paths)
+
+        for p1 in all_paths_copy:
+            for p2 in all_paths_copy:
+                if dominate(p2, p1) == 1:
+                    for pp in all_paths:
+                        if pp["probability"] == p1["probability"] and pp["cost"] == p1["cost"]:
+                            all_paths.remove(pp)
+                            break
+
+        print("--------------------------------------------------")
+        print(all_paths)
+        print("--------------------------------------------------")
+        return all_paths
     
     # Prints all paths from 's' to 'd'
     def printAllPaths(self, s, d, filtered_states, paths):
