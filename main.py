@@ -30,7 +30,7 @@ env_settings = {
     'height' : 15
 }
 
-env = Environment_simple(**env_settings)
+#env = Environment_simple(**env_settings)
 
 '''
 Create a list of sub-tasks in the environment that are used to generate a HLM
@@ -89,9 +89,9 @@ objectives.append(objective8)
 objective8r = Objective([7, 10], [10, 7], [7,7], 8, 8, ['d3'])
 objectives.append(objective8r)
 
-high_level_model = HLM(objectives, start_state, goal_state, env)
-high_level_model.train_subcontrollers()
-high_level_model.save('full_HLM')
+# high_level_model = HLM(objectives, start_state, goal_state, env)
+# high_level_model.train_subcontrollers()
+# high_level_model.save('full_HLM')
 
 high_level_model = None
 high_level_model = HLM(load_dir='full_HLM')
@@ -99,8 +99,9 @@ high_level_model = HLM(load_dir='full_HLM')
 #LTL = 'F p | F g'
 #LTL = 'F (p & F g)'
 #LTL = 'G !p & F g'
-LTL = 'G !d1 & F p'
+#LTL = 'G !d1 & F p'
 #LTL = 'F g'
+LTL = 'G !d1 & (F (p & F g))'
 automata = LTL_to_automata(LTL)
 bdict = automata.get_dict()
 
@@ -114,4 +115,4 @@ graph.martins_algorithm()
 paths = graph.find_optimal_paths()
 print(paths)
 graph.show_graph('product graph')
-high_level_model.demonstrate_HLC(path=paths[0])
+high_level_model.demonstrate_HLC(path=paths[0], n_episodes=20)

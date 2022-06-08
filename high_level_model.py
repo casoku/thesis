@@ -172,7 +172,8 @@ class HLM:
             self.env.set_observation_size(controller.observation_width, controller.observation_height, controller.observation_top)
             self.env.sub_task_goal = controller.goal_state
             obs = self.env.reset()
-            self.env.render(highlight=False)
+            if render:
+                self.env.render(highlight=False)
 
             next_edge_index = 1
             finished = False
