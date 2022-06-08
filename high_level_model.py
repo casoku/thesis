@@ -166,8 +166,8 @@ class HLM:
             cur_edge = path["edges"][0]
             controller = cur_edge.controller
             print("Demonstrating capabilities")
-            print("new controller = " + str(cur_edge.name))
-            print("new controller start: " + str(cur_edge.state1.to_string()) + ", goal: " + str(cur_edge.state2.to_string()))
+            #print("new controller = " + str(cur_edge.name))
+            #print("new controller start: " + str(cur_edge.state1.to_string()) + ", goal: " + str(cur_edge.state2.to_string()))
             #reset environment
             self.env.set_observation_size(controller.observation_width, controller.observation_height, controller.observation_top)
             self.env.sub_task_goal = controller.goal_state
@@ -185,9 +185,9 @@ class HLM:
                     if render:
                         self.env.render(highlight=False)
                     if done:
-                        print(info)
+                        #print(info)
                         if info['task_complete']:
-                            print(cur_edge.state2.to_string())
+                            #print(cur_edge.state2.to_string())
                             #print(self.goal_state)
                             #Goal reached
                             if cur_edge.state2.name == path["edges"][-1].state2.name:
@@ -204,8 +204,8 @@ class HLM:
                             self.env.sub_task_goal = controller.goal_state
                             cur_edge = edge
                             next_edge_index += 1
-                            print("new controller = " + str(cur_edge.name))
-                            print("new controller start: " + str(cur_edge.state1.to_string()) + ", goal: " + str(cur_edge.state2.to_string()))
+                            #print("new controller = " + str(cur_edge.name))
+                            #print("new controller start: " + str(cur_edge.state1.to_string()) + ", goal: " + str(cur_edge.state2.to_string()))
                             obs = self.env.gen_obs()
 
                         else:
