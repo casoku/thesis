@@ -1,6 +1,3 @@
-from numpy import Infinity
-
-
 class Label:
     def __init__(self, probability=0, cost=0, predecessor=None, current=None, position = 0):
         self.probability = probability

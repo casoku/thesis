@@ -1,13 +1,7 @@
-from copy import deepcopy
-from Util.Edge import Edge
-from Util.Graph import Graph
-from Util.State import State
 from Environment_simple import Environment_simple
 from Util.Objective import Objective
 from Util.automata_util import * 
-from Environment import Environment
 from high_level_model import HLM
-import spot
 
 def get_state_by_name(states, name):
     vertex = None
@@ -36,7 +30,7 @@ env_settings = {
     'height' : 15
 }
 
-#env = Environment_simple(**env_settings)
+env = Environment_simple(**env_settings)
 
 '''
 Create a list of sub-tasks in the environment that are used to generate a HLM
@@ -44,96 +38,80 @@ Create a list of sub-tasks in the environment that are used to generate a HLM
 objectives = []
 #Objective(start_state, goal_state, observation_top, observation_width, observation_height)
 # Room Top-left objectives
-objective1 = Objective([1,1], [7,3], [0,0], 8, 8)
+objective1 = Objective([1,1], [7,3], [0,0], 8, 8, ['d1'])
 objectives.append(objective1)
-objective1r = Objective([7,3], [1,1], [0,0], 8, 8)
+objective1r = Objective([7,3], [1,1], [0,0], 8, 8, ['s'])
 objectives.append(objective1r)
 
-objective2 = Objective([1,1], [3,7], [0,0], 8, 8)
+objective2 = Objective([1,1], [3,7], [0,0], 8, 8, ['d2'])
 objectives.append(objective2)
-objective2r = Objective([3,7], [1,1], [0,0], 8, 8)
+objective2r = Objective([3,7], [1,1], [0,0], 8, 8, ['s'])
 objectives.append(objective2r)
 
-objective7 = Objective([3,7],[7,3], [0,0], 8, 8)
+objective7 = Objective([3,7],[7,3], [0,0], 8, 8, ['d1'])
 objectives.append(objective7)
-objective7r = Objective([7,3], [3,7], [0,0], 8, 8)
+objective7r = Objective([7,3], [3,7], [0,0], 8, 8, ['d2'])
 objectives.append(objective7r)
 
 #Room Top-right objectives
-objective3 = Objective([7,3], [10,7], [7,0], 8, 8)
+objective3 = Objective([7,3], [10,7], [7,0], 8, 8, ['d3'])
 objectives.append(objective3)
-objective3r = Objective([10,7], [7,3], [7,0], 8, 8)
+objective3r = Objective([10,7], [7,3], [7,0], 8, 8, ['d1'])
 objectives.append(objective3r)
 objectiveP1 = Objective([7,3], [13,1], [7,0], 8, 8, ['p'])
 objectives.append(objectiveP1)
-objectiveP1r = Objective([13,1], [7,3], [7,0], 8, 8)
+objectiveP1r = Objective([13,1], [7,3], [7,0], 8, 8, ['d1'])
 objectives.append(objectiveP1r)
 objectiveP2 = Objective([10,7], [13,1], [7,0], 8, 8, ['p'])
 objectives.append(objectiveP2)
-objectiveP2r = Objective([13,1], [10,7], [7,0], 8, 8)
+objectiveP2r = Objective([13,1], [10,7], [7,0], 8, 8, ['d3'])
 objectives.append(objectiveP2r)
 
 #Room Bottom-left objectives
-objective4 = Objective([3,7], [7,10], [0,7], 8, 8)
+objective4 = Objective([3,7], [7,10], [0,7], 8, 8, ['d4'])
 objectives.append(objective4)
-objective4r = Objective([7,10], [3,7], [0,7], 8, 8)
+objective4r = Objective([7,10], [3,7], [0,7], 8, 8, ['d2'])
 objectives.append(objective4r)
 
 #Room Bottom-right objectives
 objective5 = Objective([7,10], [13,13], [7,7], 8, 8, ['g'])
 objectives.append(objective5)
-objective5r = Objective([13,13], [7,10], [7,7], 8, 8)
+objective5r = Objective([13,13], [7,10], [7,7], 8, 8, ['d4'])
 objectives.append(objective5r)
 
 objective6 = Objective([10,7], [13,13], [7,7], 8, 8, ['g'])
 objectives.append(objective6)
-objective6r = Objective([13,13], [10,7], [7,7], 8, 8)
+objective6r = Objective([13,13], [10,7], [7,7], 8, 8, ['d3'])
 objectives.append(objective6r)
 
-objective8 = Objective([10, 7], [7, 10],[7,7], 8, 8)
+objective8 = Objective([10, 7], [7, 10],[7,7], 8, 8, ['d4'])
 objectives.append(objective8)
-objective8r = Objective([7, 10], [10, 7], [7,7], 8, 8)
+objective8r = Objective([7, 10], [10, 7], [7,7], 8, 8, ['d3'])
 objectives.append(objective8r)
 
-# high_level_model = HLM(objectives, start_state, goal_state, env)
-# high_level_model.train_subcontrollers()
-# high_level_model.save('full_HLM')
+high_level_model = HLM(objectives, start_state, goal_state, env)
+high_level_model.train_subcontrollers()
+high_level_model.save('full_HLM')
 
 high_level_model = None
 high_level_model = HLM(load_dir='full_HLM')
 
-#high_level_model.print_controllers_performance()
-#high_level_model.martins_algorithm()
-
-# for state in high_level_model.states:
-#     for label in state.permanent_labels:
-#         print(label.to_string())
-
-#paths = high_level_model.find_optimal_paths()
-#print(paths)
-#high_level_model.demonstrate_capabilities()
-#high_level_model.demonstrate_HLC(path=paths[0])
-#high_level_model.generate_graph()
-
-#high_level_model.print_edges()
-#high_level_model.print_states()
 #LTL = 'F p | F g'
-LTL = 'F (p & F g)'
+#LTL = 'F (p & F g)'
 #LTL = 'G !p & F g'
+LTL = 'G !d1 & F p'
+#LTL = 'F g'
 automata = LTL_to_automata(LTL)
 bdict = automata.get_dict()
 
 #custom_print(automata)
 
-#show_automata(automata)
+show_automata(automata)
+high_level_model.show_HLM_graph()
 
-# - Connect Correct states and edges
-#graph = Graph(stateset, start_state_g, final_stateset, edgeset2)
 graph = high_level_model.create_product_graph(LTL)
 graph.martins_algorithm()
 paths = graph.find_optimal_paths()
 print(paths)
 graph.show_graph('product graph')
 high_level_model.demonstrate_HLC(path=paths[0])
-#high_level_model.generate_graph()
-# - Highlight start state and goal states

@@ -1,10 +1,7 @@
 import copy
-from importlib.resources import path
-from matplotlib import pyplot as plt
 from Util.Label import Label
 from Util.State import State
 from Util.Edge import Edge
-import networkx as nx
 import graphviz
 
 from Util.martins_util import order_lexicographically
@@ -112,11 +109,11 @@ class Graph:
             cur_label = temporary_labels[0]
             print("cur label:" + cur_label.to_string())
             print("cur state: " + cur_label.state().to_string())
-            print("cur edges:" + str(cur_label.state().edges))
+            print("cur edges:" + str(cur_label.state().outgoing_edges))
             cur_label.make_permanent()
             temporary_labels.remove(cur_label)
 
-            for edge in cur_label.state().edges:
+            for edge in cur_label.state().outgoing_edges:
                 print(edge.to_string())
                 probability = cur_label.probability * edge.probability
                 cost = cur_label.cost + edge.cost
@@ -185,7 +182,7 @@ class Graph:
 
         #return self.printAllPaths(self.start_state.name, self.final_states[0].name, filtered_states, paths)
         for stateF in self.final_states:
-            tempPaths = self.printAllPaths(self.start_state.name, stateF.name, filtered_states, paths)
+            tempPaths = self.findAllPaths(self.start_state.name, stateF.name, filtered_states, paths)
             for p in tempPaths:
                 all_paths.append(p)
 
@@ -217,7 +214,7 @@ class Graph:
         return all_paths
     
     # Prints all paths from 's' to 'd'
-    def printAllPaths(self, s, d, filtered_states, paths):
+    def findAllPaths(self, s, d, filtered_states, paths):
  
         # Mark all the vertices as not visited
         visited ={}
@@ -230,11 +227,11 @@ class Graph:
         print("start: " + s)
         print("destination: " + d)
         # Call the recursive helper function to print all paths
-        self.printAllPathsUtil(d, s, visited, copy.deepcopy(path), filtered_states, paths)  
+        self.findAllPathsUtil(d, s, visited, copy.deepcopy(path), filtered_states, paths)  
 
         return paths   
 
-    def printAllPathsUtil(self, u, d, visited, path, filtered_states, paths):
+    def findAllPathsUtil(self, u, d, visited, path, filtered_states, paths):
  
         # Mark the current node as visited and store in path
         visited[u]= True
@@ -278,7 +275,7 @@ class Graph:
             for i in filtered_states[u]:
                 print(i.to_string())
                 if visited[i.predecessor.name]== False:
-                    self.printAllPathsUtil(i.predecessor.name, d, visited, copy.deepcopy(path),filtered_states, paths)
+                    self.findAllPathsUtil(i.predecessor.name, d, visited, copy.deepcopy(path),filtered_states, paths)
                      
         # Remove current vertex from path[] and mark it as unvisited
         path.pop()
