@@ -286,12 +286,34 @@ class HLM:
                         endStateS.add_incoming_edge(edgeE)
                         index += 1
 
-        #TODO prune unreachable edges, except start state
-        #filter out edges without any incoming transitions, except starting state
+        #TODO prune unreachable states, except start state       
+        #filter out states without any incoming transitions, except starting state and their outgoing edges
+        contains_unreachable_states = True
+
+        while contains_unreachable_states:
+            contains_unreachable_states = False
+            for state in stateset:
+                if len(state.incoming_edges) == 0 and state.name != start_state_g.name:
+                    contains_unreachable_states = True
+                    print("to remove: " + str(state.name))
+                    for edge in edgeset:
+                        if edge.state1.name == state.name:
+                            edgeset.remove(edge)
+                    
+                    for i in range(len(stateset)):
+                        if stateset[i].name == state.name:
+                            stateset.pop(i)
+                            break
+
+                    for i in range(len(final_stateset)):
+                        if final_stateset[i].name == state.name:
+                            final_stateset.pop(i)
+                            break
+
         #filter out all final states that only have ingoing transitions from other final states
 
         for state in stateset:
-            print(str(state.outgoing_edges))
+            print(str(state.name))
 
         # - Connect Correct states and edges
         graph = Graph(stateset, start_state_g, final_stateset, edgeset)
