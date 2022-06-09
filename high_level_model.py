@@ -294,23 +294,47 @@ class HLM:
             contains_unreachable_states = False
             for state in stateset:
                 if len(state.incoming_edges) == 0 and state.name != start_state_g.name:
+                    print("removing: " + str(state.name))
                     contains_unreachable_states = True
-                    print("to remove: " + str(state.name))
-                    for edge in edgeset:
-                        if edge.state1.name == state.name:
-                            edgeset.remove(edge)
-                    
-                    for i in range(len(stateset)):
-                        if stateset[i].name == state.name:
-                            stateset.pop(i)
-                            break
 
-                    for i in range(len(final_stateset)):
-                        if final_stateset[i].name == state.name:
-                            final_stateset.pop(i)
-                            break
+                    edgeset = [e for e in edgeset if e.state1.name != state.name]
+                    stateset = [s for s in stateset if s.name != state.name] 
+                    final_stateset = [fs for fs in final_stateset if fs.name != state.name]
 
         #filter out all final states that only have ingoing transitions from other final states
+
+        # def in_stateset(stateset, name):
+        #     for s in stateset:
+        #         if s.name == name:
+        #             return True
+            
+        #     return False
+
+        # for final_state in final_stateset:
+        #     remove = 0
+        #     for incoming_edge in final_state.incoming_edges:
+        #         if in_stateset(final_stateset, incoming_edge.state1.name):
+        #             remove += 1
+
+        #     if remove == len(final_state.incoming_edges):
+        #         print("remove state: " + str(final_state.name))
+        #         for edge in edgeset:
+        #             if edge.state2.name == final_state.name:
+        #                 edgeset.remove(edge)
+                    
+        #             if edge.state1.name == final_state.name:
+        #                 edgeset.remove(edge)
+
+        #         for i in range(len(final_stateset)):
+        #             if final_stateset[i].name == final_state.name:
+        #                 final_stateset.pop(i)
+        #                 break
+
+        #         for i in range(len(stateset)):
+        #             if stateset[i].name == final_state.name:
+        #                 stateset.pop(i)
+        #                 break
+
 
         for state in stateset:
             print(str(state.name))

@@ -39,7 +39,6 @@ digraph finite_state_machine {
 	S3b0 -> S1b0 [label="['s']"]
 	S3b1 -> S1b1 [label="['s']"]
 	S3b2 -> S1b2 [label="['s']"]
-	S2b1 -> S4b1 [label="['d3']"]
 	S4b0 -> S5b1 [label="['p']"]
 	S4b1 -> S5b1 [label="['p']"]
 	S4b2 -> S5b2 [label="['p']"]
