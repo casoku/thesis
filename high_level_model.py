@@ -286,55 +286,53 @@ class HLM:
                         endStateS.add_incoming_edge(edgeE)
                         index += 1
 
-        #TODO prune unreachable states, except start state       
-        #filter out states without any incoming transitions, except starting state and their outgoing edges
-        contains_unreachable_states = True
-
-        while contains_unreachable_states:
-            contains_unreachable_states = False
-            for state in stateset:
-                if len(state.incoming_edges) == 0 and state.name != start_state_g.name:
-                    print("removing: " + str(state.name))
-                    contains_unreachable_states = True
-
-                    edgeset = [e for e in edgeset if e.state1.name != state.name]
-                    stateset = [s for s in stateset if s.name != state.name] 
-                    final_stateset = [fs for fs in final_stateset if fs.name != state.name]
+        #TODO prune unreachable states, except start state  
 
         #filter out all final states that only have ingoing transitions from other final states
 
-        # def in_stateset(stateset, name):
-        #     for s in stateset:
-        #         if s.name == name:
-        #             return True
+        def in_stateset(stateset, name):
+            for s in stateset:
+                if s.name == name:
+                    return True
             
-        #     return False
+            return False
 
-        # for final_state in final_stateset:
-        #     remove = 0
-        #     for incoming_edge in final_state.incoming_edges:
-        #         if in_stateset(final_stateset, incoming_edge.state1.name):
-        #             remove += 1
+        final_stateset_copy = copy.deepcopy(final_stateset)
+        edgeset_copy = copy.deepcopy(edgeset)
+        stateset_copy = copy.deepcopy(stateset)
+        for final_state in final_stateset:
+            #print("checking state :" + str(final_state.name))
+            remove = 0
+            for incoming_edge in final_state.incoming_edges:
+                #print("incoming state: " + str(incoming_edge.state1.name))
+                if in_stateset(final_stateset, incoming_edge.state1.name) or not in_stateset(stateset, incoming_edge.state1.name):
+                    remove += 1
 
-        #     if remove == len(final_state.incoming_edges):
-        #         print("remove state: " + str(final_state.name))
-        #         for edge in edgeset:
-        #             if edge.state2.name == final_state.name:
-        #                 edgeset.remove(edge)
-                    
-        #             if edge.state1.name == final_state.name:
-        #                 edgeset.remove(edge)
+            if remove == len(final_state.incoming_edges):
+                print("remove state: " + str(final_state.name))
+                edgeset_copy = [e for e in edgeset_copy if e.state2.name != final_state.name]
+                edgeset_copy = [e for e in edgeset_copy if e.state1.name != final_state.name]
+                stateset_copy = [s for s in stateset_copy if s.name != final_state.name] 
+                final_stateset_copy = [fs for fs in final_stateset_copy if fs.name != final_state.name]
 
-        #         for i in range(len(final_stateset)):
-        #             if final_stateset[i].name == final_state.name:
-        #                 final_stateset.pop(i)
-        #                 break
+        edgeset = edgeset_copy
+        stateset = stateset_copy
+        final_stateset = final_stateset_copy
 
-        #         for i in range(len(stateset)):
-        #             if stateset[i].name == final_state.name:
-        #                 stateset.pop(i)
-        #                 break
+        #filter out states without any incoming transitions, except starting state and their outgoing edges
+        
+        # contains_unreachable_states = True
 
+        # while contains_unreachable_states:
+        #     contains_unreachable_states = False
+        #     for state in stateset:
+        #         if len(state.incoming_edges) == 0 and state.name != start_state_g.name:
+        #             #print("removing: " + str(state.name))
+        #             contains_unreachable_states = True
+
+        #             edgeset = [e for e in edgeset if e.state1.name != state.name]
+        #             stateset = [s for s in stateset if s.name != state.name] 
+        #             final_stateset = [fs for fs in final_stateset if fs.name != state.name]
 
         for state in stateset:
             print(str(state.name))

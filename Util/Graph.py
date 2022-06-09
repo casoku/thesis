@@ -274,7 +274,7 @@ class Graph:
             print(filtered_states)
             for i in filtered_states[u]:
                 print(i.to_string())
-                if visited[i.predecessor.name]== False:
+                if i.predecessor.name in visited and visited[i.predecessor.name]== False:
                     self.findAllPathsUtil(i.predecessor.name, d, visited, copy.deepcopy(path),filtered_states, paths)
                      
         # Remove current vertex from path[] and mark it as unvisited
