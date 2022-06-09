@@ -19,15 +19,11 @@ digraph finite_state_machine {
 	node [shape=circle]
 	S5b1
 	node [shape=circle]
-	S5b2
-	node [shape=circle]
 	S6b1
 	node [shape=circle]
 	S6b2
 	node [shape=doublecircle]
 	S7b0
-	node [shape=circle]
-	S7b1
 	node [shape=circle]
 	S7b2
 	node [shape=circle]
@@ -50,22 +46,18 @@ digraph finite_state_machine {
 	S2b1 -> S5b1 [label="['p']"]
 	S2b2 -> S5b1 [label="['p']"]
 	S5b1 -> S2b1 [label="['d1']"]
-	S5b2 -> S2b2 [label="['d1']"]
 	S4b1 -> S5b1 [label="['p']"]
 	S4b2 -> S5b1 [label="['p']"]
 	S5b1 -> S4b1 [label="['d3']"]
-	S5b2 -> S4b2 [label="['d3']"]
 	S3b1 -> S6b1 [label="['d4']"]
 	S3b2 -> S6b2 [label="['d4']"]
 	S6b1 -> S3b1 [label="['d2']"]
 	S6b2 -> S3b2 [label="['d2']"]
 	S6b1 -> S7b0 [label="['g']"]
 	S6b2 -> S7b2 [label="['g']"]
-	S7b1 -> S6b1 [label="['d4']"]
 	S7b2 -> S6b2 [label="['d4']"]
 	S4b1 -> S7b0 [label="['g']"]
 	S4b2 -> S7b2 [label="['g']"]
-	S7b1 -> S4b1 [label="['d3']"]
 	S7b2 -> S4b2 [label="['d3']"]
 	S4b1 -> S6b1 [label="['d4']"]
 	S4b2 -> S6b2 [label="['d4']"]

@@ -321,18 +321,18 @@ class HLM:
 
         #filter out states without any incoming transitions, except starting state and their outgoing edges
         
-        # contains_unreachable_states = True
+        contains_unreachable_states = True
 
-        # while contains_unreachable_states:
-        #     contains_unreachable_states = False
-        #     for state in stateset:
-        #         if len(state.incoming_edges) == 0 and state.name != start_state_g.name:
-        #             #print("removing: " + str(state.name))
-        #             contains_unreachable_states = True
+        while contains_unreachable_states:
+            contains_unreachable_states = False
+            for state in stateset:
+                if len(state.incoming_edges) == 0 and state.name != start_state_g.name:
+                    #print("removing: " + str(state.name))
+                    contains_unreachable_states = True
 
-        #             edgeset = [e for e in edgeset if e.state1.name != state.name]
-        #             stateset = [s for s in stateset if s.name != state.name] 
-        #             final_stateset = [fs for fs in final_stateset if fs.name != state.name]
+                    edgeset = [e for e in edgeset if e.state1.name != state.name]
+                    stateset = [s for s in stateset if s.name != state.name] 
+                    final_stateset = [fs for fs in final_stateset if fs.name != state.name]
 
         for state in stateset:
             print(str(state.name))
