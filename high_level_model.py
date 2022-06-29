@@ -140,7 +140,7 @@ class HLM:
             edge_controller = find_controller(self, start_state, end_state)
 
             #calculate probability and cost of edge
-            edge_controller.eval_performance(n_episodes = 100)
+            edge_controller.eval_performance(n_episodes = 600)
             success_probability, cost, std = edge_controller.get_data()
 
             #create edge
@@ -355,7 +355,7 @@ class HLM:
         '''
         
         final_states = []
-        final_states.append(get_state(self, self.goal_state))
+        #final_states.append(get_state(self, self.goal_state))
         g = Graph(self.states, get_state(self, self.start_state), final_states, self.edges)
         
         g.show_graph('high level model')

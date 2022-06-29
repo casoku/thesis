@@ -12,13 +12,13 @@ def get_state_by_name(states, name):
     
     return vertex
 
-goal_state = [13, 13] # The final goal state to reach in the complex environment
 goal_1 = {'state': [13, 13], 'color': 'green'}
 goal_2 = {'state': [13, 1], 'color': 'purple'}
 goal_states = []
 goal_states.append(goal_1)
 goal_states.append(goal_2)
 start_state = [1,1]
+goal_state = [13,13]
 '''
 Create environment in which the high-level-controller will be tested
 '''
@@ -107,12 +107,12 @@ bdict = automata.get_dict()
 
 #custom_print(automata)
 
-show_automata(automata)
-high_level_model.show_HLM_graph()
+#show_automata(automata)
+#high_level_model.show_HLM_graph()
 
 graph = high_level_model.create_product_graph(LTL)
 graph.martins_algorithm()
-paths = graph.find_optimal_paths()
-#print(paths)
-graph.show_graph('product graph')
-high_level_model.demonstrate_HLC(path=paths[0], n_episodes=10)
+paths, filered_paths = graph.find_optimal_paths()
+print(paths)
+#graph.show_graph('product graph')
+#high_level_model.demonstrate_HLC(path=paths[0], n_episodes=10)

@@ -1,6 +1,6 @@
 import copy
 import pickle
-from stable_baselines3 import PPO
+from stable_baselines3 import HerReplayBuffer, DDPG, DQN, SAC, TD3, PPO, A2C
 
 from Util.subtask_controller_util import *
 
@@ -118,6 +118,8 @@ class SubtaskController(object):
         self.model = PPO("MlpPolicy", 
                     self.training_env, 
                     verbose=verbose)
+
+        #self.model = A2C("MlpPolicy", self.training_env, verbose=1)
     
     def eval_performance(self, n_episodes=400, n_steps=100, total_steps=0):
         """
@@ -151,7 +153,7 @@ class SubtaskController(object):
         self.data['performance_estimates'] = {
             'training_steps' : self.training_steps,
             'success_count' : success_count,
-            'success_rate' : success_count / trials,
+            'success_rate' : round((success_count / trials), 2),
             'num_trials' : trials,
             'avg_num_steps' : avg_num_steps,
             'std_num_steps' : std_num_steps

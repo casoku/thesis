@@ -37,9 +37,9 @@ def custom_print(aut):
             print("    label =", spot.bdd_format_formula(bdict, t.cond))
             print("    acc sets =", t.acc)
 
-def LTL_to_automata(ltl_string):
+def LTL_to_automata(ltl_string, setting = 'small'):
     #Change small to complete to also show terminating transitions
-    automata = spot.translate(ltl_string, 'Buchi', 'state-based', 'small')
+    automata = spot.translate(ltl_string, 'Buchi', 'state-based', setting)
     return automata
 
 def show_automata(automata_svg):

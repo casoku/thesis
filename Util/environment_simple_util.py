@@ -33,10 +33,6 @@ def place_goal(environment=None):
         goal_location = goal_state['state']
         environment.put_obj(goal, goal_location[0], goal_location[1])
 
-    # goal_2 = Goal()
-    # goal_2.color = 'purple'
-    # environment.put_obj(goal_2, 13, 1)
-
 def place_agent(environment=None):
     assert environment is not None
 
@@ -52,11 +48,31 @@ def place_obstacles(environment=None):
 
     environment.obstacles = []
 
-    num_rooms_in_width = 2
-    for i in range(0, num_rooms_in_width):
-        for j in range(0, num_rooms_in_width):
-            environment.obstacles.append(Ball())
-            environment.place_obj(obj = environment.obstacles[i * num_rooms_in_width + j], top = (i * 7, j * 7), size = (6, 6), max_tries=100)
+    index = 0
+    # Room 1
+    environment.obstacles.append(Ball())
+    environment.place_obj(obj = environment.obstacles[index], top = (0, 0), size = (6, 6), max_tries=100)
+    index += 1
+    # Room 2
+    environment.obstacles.append(Ball())
+    environment.place_obj(obj = environment.obstacles[index], top = (7, 0), size = (6, 6), max_tries=100)
+    index += 1
+    environment.obstacles.append(Ball())
+    environment.place_obj(obj = environment.obstacles[index], top = (7, 0), size = (6, 6), max_tries=100)
+    index += 1
+    # Room 3
+    environment.obstacles.append(Ball())
+    environment.place_obj(obj = environment.obstacles[index], top = (0, 7), size = (6, 6), max_tries=100)
+    index += 1
+    # Room 4
+    environment.obstacles.append(Ball())
+    environment.place_obj(obj = environment.obstacles[index], top = (7, 7), size = (6, 6), max_tries=100)
+
+    # num_rooms_in_width = 2
+    # for i in range(0, num_rooms_in_width):
+    #     for j in range(0, num_rooms_in_width):
+    #         environment.obstacles.append(Ball())
+    #         environment.place_obj(obj = environment.obstacles[i * num_rooms_in_width + j], top = (i * 7, j * 7), size = (6, 6), max_tries=100)
 
 def create_observation(environment=None):
     assert environment is not None

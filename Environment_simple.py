@@ -67,7 +67,7 @@ class Environment_simple(MiniGridEnv):
         place_agent(self)
         place_obstacles(self)
 
-        self.mission = "get to the green goal square"
+        self.mission = ""
 
     def gen_obs(self):
         """

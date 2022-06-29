@@ -112,6 +112,7 @@ args = parser.parse_args()
 # }
 # env = Environment_test(**env_settings)
 
+
 goal_state = [13, 13] # The final goal state to reach in the complex environment
 goal_1 = {'state': [13, 13], 'color': 'green'}
 goal_2 = {'state': [13, 1], 'color': 'purple'}
@@ -129,9 +130,24 @@ env_settings = {
 }
 env = Environment_simple(**env_settings)
 
+
+# goal_1 = {'state': [20, 20], 'color': 'green'}
+# goal_2 = {'state': [1, 20], 'color': 'purple'}
+# goal_3 = {'state': [20, 1], 'color': 'yellow'}
+# goal_4 = {'state': [10, 10], 'color': 'cyan'}
+# goal_states = []
+# goal_states.append(goal_1)
+# goal_states.append(goal_2)
+# goal_states.append(goal_3)
+# goal_states.append(goal_4)
+# start_state = [1,1]
+
+# '''
+# Create environment in which the high-level-controller will be tested
+# '''
 # env_settings = {
-#     'agent_start_states' : [1, 1],
-#     'goal_states': [20, 20],
+#     'agent_start_states' : start_state,
+#     'goal_states': goal_states,
 #     'slip_p' : 0,
 #     'width' : 22,
 #     'height' : 22

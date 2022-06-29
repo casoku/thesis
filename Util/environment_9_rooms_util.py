@@ -27,8 +27,11 @@ def generate_doors(environment=None):
 def place_goal(environment=None):
     assert environment is not None
 
-    goal_state = environment.goal_states
-    environment.put_obj(Goal(), goal_state[0], goal_state[1])
+    for goal_state in environment.goal_states:
+        goal = Goal()
+        goal.color = goal_state['color']
+        goal_location = goal_state['state']
+        environment.put_obj(goal, goal_location[0], goal_location[1])
 
 def place_agent(environment=None):
     assert environment is not None

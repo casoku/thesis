@@ -68,6 +68,7 @@ class Graph:
         return False
 
     def is_final_state(self, state):
+        print(state.to_string())
         for fs in self.final_states:
             if fs.name == state.name:
                 return True
@@ -115,7 +116,7 @@ class Graph:
 
             for edge in cur_label.state().outgoing_edges:
                 print(edge.to_string())
-                probability = cur_label.probability * edge.probability
+                probability = round(cur_label.probability * edge.probability, 3)
                 cost = cur_label.cost + edge.cost
                 predecessor = edge.state1
                 current = edge.state2
@@ -207,11 +208,14 @@ class Graph:
                         if pp["probability"] == p1["probability"] and pp["cost"] == p1["cost"]:
                             all_paths.remove(pp)
                             break
+        
+        b = []
+        for i in range(len(all_paths)):
+            if all_paths[i] not in all_paths[i+1:]:
+                b.append(all_paths[i])
 
-        print("--------------------------------------------------")
-        print(all_paths)
-        print("--------------------------------------------------")
-        return all_paths
+        # all_paths = b
+        return all_paths, b
     
     # Prints all paths from 's' to 'd'
     def findAllPaths(self, s, d, filtered_states, paths):
@@ -253,7 +257,7 @@ class Graph:
             cost = 0
 
             for i in range(len(edges)):
-                probability *= edges[i].probability
+                probability = round(probability * edges[i].probability, 3)
                 cost += edges[i].cost
 
             insert = True
@@ -283,22 +287,23 @@ class Graph:
         
     def show_graph(self, name = 'fsm.gv'):
         f = graphviz.Digraph('finite_state_machine', filename=name)
-        f.attr(rankdir='LR', size='8,5')
+        f.attr(rankdir='LR', size='8.5')
 
+        print(self.states)
         for state in self.states:
             if state.name == self.start_state.name:
-                f.attr('node', shape='Mdiamond')
+                f.attr('node', shape='Mdiamond', fontsize="24pt")
             elif self.is_final_state(state):
-                f.attr('node', shape='doublecircle')
+                f.attr('node', shape='doublecircle', fontsize="24pt")
             else:
-                f.attr('node', shape='circle')
+                f.attr('node', shape='circle', fontsize="24pt")
 
             
             f.node(state.name)
 
         f.attr('node', shape='circle')
         for edge in self.edges:
-            f.edge(edge.state1.name, edge.state2.name, label=str(edge.labels))
+            f.edge(edge.state1.name, edge.state2.name, label=str(edge.labels), fontsize="24pt")
 
         f.view()
     
