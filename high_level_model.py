@@ -60,12 +60,6 @@ class HLM:
             controller_path = os.path.join(subcontroller_path, controller_dir)
             controller.save(controller_path, HLM_save = True)
 
-        #Save each edge of this HLM
-        for edge in self.edges:
-            edge_dir = "edge" + str(edge.name)
-            edge_path = os.path.join(edges_path, edge_dir)
-            pickle.dump()
-
         #Save the data from the models
         model_data = {
             'objectives': self.objectives,
