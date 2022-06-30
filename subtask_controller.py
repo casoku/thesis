@@ -90,6 +90,8 @@ class SubtaskController(object):
         self.verbose = controller_data['verbose']
         self.data = controller_data['data']
         
+        print(self.data)
+
         self._set_training_env(self.env)
         self.model = PPO.load(model_file, env=self.training_env)
         

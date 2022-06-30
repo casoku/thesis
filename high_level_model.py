@@ -41,6 +41,7 @@ class HLM:
             controller = SubtaskController(controller_id, task.start_state, task.goal_state, env=self.env, verbose=0,
                  observation_top=task.observation_top, observation_width=task.observation_width, observation_height=task.observation_height)
             controller.learn(50000)
+            controller.eval_performance(600)
             self.controllers.append(controller)
             controller_id += 1
             print("controller" + str(controller_id) + " done")
@@ -51,13 +52,19 @@ class HLM:
         """
 
         #Create locations and files to save to
-        model_file, subcontroller_path = create_HLM_save_files(save_dir)
+        model_file, subcontroller_path, edges_path, states_path = create_HLM_save_files(save_dir)
 
         #Save each subcontroller in a seperate folder
         for controller in self.controllers:
             controller_dir = "controller" + str(controller.id)
             controller_path = os.path.join(subcontroller_path, controller_dir)
             controller.save(controller_path, HLM_save = True)
+
+        #Save each edge of this HLM
+        for edge in self.edges:
+            edge_dir = "edge" + str(edge.name)
+            edge_path = os.path.join(edges_path, edge_dir)
+            pickle.dump()
 
         #Save the data from the models
         model_data = {
@@ -140,7 +147,7 @@ class HLM:
             edge_controller = find_controller(self, start_state, end_state)
 
             #calculate probability and cost of edge
-            edge_controller.eval_performance(n_episodes = 600)
+            #edge_controller.eval_performance(n_episodes = 600)
             success_probability, cost, std = edge_controller.get_data()
 
             #create edge
