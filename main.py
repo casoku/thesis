@@ -3,6 +3,7 @@ from Util.Objective import Objective
 from Util.automata_util import * 
 from high_level_model import HLM
 
+
 def get_state_by_name(states, name):
     vertex = None
     for cur_state in states:
@@ -107,8 +108,8 @@ bdict = automata.get_dict()
 
 #custom_print(automata)
 
-#show_automata(automata)
-#high_level_model.show_HLM_graph()
+show_automata(automata)
+high_level_model.show_HLM_graph()
 
 graph = high_level_model.create_product_graph(LTL)
 graph.martins_algorithm()

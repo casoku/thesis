@@ -286,7 +286,7 @@ class Graph:
         visited[u]= False
         
     def show_graph(self, name = 'fsm.gv'):
-        f = graphviz.Digraph('finite_state_machine', filename=name)
+        f = graphviz.Digraph('finite_state_machine', filename='graphs/' + name)
         f.attr(rankdir='LR', size='8.5')
 
         print(self.states)
