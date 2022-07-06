@@ -165,6 +165,8 @@ def update_environment(environment=None, objects_old_pos=None, objects_new_pos=N
         done = True
         info['lava'] = True
         reward = -1
+    if agent_new_cell != None and agent_new_cell.type == 'wall':
+        reward = -1
 
     return done, info, reward
 

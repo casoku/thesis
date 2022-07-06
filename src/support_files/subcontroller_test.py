@@ -3,7 +3,7 @@ from Environment_simple import Environment_simple
 from Environment_test import Environment_test
 from Util.Objective import Objective
 from Environment import Environment
-from subtask_controller import SubtaskController
+from src.subtask_controller import SubtaskController
 
 # env_settings = {
 #     'agent_start_states' : [1,1],

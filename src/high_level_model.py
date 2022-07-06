@@ -11,7 +11,6 @@ from Util.automata_util import LTL_to_automata, solve_edge_bool_expression
 from Util.high_level_model_util import *
 from subtask_controller import SubtaskController
 
-
 class HLM:
     def __init__(self, objectives =None, start_state=None, goal_state=None, env=None, load_dir = None):
         self.controllers = []
@@ -52,7 +51,7 @@ class HLM:
         """
 
         #Create locations and files to save to
-        model_file, subcontroller_path, edges_path, states_path = create_HLM_save_files(save_dir)
+        model_file, subcontroller_path = create_HLM_save_files(save_dir)
 
         #Save each subcontroller in a seperate folder
         for controller in self.controllers:
@@ -76,7 +75,7 @@ class HLM:
         Load the subcontrollers/HLM and create all edges and states in the model
         """
         # Load model data
-        load_path = os.path.join('Models', load_dir)
+        load_path = os.path.join('../Models', load_dir)
         model_file = os.path.join(load_path, 'model_data.p')
         with open(model_file, 'rb') as pickleFile:
             model_data = pickle.load(pickleFile)
@@ -287,10 +286,7 @@ class HLM:
                         endStateS.add_incoming_edge(edgeE)
                         index += 1
 
-        #TODO prune unreachable states, except start state  
-
-        #filter out all final states that only have ingoing transitions from other final states
-
+        #Filter out all final states that only have ingoing transitions from other final states
         def in_stateset(stateset, name):
             for s in stateset:
                 if s.name == name:
@@ -320,7 +316,7 @@ class HLM:
         stateset = stateset_copy
         final_stateset = final_stateset_copy
 
-        #filter out states without any incoming transitions, except starting state and their outgoing edges
+        #Filter out states without any incoming transitions, except starting state and their outgoing edges
         
         contains_unreachable_states = True
 

@@ -90,12 +90,12 @@ objectives.append(objective8)
 objective8r = Objective([7, 10], [10, 7], [7,7], 8, 8, ['d3'])
 objectives.append(objective8r)
 
-#high_level_model = HLM(objectives, start_state, goal_state, env)
-#high_level_model.train_subcontrollers()
-#high_level_model.save('full_HLM')
+# high_level_model = HLM(objectives, start_state, goal_state, env)
+# high_level_model.train_subcontrollers()
+# high_level_model.save('full_HLM_2')
 
 high_level_model = None
-high_level_model = HLM(load_dir='full_HLM')
+high_level_model = HLM(load_dir='full_HLM_2')
 
 #LTL = 'F p | F g'
 LTL = 'F (p & F g)'
@@ -117,4 +117,4 @@ paths, filered_paths = graph.find_optimal_paths()
 print(paths)
 
 #graph.show_graph('product graph')
-#high_level_model.demonstrate_HLC(path=paths[0], n_episodes=10)
+high_level_model.demonstrate_HLC(path=paths[0], n_episodes=10)

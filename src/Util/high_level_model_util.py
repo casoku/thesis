@@ -43,12 +43,12 @@ def get_state(HLM, state):
 
 def create_HLM_save_files(save_dir):
     #Create path and folder to save HLM in
-    save_path = os.path.join('Models', save_dir)
+    save_path = os.path.join('../Models', save_dir)
     if not os.path.isdir(save_path):
         os.mkdir(save_path)
 
     #Create subfolder to save subcontrollers of this HLM in
-    subcontrollers_path = os.path.join('Models', save_dir, 'Subcontrollers')
+    subcontrollers_path = os.path.join('../Models', save_dir, 'Subcontrollers')
     if not os.path.isdir(subcontrollers_path):
         os.mkdir(subcontrollers_path)
 

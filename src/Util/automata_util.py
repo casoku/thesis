@@ -44,8 +44,8 @@ def LTL_to_automata(ltl_string, setting = 'small'):
 
 def show_automata(automata_svg):
     spot.setup()
-    svg2png(bytestring=automata_svg.show().__dict__["data"], write_to='graphs/output.png')
-    image = Image.open('graphs/output.png')
+    svg2png(bytestring=automata_svg.show().__dict__["data"], write_to='../graphs/output.png')
+    image = Image.open('../graphs/output.png')
     image.show()
 
 # automata = spot.translate('F((F c & F d) & F s)', 'Buchi', 'state-based', 'small')
