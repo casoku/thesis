@@ -1,4 +1,6 @@
 import copy
+from tkinter import font
+from turtle import shape
 from Util.Label import Label
 from Util.State import State
 from Util.Edge import Edge
@@ -68,7 +70,7 @@ class Graph:
         return False
 
     def is_final_state(self, state):
-        print(state.to_string())
+        #print(state.to_string())
         for fs in self.final_states:
             if fs.name == state.name:
                 return True
@@ -102,31 +104,32 @@ class Graph:
         while temporary_labels:
             temporary_labels = order_lexicographically(temporary_labels)
 
-            print("------------------------------")
-            for i in range(len(temporary_labels)):
-                print(str(i) + ": " + temporary_labels[i].to_string())
-            print("------------------------------")
+            # print("------------------------------")
+            # for i in range(len(temporary_labels)):
+            #     print(str(i) + ": " + temporary_labels[i].to_string())
+            # print("------------------------------")
 
             cur_label = temporary_labels[0]
-            print("cur label:" + cur_label.to_string())
-            print("cur state: " + cur_label.state().to_string())
-            print("cur edges:" + str(cur_label.state().outgoing_edges))
+            # print("cur label:" + cur_label.to_string())
+            # print("cur state: " + cur_label.state().to_string())
+            # print("cur edges:" + str(cur_label.state().outgoing_edges))
             cur_label.make_permanent()
             temporary_labels.remove(cur_label)
 
             for edge in cur_label.state().outgoing_edges:
-                print(edge.to_string())
-                probability = round(cur_label.probability * edge.probability, 3)
+                #print(edge.to_string())
+                probability = round(cur_label.probability * edge.probability, 2)
                 cost = cur_label.cost + edge.cost
                 predecessor = edge.state1
                 current = edge.state2
-
-                label = Label(probability, cost, predecessor, current, 0)
-                print(label.to_string())
+                #print("--" + str(predecessor.permanent_labels) + "--")
+                position = len(predecessor.permanent_labels) - 1
+                label = Label(probability, cost, predecessor, current, position)
+                #print(label.to_string())
                 #check if new label is dominated or not, if not add to temporary labels
                 dominated = False
                 for permanent_label in current.permanent_labels:
-                    print(permanent_label.to_string())
+                    #print(permanent_label.to_string())
                     if permanent_label.dominate(label) == 1:
                         dominated = True
 
@@ -138,7 +141,7 @@ class Graph:
                         current.temporary_labels.remove(temporary_label)
                         temporary_labels.remove(temporary_label)
 
-                print(dominated)
+                #print(dominated)
 
                 if not dominated:
                     current.add_temporary_label(label)
@@ -155,6 +158,71 @@ class Graph:
             for label in goal_state.permanent_labels:
                 print(label.to_string())
     
+    def find_optimal_paths_2(self):
+        final_labels = []
+        for state in self.states:
+            for stateF in self.final_states:
+                if state.name == stateF.name: 
+                    for label in state.permanent_labels:
+                        #print(label.to_string())
+                        final_labels.append(label)
+        
+        # filter on pareto optimal paths
+        temp = copy.deepcopy(final_labels)
+        for label in temp:
+            print(label.to_string())
+
+        def dominate(dict1, other):
+            if(dict1.probability == other.probability and dict1.cost == other.cost):
+                return 0
+
+            if(dict1.probability >= other.probability and dict1.cost <= other.cost):
+                return 1
+
+            if(dict1.probability <= other.probability and dict1.cost >= other.cost):
+                return -1
+
+            return 0
+
+        for p1 in temp:
+            for p2 in temp:
+                if dominate(p2, p1) == 1:
+                    for pp in final_labels:
+                        if pp.probability == p1.probability and pp.cost == p1.cost:
+                            final_labels.remove(pp)
+                            break
+                
+        
+        paths = []
+        print("_______________________________________")
+        for label in final_labels:
+            print(label.to_string())
+            path = self.find_path(self.start_state.name, label, [label.current.name])
+            path.reverse()
+
+            edges = []
+            for i in range(len(path)-1):
+                edge = self.get_edge_by_states(self.get_state_by_name(path[i]), self.get_state_by_name(path[i + 1]))
+                edges.append(edge)
+
+            dict = {"edges": edges, "probability": label.probability, "cost": label.cost}
+            paths.append(dict)
+        print("_______________________________________")
+        print(paths)
+
+        return paths
+
+    def find_path(self, start, label, pathI):
+        pathI.append(label.predecessor.name)
+
+        # path completed
+        if(start == label.predecessor.name):
+            #print("path: " + str(pathI))
+            return pathI
+
+        return self.find_path(start, label.predecessor.permanent_labels[label.position], pathI)
+
+
     def find_optimal_paths(self):
         paths = []
 
@@ -217,7 +285,8 @@ class Graph:
         # all_paths = b
         return all_paths, b
     
-    # Prints all paths from 's' to 'd'
+    #Prints all paths from 's' to 'd'
+
     def findAllPaths(self, s, d, filtered_states, paths):
  
         # Mark all the vertices as not visited
@@ -244,7 +313,7 @@ class Graph:
         # current path[]
         if u == d:
             path.reverse()
-            print(path)
+            #print(path)
 
             #find edges
             edges = []
@@ -257,7 +326,7 @@ class Graph:
             cost = 0
 
             for i in range(len(edges)):
-                probability = round(probability * edges[i].probability, 3)
+                probability = round(probability * edges[i].probability, 2)
                 cost += edges[i].cost
 
             insert = True
@@ -268,16 +337,16 @@ class Graph:
             if insert:
                 paths.append({"edges": edges, "probability": probability, "cost": cost})
             
-            for edge in edges:
-                print(edge.to_string())
+            # for edge in edges:
+            #     print(edge.to_string())
 
         else:
             # If current vertex is not destination
             # Recur for all the vertices adjacent to this vertex
-            print(u)
-            print(filtered_states)
+            #print(u)
+            #print(filtered_states)
             for i in filtered_states[u]:
-                print(i.to_string())
+                #print(i.to_string())
                 if i.predecessor.name in visited and visited[i.predecessor.name]== False:
                     self.findAllPathsUtil(i.predecessor.name, d, visited, copy.deepcopy(path),filtered_states, paths)
                      
@@ -288,11 +357,14 @@ class Graph:
     def show_graph(self, name = 'fsm.gv'):
         f = graphviz.Digraph('finite_state_machine', filename='graphs/' + name)
         f.attr(rankdir='LR', size='8.5')
+        #f.node("q1", shape="point")
 
-        print(self.states)
+        #print(self.states)
         for state in self.states:
             if state.name == self.start_state.name:
                 f.attr('node', shape='Mdiamond', fontsize="24pt")
+                #f.attr('node', shape='circle', fontsize="24pt")
+                #f.edge("q1", self.start_state.name, fontsize="24pt")
             elif self.is_final_state(state):
                 f.attr('node', shape='doublecircle', fontsize="24pt")
             else:

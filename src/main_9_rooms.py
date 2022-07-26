@@ -221,16 +221,17 @@ high_level_model = HLM(load_dir='9_rooms_HLM')
 #LTL = 'F (p & F g)'
 #LTL = 'G !p & F g'
 #LTL = 'G !d1 & F p'
-#LTL = 'F g'
+LTL = 'F g'
 #LTL = 'G !d1 & (F (p & F g))'
-LTL = 'G !d1 & (F y & F c & F (p & F g))'
+#LTL = 'G !d1 & (F y & F c & F (p & F g))'
+#LTL = 'F y & F c & F p & F g'
 automata = LTL_to_automata(LTL)
 bdict = automata.get_dict()
 
 #custom_print(automata)
 
-show_automata(automata)
-high_level_model.show_HLM_graph()
+#show_automata(automata)
+#high_level_model.show_HLM_graph()
 
 graph = high_level_model.create_product_graph(LTL)
 graph.martins_algorithm()
@@ -243,5 +244,6 @@ print("------------------------------------")
 print("num of paths: " + str(len(paths)))
 print("num of filtere paths: " + str(len(filterer_paths)))
 print("------------------------------------")
+paths = graph.find_optimal_paths_2()
 #graph.show_graph('product graph')
-#high_level_model.demonstrate_HLC(path=paths[0], n_episodes=10)
+high_level_model.demonstrate_HLC(path=filterer_paths[0], n_episodes=2, render = True)

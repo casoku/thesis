@@ -98,23 +98,26 @@ high_level_model = None
 high_level_model = HLM(load_dir='full_HLM_2')
 
 #LTL = 'F p | F g'
-LTL = 'F (p & F g)'
+#LTL = 'F (p & F g)'
+LTL = 'F (d3 & F g)'
 #LTL = 'G !p & F g'
 #LTL = 'G !d1 & F p'
-#LTL = 'F g'
-#LTL = 'G !d1 & (F (p & F g))'
+#LTL = 'F p'
+# LTL = 'G !d1 & (F (p & F g))'
+# LTL = 'F g'
+# LTL = 'F p & G !d1 & G !d3'
 automata = LTL_to_automata(LTL)
 bdict = automata.get_dict()
 
 #custom_print(automata)
 
-show_automata(automata)
-high_level_model.show_HLM_graph()
+#show_automata(automata)
+#high_level_model.show_HLM_graph()
 
 graph = high_level_model.create_product_graph(LTL)
 graph.martins_algorithm()
-paths, filered_paths = graph.find_optimal_paths()
-print(paths)
+paths = graph.find_optimal_paths_2()
+#print(paths)
 
-#graph.show_graph('product graph')
-high_level_model.demonstrate_HLC(path=paths[0], n_episodes=10)
+graph.show_graph('product graph')
+high_level_model.demonstrate_HLC(path=paths[0], n_episodes=5, render = True)

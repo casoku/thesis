@@ -1,6 +1,7 @@
 import copy
 import os
 import pickle
+from time import sleep
 import spot
 import numpy as np
 
@@ -152,7 +153,7 @@ class HLM:
             end_state.add_incoming_edge(edge)
         print('Done creating edges for HLM')
 
-    def demonstrate_HLC(self, path, n_episodes=8, n_steps=100, render=True):
+    def demonstrate_HLC(self, path, n_episodes=8, n_steps=100, render=True, sleep_duration=0):
         '''
         Demonstrates a planning in the environment, the path exist out of subtask to executes in which order (left to right)
         '''
@@ -161,7 +162,6 @@ class HLM:
 
         for episodes in range(n_episodes):
             cost = 0
-
             # select start controller
             cur_edge = path["edges"][0]
             controller = cur_edge.controller
@@ -179,6 +179,8 @@ class HLM:
             finished = False
             while not finished:
                 for step in range(n_steps):
+                    if sleep_duration != 0:
+                        sleep(sleep_duration)
                     action, _states = controller.model.predict(obs, deterministic=True)
                     obs, reward, done, info = self.env.step(action)
                     cost += 1
@@ -207,7 +209,7 @@ class HLM:
                             #print("new controller = " + str(cur_edge.name))
                             #print("new controller start: " + str(cur_edge.state1.to_string()) + ", goal: " + str(cur_edge.state2.to_string()))
                             obs = self.env.gen_obs()
-
+                            
                         else:
                             print("sub task failed :(")
                             finished = True
@@ -241,12 +243,12 @@ class HLM:
                     start_state_g = copy.deepcopy(sp)
 
                 for t in automata.out(s):
-                    print("    acc sets =", t.acc)
+                    #print("    acc sets =", t.acc)
                     if(len(str(t.acc)) > 2):
                         final_stateset.append(sp)
 
-        for state in stateset:
-            print(state.to_string())
+        #for state in stateset:
+        #    print(state.to_string())
 
         #Create list of variables
         variables = []

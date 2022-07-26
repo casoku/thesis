@@ -1,0 +1,64 @@
+digraph finite_state_machine {
+	rankdir=LR size=8.5
+	node [fontsize="24pt" shape=circle]
+	S1b1
+	node [fontsize="24pt" shape=Mdiamond]
+	S1b2
+	node [fontsize="24pt" shape=circle]
+	S2b1
+	node [fontsize="24pt" shape=circle]
+	S2b2
+	node [fontsize="24pt" shape=circle]
+	S3b1
+	node [fontsize="24pt" shape=circle]
+	S3b2
+	node [fontsize="24pt" shape=circle]
+	S4b1
+	node [fontsize="24pt" shape=circle]
+	S5b1
+	node [fontsize="24pt" shape=circle]
+	S5b2
+	node [fontsize="24pt" shape=circle]
+	S6b1
+	node [fontsize="24pt" shape=circle]
+	S6b2
+	node [fontsize="24pt" shape=doublecircle]
+	S7b0
+	node [fontsize="24pt" shape=circle]
+	S7b2
+	node [shape=circle]
+	S1b1 -> S2b1 [label="['d1']" fontsize="24pt"]
+	S1b2 -> S2b2 [label="['d1']" fontsize="24pt"]
+	S2b1 -> S1b1 [label="['s']" fontsize="24pt"]
+	S2b2 -> S1b2 [label="['s']" fontsize="24pt"]
+	S1b1 -> S3b1 [label="['d2']" fontsize="24pt"]
+	S1b2 -> S3b2 [label="['d2']" fontsize="24pt"]
+	S3b1 -> S1b1 [label="['s']" fontsize="24pt"]
+	S3b2 -> S1b2 [label="['s']" fontsize="24pt"]
+	S3b1 -> S2b1 [label="['d1']" fontsize="24pt"]
+	S3b2 -> S2b2 [label="['d1']" fontsize="24pt"]
+	S2b1 -> S3b1 [label="['d2']" fontsize="24pt"]
+	S2b2 -> S3b2 [label="['d2']" fontsize="24pt"]
+	S2b1 -> S4b1 [label="['d3']" fontsize="24pt"]
+	S2b2 -> S4b1 [label="['d3']" fontsize="24pt"]
+	S4b1 -> S2b1 [label="['d1']" fontsize="24pt"]
+	S2b1 -> S5b1 [label="['p']" fontsize="24pt"]
+	S2b2 -> S5b2 [label="['p']" fontsize="24pt"]
+	S5b1 -> S2b1 [label="['d1']" fontsize="24pt"]
+	S5b2 -> S2b2 [label="['d1']" fontsize="24pt"]
+	S4b1 -> S5b1 [label="['p']" fontsize="24pt"]
+	S5b1 -> S4b1 [label="['d3']" fontsize="24pt"]
+	S5b2 -> S4b1 [label="['d3']" fontsize="24pt"]
+	S3b1 -> S6b1 [label="['d4']" fontsize="24pt"]
+	S3b2 -> S6b2 [label="['d4']" fontsize="24pt"]
+	S6b1 -> S3b1 [label="['d2']" fontsize="24pt"]
+	S6b2 -> S3b2 [label="['d2']" fontsize="24pt"]
+	S6b1 -> S7b0 [label="['g']" fontsize="24pt"]
+	S6b2 -> S7b2 [label="['g']" fontsize="24pt"]
+	S7b2 -> S6b2 [label="['d4']" fontsize="24pt"]
+	S4b1 -> S7b0 [label="['g']" fontsize="24pt"]
+	S7b2 -> S4b1 [label="['d3']" fontsize="24pt"]
+	S4b1 -> S6b1 [label="['d4']" fontsize="24pt"]
+	S6b1 -> S4b1 [label="['d3']" fontsize="24pt"]
+	S6b2 -> S4b1 [label="['d3']" fontsize="24pt"]
+}
