@@ -3,25 +3,37 @@ from Environment_simple import Environment_simple
 from Environment_test import Environment_test
 from Util.Objective import Objective
 from Environment import Environment
-from src.subtask_controller import SubtaskController
+from Environment_discrete import Environment_discrete_rooms
+from subtask_controller import SubtaskController
 
+# goal_1 = {'state': [1, 6], 'color': 'green'}
+# goal_2 = {'state': [13, 1], 'color': 'yellow'}
+# goal_3 = {'state': [13, 8], 'color': 'purple'}
+# goal_states = []
+# goal_states.append(goal_1)
+# goal_states.append(goal_2)
+# goal_states.append(goal_3)
+# start_state = [1,1]
+# goal_state = [13,13]
+# '''
+# Create environment in which the high-level-controller will be tested
+# '''
 # env_settings = {
-#     'agent_start_states' : [1,1],
-#     'goal_states': [11, 11],
+#     'agent_start_states' : start_state,
+#     'goal_states': goal_states,
 #     'slip_p' : 0,
-#     'width' : 13,
-#     'height' : 13
+#     'width' : 15,
+#     'height' : 15
 # }
-# env = Environment(**env_settings)
-#env = gym.make('MiniGrid-FourRooms-v0')
+# env = Environment_discrete_rooms(**env_settings)
 
-goal_state = [13, 13] # The final goal state to reach in the complex environment
 goal_1 = {'state': [13, 13], 'color': 'green'}
 goal_2 = {'state': [13, 1], 'color': 'purple'}
 goal_states = []
 goal_states.append(goal_1)
 goal_states.append(goal_2)
 start_state = [1,1]
+goal_state = [13,13]
 '''
 Create environment in which the high-level-controller will be tested
 '''
@@ -34,19 +46,6 @@ env_settings = {
 }
 
 env = Environment_simple(**env_settings)
-
-# '''
-# Create environment in which the high-level-controller will be tested
-# '''
-# env_settings = {
-#     'agent_start_states' : [1,1],
-#     'goal_states': [2, 24],
-#     'slip_p' : 0,
-#     'width' : 29,
-#     'height' : 29,
-#     'obstacles_per_room': 0
-# }
-# env = Deterministic_Environment(**env_settings)
 
 controller_list = []
 controller_id = -1
@@ -111,19 +110,19 @@ def assign_controller_id(controller_id):
 #                 observation_top=observation_top, observation_width=observation_width, observation_height=observation_height)
 # controller6.learn()
 
-task14 = Objective([7,10], [3,7], [0,7], 8, 8)
+task14 = Objective([1,1], [3,7], [0,0], 8, 8)
 controller14 = SubtaskController(controller_id, task14.start_state, task14.goal_state, env=env, verbose=1,
                  observation_top=task14.observation_top, observation_width=task14.observation_width, observation_height=task14.observation_height)
 controller14.learn(50000)
-controller14.save("test_subcontroller14")
-
+controller14.save("test_subcontroller14_v2")
+del controller14.model
 print("-------------Controller 14 performance----------------------")
 controller14 = None
-controller14 = SubtaskController(load_dir="test_subcontroller14")
-controller14.eval_performance(100)
+controller14 = SubtaskController(load_dir="test_subcontroller14_v2")
+controller14.eval_performance(600)
 performance = controller14.get_performance()
 print(performance)
-controller14.demonstrate_capabilities()
+controller14.demonstrate_capabilities(n_episodes=2)
 print()
 
 # print("-------------Controller 1 performance----------------------")

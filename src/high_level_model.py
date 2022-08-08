@@ -45,6 +45,7 @@ class HLM:
             self.controllers.append(controller)
             controller_id += 1
             print("controller" + str(controller_id) + " done")
+            print(controller.get_performance())
 
     def save(self, save_dir):
         """
@@ -165,7 +166,7 @@ class HLM:
             # select start controller
             cur_edge = path["edges"][0]
             controller = cur_edge.controller
-            print("Demonstrating capabilities")
+            #print("Demonstrating capabilities")
             #print("new controller = " + str(cur_edge.name))
             #print("new controller start: " + str(cur_edge.state1.to_string()) + ", goal: " + str(cur_edge.state2.to_string()))
             #reset environment
@@ -181,7 +182,7 @@ class HLM:
                 for step in range(n_steps):
                     if sleep_duration != 0:
                         sleep(sleep_duration)
-                    action, _states = controller.model.predict(obs, deterministic=True)
+                    action, _states = controller.model.predict(obs)
                     obs, reward, done, info = self.env.step(action)
                     cost += 1
                     if render:
@@ -193,7 +194,7 @@ class HLM:
                             #print(self.goal_state)
                             #Goal reached
                             if cur_edge.state2.name == path["edges"][-1].state2.name:
-                                print("goal reached! :)")
+                                #print("goal reached! :)")
                                 finished = True
                                 total_cost.append(cost)
                                 total_successes.append(1)
@@ -211,7 +212,7 @@ class HLM:
                             obs = self.env.gen_obs()
                             
                         else:
-                            print("sub task failed :(")
+                            #print("sub task failed :(")
                             finished = True
                             total_successes.append(0)
                             break
@@ -220,6 +221,9 @@ class HLM:
         print("average cost: " + str(np.average(total_cost)))
         print("calculated pareto probability: " + str(path["probability"]))
         print("success rate: " + str(np.sum(total_successes)/len(total_successes)))
+
+        dict = {"probability": np.sum(total_successes)/len(total_successes), "cost": np.average(total_cost)}
+        return dict
     
     def create_product_graph(self, LTL_string):
         automata = LTL_to_automata(LTL_string)

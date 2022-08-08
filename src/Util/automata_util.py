@@ -73,7 +73,7 @@ def solve_edge_bool_expression(bdict, automata_edge, map_edge, variables):
 
     #Replace unassigned values with "False"
     for variable in variables_copy:
-        #print("variable to replace: " + variable)
+        print("variable to replace: " + variable)
         expression = str(expression.replace((str(variable)) , 'False'))
 
     #print("expression: " + expression)

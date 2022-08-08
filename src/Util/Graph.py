@@ -130,7 +130,7 @@ class Graph:
                 dominated = False
                 for permanent_label in current.permanent_labels:
                     #print(permanent_label.to_string())
-                    if permanent_label.dominate(label) == 1:
+                    if permanent_label.dominate(label) == 1 or permanent_label.dominate(label) == 0:
                         dominated = True
 
                 for temporary_label in current.temporary_labels:
@@ -159,18 +159,16 @@ class Graph:
                 print(label.to_string())
     
     def find_optimal_paths_2(self):
+        #find all labels of final states
         final_labels = []
         for state in self.states:
             for stateF in self.final_states:
                 if state.name == stateF.name: 
                     for label in state.permanent_labels:
-                        #print(label.to_string())
                         final_labels.append(label)
         
-        # filter on pareto optimal paths
+        # filter on pareto optimal labels in all final states
         temp = copy.deepcopy(final_labels)
-        for label in temp:
-            print(label.to_string())
 
         def dominate(dict1, other):
             if(dict1.probability == other.probability and dict1.cost == other.cost):
@@ -191,12 +189,10 @@ class Graph:
                         if pp.probability == p1.probability and pp.cost == p1.cost:
                             final_labels.remove(pp)
                             break
-                
-        
+
+        # find all paths according to labels             
         paths = []
-        print("_______________________________________")
         for label in final_labels:
-            print(label.to_string())
             path = self.find_path(self.start_state.name, label, [label.current.name])
             path.reverse()
 
@@ -207,8 +203,6 @@ class Graph:
 
             dict = {"edges": edges, "probability": label.probability, "cost": label.cost}
             paths.append(dict)
-        print("_______________________________________")
-        print(paths)
 
         return paths
 
@@ -217,7 +211,6 @@ class Graph:
 
         # path completed
         if(start == label.predecessor.name):
-            #print("path: " + str(pathI))
             return pathI
 
         return self.find_path(start, label.predecessor.permanent_labels[label.position], pathI)

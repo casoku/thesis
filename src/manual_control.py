@@ -9,6 +9,7 @@ from Environment import Environment
 from Environment_9_rooms import Environment_9_rooms
 from Environment_simple import Environment_simple
 from Environment_test import Environment_test
+from Environment_discrete import Environment_discrete_rooms
 
 class Actions(IntEnum):
         up = 0
@@ -99,16 +100,32 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-# %% Setup and create the environment
-# goal_state = [7, 7] # The final goal state to reach in the complex environment
-# start_state = [1,1]
+# goal_state = [13, 13] # The final goal state to reach in the complex environment
+# goal_1 = {'state': [1, 1], 'color': 'green'}
+# goal_3 = {'state': [1, 2], 'color': 'green'}
+# goal_4 = {'state': [2, 1], 'color': 'green'}
+# goal_5 = {'state': [2, 2], 'color': 'green'}
+# goal_2 = {'state': [1, 6], 'color': 'purple'}
+# goal_6 = {'state': [1, 5], 'color': 'purple'}
+# goal_7 = {'state': [2, 6], 'color': 'purple'}
+# goal_8 = {'state': [2, 5], 'color': 'purple'}
+# goal_states = []
+# goal_states.append(goal_1)
+# goal_states.append(goal_2)
+# goal_states.append(goal_3)
+# goal_states.append(goal_4)
+# goal_states.append(goal_5)
+# goal_states.append(goal_6)
+# goal_states.append(goal_7)
+# goal_states.append(goal_8)
+# start_state = [7,3]
 
 # env_settings = {
-#     'agent_start_states' : start_state,
-#     'goal_states': goal_state,
+#     'agent_start_states' : [3, 7],
+#     'goal_states': goal_states,
 #     'slip_p' : 0,
-#     'width' : 8,
-#     'height' : 8
+#     'width' : 15,
+#     'height' : 15
 # }
 # env = Environment_test(**env_settings)
 
@@ -131,15 +148,13 @@ env_settings = {
 env = Environment_simple(**env_settings)
 
 
-# goal_1 = {'state': [20, 20], 'color': 'green'}
-# goal_2 = {'state': [1, 20], 'color': 'purple'}
-# goal_3 = {'state': [20, 1], 'color': 'yellow'}
-# goal_4 = {'state': [10, 10], 'color': 'cyan'}
+# goal_1 = {'state': [1, 6], 'color': 'green'}
+# goal_2 = {'state': [13, 1], 'color': 'yellow'}
+# goal_3 = {'state': [13, 8], 'color': 'purple'}
 # goal_states = []
 # goal_states.append(goal_1)
 # goal_states.append(goal_2)
 # goal_states.append(goal_3)
-# goal_states.append(goal_4)
 # start_state = [1,1]
 
 # '''
@@ -149,16 +164,17 @@ env = Environment_simple(**env_settings)
 #     'agent_start_states' : start_state,
 #     'goal_states': goal_states,
 #     'slip_p' : 0,
-#     'width' : 22,
-#     'height' : 22
+#     'width' : 15,
+#     'height' : 15
 # }
-# env = Environment_9_rooms(**env_settings)
+# env = Environment_discrete_rooms(**env_settings)
 
-observation_top = [0, 0]
-observation_width = 8
-observation_height = 8
-env.sub_task_goal = [7, 4]
-env.set_observation_size(observation_width, observation_height, observation_top)
+# observation_top = [0, 0]
+# observation_width = 8
+# observation_height = 8
+# env.sub_task_goal = [1, 6]
+# env.set_observation_size(observation_width, observation_height, observation_top)
+
 
 window = Window('gym_minigrid - Maze')
 window.reg_key_handler(key_handler)

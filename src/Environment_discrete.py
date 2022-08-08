@@ -3,9 +3,9 @@ from random import randint
 from gym_minigrid.minigrid import *
 import numpy as np
 
-from Util.environment_test_util import *
+from Util.environment_discrete_util import *
 
-class Environment_test(MiniGridEnv):
+class Environment_discrete_rooms(MiniGridEnv):
     """
     Grid Environment
 
@@ -37,7 +37,7 @@ class Environment_test(MiniGridEnv):
         super().__init__(width=self.width, height=self.height, max_steps=4 * self.size)
 
         #Action enumeration for this environment
-        self.actions = Environment_test.Actions
+        self.actions = Environment_discrete_rooms.Actions
 
         # Actions are discrete integer values
         self.action_space = spaces.Discrete(len(self.actions))
@@ -62,10 +62,11 @@ class Environment_test(MiniGridEnv):
 
         generate_rooms(self.grid)
         generate_doors(self)
+        generate_walls(self.grid)
 
         place_goal(self)
         place_agent(self)
-        place_obstacles(self)
+        #place_obstacles(self)
 
         self.mission = ""
 
@@ -74,7 +75,7 @@ class Environment_test(MiniGridEnv):
         Generate the observation of the agent, which in this environment, is its state.
         """
         obs_grid, obs_out = create_observation(self)
-
+        #print(obs_out)
         #change observation to integers
         with open('map_obs.json') as json_file:
             data = json.load(json_file)
@@ -82,7 +83,7 @@ class Environment_test(MiniGridEnv):
 
             for i in range (obs_grid.height * obs_grid.width):
                 obs_out[i] = map[obs_out[i]]
-               
+        
         return obs_out
 
     def get_front_pos(self, action):
@@ -116,8 +117,8 @@ class Environment_test(MiniGridEnv):
             action = 0
 
         # Update obstacle positions
-        #objects_old_pos, objects_new_pos = update_obstacles_positions(self)
-        objects_old_pos, objects_new_pos = [], []
+        objects_old_pos, objects_new_pos = update_obstacles_positions(self)
+        
         # Update the agent's position
         agent_old_pos = self.agent_pos
         agent_new_pos = self.get_front_pos(action)

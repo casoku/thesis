@@ -141,7 +141,7 @@ class SubtaskController(object):
             for step_ind in range(n_steps):
                 num_steps = num_steps + 1
                 total_steps = total_steps + 1
-                action, _states = self.model.predict(obs, deterministic=True)
+                action, _states = self.model.predict(obs)
                 obs, reward, done, info = self.training_env.step(action)
                 if done:
                     if info['task_complete']:
@@ -168,18 +168,18 @@ class SubtaskController(object):
         data = self.data['performance_estimates']
         return data['success_rate'], data ['avg_num_steps'], data['std_num_steps']
 
-    def demonstrate_capabilities(self, n_episodes=8, n_steps=100, render=True):
+    def demonstrate_capabilities(self, n_episodes=8, n_steps=50, render=True):
         """
         Demonstrate the capabilities of the learned controller in the environment used to train it.
         """
         for episode_ind in range(n_episodes):
             obs = self.training_env.reset()
-            #print(obs)
             self.training_env.render(highlight=False)
             for step in range(n_steps):
-                action, _states = self.model.predict(obs, deterministic=True)
+                print(obs)
+                action, _states = self.model.predict(obs)
                 obs, reward, done, info = self.training_env.step(action)
-                #print(obs)
+                print(action)
                 if render:
                     self.training_env.render(highlight=False)
                 if done:
