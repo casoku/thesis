@@ -3,9 +3,9 @@ from random import randint
 from gym_minigrid.minigrid import *
 import numpy as np
 
-from Util.environment_util import *
+from Util.environment_discrete_util import *
 
-class Environment(MiniGridEnv):
+class Environment_discrete_rooms(MiniGridEnv):
     """
     Grid Environment
 
@@ -27,7 +27,7 @@ class Environment(MiniGridEnv):
         self.obstacles_per_room = obstacles_per_room
         self.obstacles = []
         self.goal_states = goal_states
-        self.sub_task_goal = goal_states
+        self.sub_task_goal = [0, 0]
         self.agent_start_dir = 0 # Minigrid requires a direction, however it is not used. 
 
         #Set observation size
@@ -37,7 +37,7 @@ class Environment(MiniGridEnv):
         super().__init__(width=self.width, height=self.height, max_steps=4 * self.size)
 
         #Action enumeration for this environment
-        self.actions = Environment.Actions
+        self.actions = Environment_discrete_rooms.Actions
 
         # Actions are discrete integer values
         self.action_space = spaces.Discrete(len(self.actions))
@@ -62,19 +62,20 @@ class Environment(MiniGridEnv):
 
         generate_rooms(self.grid)
         generate_doors(self)
+        generate_walls(self.grid)
 
         place_goal(self)
         place_agent(self)
-        place_obstacles(self)
+        #place_obstacles(self)
 
-        self.mission = "get to the green goal square"
+        self.mission = ""
 
     def gen_obs(self):
         """
         Generate the observation of the agent, which in this environment, is its state.
         """
         obs_grid, obs_out = create_observation(self)
-
+        #print(obs_out)
         #change observation to integers
         with open('map_obs.json') as json_file:
             data = json.load(json_file)
@@ -82,7 +83,7 @@ class Environment(MiniGridEnv):
 
             for i in range (obs_grid.height * obs_grid.width):
                 obs_out[i] = map[obs_out[i]]
-               
+        
         return obs_out
 
     def get_front_pos(self, action):

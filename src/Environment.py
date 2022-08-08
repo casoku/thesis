@@ -3,9 +3,9 @@ from random import randint
 from gym_minigrid.minigrid import *
 import numpy as np
 
-from Util.environment_simple_util import *
+from Util.environment_util import *
 
-class Environment_simple(MiniGridEnv):
+class Environment(MiniGridEnv):
     """
     Grid Environment
 
@@ -37,7 +37,7 @@ class Environment_simple(MiniGridEnv):
         super().__init__(width=self.width, height=self.height, max_steps=4 * self.size)
 
         #Action enumeration for this environment
-        self.actions = Environment_simple.Actions
+        self.actions = Environment.Actions
 
         # Actions are discrete integer values
         self.action_space = spaces.Discrete(len(self.actions))
@@ -67,7 +67,7 @@ class Environment_simple(MiniGridEnv):
         place_agent(self)
         place_obstacles(self)
 
-        self.mission = "get to the green goal square"
+        self.mission = ""
 
     def gen_obs(self):
         """

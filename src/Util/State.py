@@ -2,10 +2,12 @@ from Util.martins_util import order_lexicographically
 
 
 class State:
-    def __init__(self, name, low_level_state):
+    def __init__(self, name, low_level_state, labels = []):
         self.name = name
         self.low_level_state = low_level_state
-        self.edges = []
+        self.incoming_edges = []
+        self.outgoing_edges = []
+        self.labels = labels
         self.permanent_labels = []
         self.temporary_labels = []
 
@@ -15,8 +17,11 @@ class State:
         else:
             return self.low_level_state[0] == other[0] and self.low_level_state[1] == other[1]
 
-    def add_edge(self, e):
-        self.edges.append(e)
+    def add_incoming_edge(self, e):
+        self.incoming_edges.append(e)
+
+    def add_outgoing_edge(self, e):
+        self.outgoing_edges.append(e)
 
     def add_temporary_label(self, label):
         self.temporary_labels.append(label)
@@ -28,4 +33,4 @@ class State:
 
 
     def to_string(self):
-        return "name: " +  self.name + ", low_level: " + str(self.low_level_state)
+        return "name: " +  self.name + ", low_level: " + str(self.low_level_state) + ", labels: " + str(self.labels)

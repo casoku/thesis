@@ -1,10 +1,7 @@
-from numpy import Infinity
-
-
 class Label:
     def __init__(self, probability=0, cost=0, predecessor=None, current=None, position = 0):
-        self.probability = probability
-        self.cost = cost
+        self.probability = round(probability, 2)
+        self.cost = round(cost, 2)
         self.permanent = False
         self.predecessor = predecessor
         self.current = current

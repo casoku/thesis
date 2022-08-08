@@ -41,7 +41,7 @@ def calculate_step_data(steps_array=None):
     avg_num_steps = 0
     std_num_steps = 0
     if len(steps_array) > 0:
-        avg_num_steps = np.mean(steps_array)
-        std_num_steps = np.std(steps_array)
+        avg_num_steps = round(np.mean(steps_array))
+        std_num_steps = round(np.std(steps_array))
 
     return avg_num_steps, std_num_steps

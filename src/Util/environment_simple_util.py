@@ -27,8 +27,11 @@ def generate_doors(environment=None):
 def place_goal(environment=None):
     assert environment is not None
 
-    goal_state = environment.goal_states
-    environment.put_obj(Goal(), goal_state[0], goal_state[1])
+    for goal_state in environment.goal_states:
+        goal = Goal()
+        goal.color = goal_state['color']
+        goal_location = goal_state['state']
+        environment.put_obj(goal, goal_location[0], goal_location[1])
 
 def place_agent(environment=None):
     assert environment is not None
@@ -45,11 +48,31 @@ def place_obstacles(environment=None):
 
     environment.obstacles = []
 
-    num_rooms_in_width = 2
-    for i in range(0, num_rooms_in_width):
-        for j in range(0, num_rooms_in_width):
-            environment.obstacles.append(Ball())
-            environment.place_obj(obj = environment.obstacles[i * num_rooms_in_width + j], top = (i * 7, j * 7), size = (6, 6), max_tries=100)
+    index = 0
+    # Room 1
+    environment.obstacles.append(Ball())
+    environment.place_obj(obj = environment.obstacles[index], top = (0, 0), size = (6, 6), max_tries=100)
+    index += 1
+    # Room 2
+    environment.obstacles.append(Ball())
+    environment.place_obj(obj = environment.obstacles[index], top = (7, 0), size = (6, 6), max_tries=100)
+    index += 1
+    environment.obstacles.append(Ball())
+    environment.place_obj(obj = environment.obstacles[index], top = (7, 0), size = (6, 6), max_tries=100)
+    index += 1
+    # Room 3
+    environment.obstacles.append(Ball())
+    environment.place_obj(obj = environment.obstacles[index], top = (0, 7), size = (6, 6), max_tries=100)
+    index += 1
+    # Room 4
+    environment.obstacles.append(Ball())
+    environment.place_obj(obj = environment.obstacles[index], top = (7, 7), size = (6, 6), max_tries=100)
+
+    # num_rooms_in_width = 2
+    # for i in range(0, num_rooms_in_width):
+    #     for j in range(0, num_rooms_in_width):
+    #         environment.obstacles.append(Ball())
+    #         environment.place_obj(obj = environment.obstacles[i * num_rooms_in_width + j], top = (i * 7, j * 7), size = (6, 6), max_tries=100)
 
 def create_observation(environment=None):
     assert environment is not None
@@ -71,6 +94,7 @@ def create_observation(environment=None):
         obs_out[(agent_pos[1] - environment.observation_top[1]) * obs_grid.width + agent_pos[0] - environment.observation_top[0]] = 'agent'
     
     #Add goal to observation
+    #print(environment.sub_task_goal)
     if environment.sub_task_goal[0] < obs_grid.width and environment.sub_task_goal[1] < obs_grid.height:
         obs_out[environment.sub_task_goal[1] * obs_grid.width + environment.sub_task_goal[0]] = 'goal'
 
@@ -125,6 +149,13 @@ def update_environment(environment=None, objects_old_pos=None, objects_new_pos=N
     for i in range(0, len(objects_old_pos)):
         if same_position(agent_old_pos, objects_new_pos[i]) and same_position(agent_new_pos, objects_old_pos[i]):
             collision = True
+
+    agent_pos = environment.agent_pos
+    obs_grid = environment.grid.slice(environment.observation_top[0], environment.observation_top[1], environment.observation_width, environment.observation_height)
+    if not(agent_pos[1] - environment.observation_top[1] < obs_grid.height and agent_pos[1] - environment.observation_top[1] >= 0 and agent_pos[0] - environment.observation_top[0] < obs_grid.width and agent_pos[0] - environment.observation_top[0] >= 0):
+        done = True
+        reward = -10
+        return done, info, reward
         
 
     if agent_new_cell == None or agent_new_cell.can_overlap():
@@ -132,7 +163,7 @@ def update_environment(environment=None, objects_old_pos=None, objects_new_pos=N
     if same_position(agent_new_pos, environment.sub_task_goal):
         done = True
         info['task_complete'] = True
-        reward = 1
+        reward = 100
     if (agent_new_cell != None and agent_new_cell.type == 'ball') or collision:
         done = True
         info['ball'] = True
@@ -140,7 +171,9 @@ def update_environment(environment=None, objects_old_pos=None, objects_new_pos=N
     if agent_new_cell != None and agent_new_cell.type == 'lava':
         done = True
         info['lava'] = True
-        reward = -1
+        #reward = -1
+    # if agent_new_cell != None and agent_new_cell.type == 'wall':
+    #     reward = -0.2
 
     return done, info, reward
 

@@ -3,9 +3,9 @@ from random import randint
 from gym_minigrid.minigrid import *
 import numpy as np
 
-from Util.environment_9_rooms_util import *
+from Util.environment_test_util import *
 
-class Environment_9_rooms(MiniGridEnv):
+class Environment_test(MiniGridEnv):
     """
     Grid Environment
 
@@ -27,7 +27,7 @@ class Environment_9_rooms(MiniGridEnv):
         self.obstacles_per_room = obstacles_per_room
         self.obstacles = []
         self.goal_states = goal_states
-        self.sub_task_goal = goal_states
+        self.sub_task_goal = [0, 0]
         self.agent_start_dir = 0 # Minigrid requires a direction, however it is not used. 
 
         #Set observation size
@@ -37,7 +37,7 @@ class Environment_9_rooms(MiniGridEnv):
         super().__init__(width=self.width, height=self.height, max_steps=4 * self.size)
 
         #Action enumeration for this environment
-        self.actions = Environment_9_rooms.Actions
+        self.actions = Environment_test.Actions
 
         # Actions are discrete integer values
         self.action_space = spaces.Discrete(len(self.actions))
@@ -67,7 +67,7 @@ class Environment_9_rooms(MiniGridEnv):
         place_agent(self)
         place_obstacles(self)
 
-        self.mission = "get to the green goal square"
+        self.mission = ""
 
     def gen_obs(self):
         """
@@ -116,8 +116,8 @@ class Environment_9_rooms(MiniGridEnv):
             action = 0
 
         # Update obstacle positions
-        objects_old_pos, objects_new_pos = update_obstacles_positions(self)
-        
+        #objects_old_pos, objects_new_pos = update_obstacles_positions(self)
+        objects_old_pos, objects_new_pos = [], []
         # Update the agent's position
         agent_old_pos = self.agent_pos
         agent_new_pos = self.get_front_pos(action)

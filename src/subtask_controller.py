@@ -1,6 +1,6 @@
 import copy
 import pickle
-from stable_baselines3 import PPO
+from stable_baselines3 import HerReplayBuffer, DDPG, DQN, SAC, TD3, PPO, A2C
 
 from Util.subtask_controller_util import *
 
@@ -90,6 +90,8 @@ class SubtaskController(object):
         self.verbose = controller_data['verbose']
         self.data = controller_data['data']
         
+        print(self.data)
+
         self._set_training_env(self.env)
         self.model = PPO.load(model_file, env=self.training_env)
         
@@ -118,6 +120,8 @@ class SubtaskController(object):
         self.model = PPO("MlpPolicy", 
                     self.training_env, 
                     verbose=verbose)
+
+        #self.model = A2C("MlpPolicy", self.training_env, verbose=1)
     
     def eval_performance(self, n_episodes=400, n_steps=100, total_steps=0):
         """
@@ -137,7 +141,7 @@ class SubtaskController(object):
             for step_ind in range(n_steps):
                 num_steps = num_steps + 1
                 total_steps = total_steps + 1
-                action, _states = self.model.predict(obs, deterministic=True)
+                action, _states = self.model.predict(obs)
                 obs, reward, done, info = self.training_env.step(action)
                 if done:
                     if info['task_complete']:
@@ -151,7 +155,7 @@ class SubtaskController(object):
         self.data['performance_estimates'] = {
             'training_steps' : self.training_steps,
             'success_count' : success_count,
-            'success_rate' : success_count / trials,
+            'success_rate' : round((success_count / trials), 2),
             'num_trials' : trials,
             'avg_num_steps' : avg_num_steps,
             'std_num_steps' : std_num_steps
@@ -164,18 +168,18 @@ class SubtaskController(object):
         data = self.data['performance_estimates']
         return data['success_rate'], data ['avg_num_steps'], data['std_num_steps']
 
-    def demonstrate_capabilities(self, n_episodes=8, n_steps=100, render=True):
+    def demonstrate_capabilities(self, n_episodes=8, n_steps=50, render=True):
         """
         Demonstrate the capabilities of the learned controller in the environment used to train it.
         """
         for episode_ind in range(n_episodes):
             obs = self.training_env.reset()
-            #print(obs)
             self.training_env.render(highlight=False)
             for step in range(n_steps):
-                action, _states = self.model.predict(obs, deterministic=True)
+                print(obs)
+                action, _states = self.model.predict(obs)
                 obs, reward, done, info = self.training_env.step(action)
-                #print(obs)
+                print(action)
                 if render:
                     self.training_env.render(highlight=False)
                 if done:
