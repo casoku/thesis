@@ -1,6 +1,4 @@
 import copy
-from tkinter import font
-from turtle import shape
 from Util.Label import Label
 from Util.State import State
 from Util.Edge import Edge

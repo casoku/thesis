@@ -71,12 +71,28 @@ def solve_edge_bool_expression(bdict, automata_edge, map_edge, variables):
             variables_copy.remove(str(label))
         expression = str(expression.replace((str(label)) , 'True'))
 
+    # split string to find negation
+    split = expression.split()
+    split_expression_length = len(split)
+    
+    print("avoid labels: " + str(map_edge.avoid_labels))
+    # check if variable in avoid_labels of edge and replace with True
+    for i in range(split_expression_length):
+        if split[i] == 'not':
+            print(split[i+1])
+            if split[i+1] in map_edge.avoid_labels:
+                print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+                split[i+1] = 'True'
+
+    # recombine string
+    expression = ' '.join(split)
+
     #Replace unassigned values with "False"
     for variable in variables_copy:
         print("variable to replace: " + variable)
         expression = str(expression.replace((str(variable)) , 'False'))
 
-    #print("expression: " + expression)
+    print("expression: " + expression)
     #evaluate expression:
     return bool(eval(expression))
 

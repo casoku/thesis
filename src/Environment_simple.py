@@ -34,11 +34,7 @@ class Environment_simple(MiniGridEnv):
         self.set_observation_size(observation_width, observation_height, observation_top)
         self.slip_p = slip_p    #Not used
 
-        mission_space = MissionSpace(
-            mission_func=lambda: ""
-        )
-
-        super().__init__(width=self.width, height=self.height, max_steps=4 * self.size, mission_space=mission_space)
+        super().__init__(width=self.width, height=self.height, max_steps=4 * self.size)
 
         #Action enumeration for this environment
         self.actions = Environment_simple.Actions

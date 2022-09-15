@@ -20,7 +20,7 @@ class Actions(IntEnum):
 actions = Actions
 
 def redraw(img):
-    img = env.get_frame(highlight = False, tile_size=args.tile_size)
+    img = env.render('rgb_array', highlight = False, tile_size=args.tile_size)
     window.show_img(img)
 
 def reset():

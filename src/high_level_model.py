@@ -29,7 +29,7 @@ class HLM:
             self.load(load_dir)
 
 
-    def train_subcontrollers(self):
+    def train_subcontrollers(self, epochs):
         '''
         Train subcontrollers for all objectives (sub-tasks) 
         and collect their statistics (cost and success probability)
@@ -40,7 +40,7 @@ class HLM:
             print(task.to_string())
             controller = SubtaskController(controller_id, task.start_state, task.goal_state, env=self.env, verbose=0,
                  observation_top=task.observation_top, observation_width=task.observation_width, observation_height=task.observation_height)
-            controller.learn(50000)
+            controller.learn(epochs)
             controller.eval_performance(600)
             self.controllers.append(controller)
             controller_id += 1
@@ -148,7 +148,7 @@ class HLM:
             #create edge
             id += 1
             name = 'E' + str(id)
-            edge = Edge(name, edge_controller, start_state, end_state, success_probability, cost, task.labels)
+            edge = Edge(name, edge_controller, start_state, end_state, success_probability, cost, task.labels, task.avoid_labels)
             self.edges.append(edge)
             start_state.add_outgoing_edge(edge)
             end_state.add_incoming_edge(edge)
@@ -283,7 +283,7 @@ class HLM:
                         edge = {"start": startState, "end": endState, "label": spot.bdd_format_formula(bdict, edgeAut.cond), "probability": edgeHLM.probability, "cost":edgeHLM.cost} 
                         startStateS = get_state_by_name_from_array(stateset, startState)
                         endStateS = get_state_by_name_from_array(stateset, endState)
-                        edgeE = Edge('E' + str(index), edgeHLM.controller, startStateS, endStateS, edgeHLM.probability, edgeHLM.cost, edgeHLM.labels)  
+                        edgeE = Edge('E' + str(index), edgeHLM.controller, startStateS, endStateS, edgeHLM.probability, edgeHLM.cost, edgeHLM.labels, edgeHLM.avoid_labels)  
                         edgeset.append(edgeE)
                         print(edgeE.to_string())         
                         edgeset_string.append(edge)
