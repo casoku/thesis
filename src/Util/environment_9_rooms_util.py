@@ -1,5 +1,4 @@
 import random
-from turtle import width
 from gym_minigrid.minigrid import *
 from operator import add
 

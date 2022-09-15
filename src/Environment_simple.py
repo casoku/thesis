@@ -34,7 +34,11 @@ class Environment_simple(MiniGridEnv):
         self.set_observation_size(observation_width, observation_height, observation_top)
         self.slip_p = slip_p    #Not used
 
-        super().__init__(width=self.width, height=self.height, max_steps=4 * self.size)
+        mission_space = MissionSpace(
+            mission_func=lambda: ""
+        )
+
+        super().__init__(width=self.width, height=self.height, max_steps=4 * self.size, mission_space=mission_space)
 
         #Action enumeration for this environment
         self.actions = Environment_simple.Actions
@@ -50,10 +54,6 @@ class Environment_simple(MiniGridEnv):
         self.observation_space = spaces.Box(low = 0, high = 5, shape=((self.observation_width * self.observation_height), ), dtype='uint8')
 
     def _gen_grid(self, width, height):
-        #Generate new seed, so that the map has randomized obstacle positions
-        seed = randint(0, 2000)
-        self.seed(seed)
-
         # Create an empty grid
         self.grid = Grid(width, height)
 
