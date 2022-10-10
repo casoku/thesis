@@ -366,7 +366,7 @@ class Graph:
 
         f.attr('node', shape='circle')
         for edge in self.edges:
-            f.edge(edge.state1.name, edge.state2.name, label=str(edge.labels), fontsize="24pt")
+            f.edge(edge.state1.name, edge.state2.name, label=str(edge.labels) + ", " + str(edge.avoid_labels), fontsize="24pt")
 
         f.view()
     

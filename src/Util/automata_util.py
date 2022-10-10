@@ -75,13 +75,10 @@ def solve_edge_bool_expression(bdict, automata_edge, map_edge, variables):
     split = expression.split()
     split_expression_length = len(split)
     
-    print("avoid labels: " + str(map_edge.avoid_labels))
     # check if variable in avoid_labels of edge and replace with True
     for i in range(split_expression_length):
         if split[i] == 'not':
-            print(split[i+1])
             if split[i+1] in map_edge.avoid_labels:
-                print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                 split[i+1] = 'True'
 
     # recombine string

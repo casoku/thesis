@@ -6,6 +6,34 @@ from Environment import Environment
 from Environment_discrete import Environment_discrete_rooms
 from subtask_controller import SubtaskController
 
+from Environment_9_rooms import Environment_9_rooms
+from Util.Objective import Objective
+from Util.automata_util import * 
+from high_level_model import HLM
+
+start_state = [1,1]
+goal_1 = {'state': [20, 20], 'color': 'green'}
+goal_2 = {'state': [1, 20], 'color': 'purple'}
+goal_3 = {'state': [20, 6], 'color': 'yellow'}
+goal_4 = {'state': [10, 10], 'color': 'cyan'}
+goal_states = []
+goal_states.append(goal_1)
+goal_states.append(goal_2)
+goal_states.append(goal_3)
+goal_states.append(goal_4)
+
+'''
+Create environment in which the high-level-controller will be tested
+'''
+env_settings = {
+    'agent_start_states' : start_state,
+    'goal_states': goal_states,
+    'slip_p' : 0,
+    'width' : 22,
+    'height' : 22
+}
+env = Environment_9_rooms(**env_settings)
+
 # goal_1 = {'state': [1, 6], 'color': 'green'}
 # goal_2 = {'state': [13, 1], 'color': 'yellow'}
 # goal_3 = {'state': [13, 8], 'color': 'purple'}
@@ -27,25 +55,25 @@ from subtask_controller import SubtaskController
 # }
 # env = Environment_discrete_rooms(**env_settings)
 
-goal_1 = {'state': [13, 13], 'color': 'green'}
-goal_2 = {'state': [13, 1], 'color': 'purple'}
-goal_states = []
-goal_states.append(goal_1)
-goal_states.append(goal_2)
-start_state = [1,1]
-goal_state = [13,13]
-'''
-Create environment in which the high-level-controller will be tested
-'''
-env_settings = {
-    'agent_start_states' : start_state,
-    'goal_states': goal_states,
-    'slip_p' : 0,
-    'width' : 15,
-    'height' : 15
-}
+# goal_1 = {'state': [13, 13], 'color': 'green'}
+# goal_2 = {'state': [13, 1], 'color': 'purple'}
+# goal_states = []
+# goal_states.append(goal_1)
+# goal_states.append(goal_2)
+# start_state = [1,1]
+# goal_state = [13,13]
+# '''
+# Create environment in which the high-level-controller will be tested
+# '''
+# env_settings = {
+#     'agent_start_states' : start_state,
+#     'goal_states': goal_states,
+#     'slip_p' : 0,
+#     'width' : 15,
+#     'height' : 15
+# }
 
-env = Environment_simple(**env_settings)
+# env = Environment_simple(**env_settings)
 
 controller_list = []
 controller_id = -1
@@ -110,19 +138,20 @@ def assign_controller_id(controller_id):
 #                 observation_top=observation_top, observation_width=observation_width, observation_height=observation_height)
 # controller6.learn()
 
-task14 = Objective([1,1], [3,7], [0,0], 8, 8)
-controller14 = SubtaskController(controller_id, task14.start_state, task14.goal_state, env=env, verbose=1,
-                 observation_top=task14.observation_top, observation_width=task14.observation_width, observation_height=task14.observation_height)
-controller14.learn(50000)
-controller14.save("test_subcontroller14_v2")
-del controller14.model
-print("-------------Controller 14 performance----------------------")
-controller14 = None
-controller14 = SubtaskController(load_dir="test_subcontroller14_v2")
-controller14.eval_performance(600)
-performance = controller14.get_performance()
+task = Objective([7,3], [10,7], [7,0], 8, 8, ['d4'], ['R2'])
+controller = SubtaskController(controller_id, task.start_state, task.goal_state, env=env, verbose=1,
+                 observation_top=task.observation_top, observation_width=task.observation_width, observation_height=task.observation_height)
+controller.learn(50000)
+controller.save("test_subcontroller")
+del controller.model
+print("-------------Controller performance----------------------")
+controller = None
+controller = SubtaskController(load_dir="test_subcontroller")
+controller.eval_performance(600)
+performance = controller.get_performance()
 print(performance)
-controller14.demonstrate_capabilities(n_episodes=2)
+input("waiting for user input")
+controller.demonstrate_capabilities(n_episodes=2)
 print()
 
 # print("-------------Controller 1 performance----------------------")

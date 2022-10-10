@@ -92,7 +92,7 @@ objective8r = Objective([7, 10], [10, 7], [7,7], 8, 8, ['d3'], ['r4'])
 objectives.append(objective8r)
 
 # high_level_model = HLM(objectives, start_state, goal_state, env)
-# high_level_model.train_subcontrollers(epochs = 2000)
+# high_level_model.train_subcontrollers(epochs = 30000)
 # high_level_model.save('simple_env_small_subtasks')
 # del high_level_model
 
@@ -114,18 +114,18 @@ show_automata(automata)
 high_level_model.show_HLM_graph()
 
 graph = high_level_model.create_product_graph(LTL)
-graph.martins_algorithm()
-paths = graph.find_optimal_paths_2()
-print(paths)
+# graph.martins_algorithm()
+# paths = graph.find_optimal_paths_2()
+# print(paths)
 
 graph.show_graph('product graph')
-dict = high_level_model.demonstrate_HLC(path=paths[0], n_episodes=1, render = False)
-PAC_upper_probability = dict["probability"] + 0.05 * dict["probability"]
-PAC_lower_probability = dict["probability"] - 0.05 * dict["probability"]
-PAC_upper_cost = dict["cost"] + 0.05 * dict["cost"]
-PAC_lower_cost = dict["cost"] - 0.05 * dict["cost"]
-print("--------------------------------------")
-print("PAC upper Probability: " + str(PAC_upper_probability))
-print("PAC lower Probability: " + str(PAC_lower_probability))
-print("PAC upper Cost: " + str(PAC_upper_cost))
-print("PAC lower Cost: " + str(PAC_lower_cost))
+# dict = high_level_model.demonstrate_HLC(path=paths[0], n_episodes=8, render = True)
+# PAC_upper_probability = dict["probability"] + 0.05 * dict["probability"]
+# PAC_lower_probability = dict["probability"] - 0.05 * dict["probability"]
+# PAC_upper_cost = dict["cost"] + 0.05 * dict["cost"]
+# PAC_lower_cost = dict["cost"] - 0.05 * dict["cost"]
+# print("--------------------------------------")
+# print("PAC upper Probability: " + str(PAC_upper_probability))
+# print("PAC lower Probability: " + str(PAC_lower_probability))
+# print("PAC upper Cost: " + str(PAC_upper_cost))
+# print("PAC lower Cost: " + str(PAC_lower_cost))

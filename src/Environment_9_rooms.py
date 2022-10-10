@@ -62,7 +62,7 @@ class Environment_9_rooms(MiniGridEnv):
 
         generate_rooms(self.grid)
         generate_doors(self)
-
+        generate_walls(self.grid)
         place_goal(self)
         place_agent(self)
         place_obstacles(self)

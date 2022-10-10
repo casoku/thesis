@@ -176,10 +176,10 @@ class SubtaskController(object):
             obs = self.training_env.reset()
             self.training_env.render(highlight=False)
             for step in range(n_steps):
-                print(obs)
+                #print(obs)
                 action, _states = self.model.predict(obs)
                 obs, reward, done, info = self.training_env.step(action)
-                print(action)
+                #print(action)
                 if render:
                     self.training_env.render(highlight=False)
                 if done:
