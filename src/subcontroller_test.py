@@ -138,10 +138,10 @@ def assign_controller_id(controller_id):
 #                 observation_top=observation_top, observation_width=observation_width, observation_height=observation_height)
 # controller6.learn()
 
-task = Objective([7,3], [10,7], [7,0], 8, 8, ['d4'], ['R2'])
+task = Objective([7,3], [10,7], [7,0], 8, 8, ['d4', 'R2'], ['R2'])
 controller = SubtaskController(controller_id, task.start_state, task.goal_state, env=env, verbose=1,
                  observation_top=task.observation_top, observation_width=task.observation_width, observation_height=task.observation_height)
-controller.learn(50000)
+controller.learn(10000)
 controller.save("test_subcontroller")
 del controller.model
 print("-------------Controller performance----------------------")

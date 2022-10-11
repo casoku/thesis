@@ -29,7 +29,7 @@ class HLM:
             self.load(load_dir)
 
 
-    def train_subcontrollers(self, epochs):
+    def train_subcontrollers(self, epochs=50000):
         '''
         Train subcontrollers for all objectives (sub-tasks) 
         and collect their statistics (cost and success probability)
