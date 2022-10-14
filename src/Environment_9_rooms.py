@@ -19,7 +19,7 @@ class Environment_9_rooms(MiniGridEnv):
             down = 2
             left = 3
 
-    def __init__(self, agent_start_states=[1, 1], goal_states=[18, 18], observation_width=20, observation_height=20, observation_top=[0, 0],slip_p=0.0, width=20, height=20, obstacles_per_room=1):
+    def __init__(self, agent_start_states=[1, 1], goal_states=[18, 18], observation_width=22, observation_height=22, observation_top=[0, 0],slip_p=0.0, width=22, height=22, obstacles_per_room=1):
         self.width = width
         self.height = height
         self.size = width* height

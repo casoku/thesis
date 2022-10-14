@@ -34,7 +34,7 @@ class HLM:
         Train subcontrollers for all objectives (sub-tasks) 
         and collect their statistics (cost and success probability)
         '''
-        controller_id = 0
+        controller_id = 34
         print("start training " + str(len(self.objectives)) + " Controllers")
         for task in self.objectives:
             print(task.to_string())
@@ -43,9 +43,16 @@ class HLM:
             controller.learn(epochs)
             controller.eval_performance(600)
             self.controllers.append(controller)
-            controller_id += 1
+
+            save_dir = '9_rooms_HLM'
+            model_file, subcontroller_path = create_HLM_save_files(save_dir)
+            controller_dir = "controller" + str(controller.id)
+            controller_path = os.path.join(subcontroller_path, controller_dir)
+            controller.save(controller_path, HLM_save = True)
+
             print("controller" + str(controller_id) + " done")
             print(controller.get_performance())
+            controller_id += 1
 
     def save(self, save_dir):
         """
@@ -56,10 +63,10 @@ class HLM:
         model_file, subcontroller_path = create_HLM_save_files(save_dir)
 
         #Save each subcontroller in a seperate folder
-        for controller in self.controllers:
-            controller_dir = "controller" + str(controller.id)
-            controller_path = os.path.join(subcontroller_path, controller_dir)
-            controller.save(controller_path, HLM_save = True)
+        # for controller in self.controllers:
+        #     controller_dir = "controller" + str(controller.id)
+        #     controller_path = os.path.join(subcontroller_path, controller_dir)
+        #     controller.save(controller_path, HLM_save = True)
 
         #Save the data from the models
         model_data = {
@@ -105,6 +112,7 @@ class HLM:
         '''
         print('Creating state of HLM')
         id = 1
+        print(len(self.objectives))
         for task in self.objectives:
             name = "S" + str(id)
             S1 = State(name, task.start_state, task.labels)
@@ -358,7 +366,8 @@ class HLM:
         '''
         
         final_states = []
-        #final_states.append(get_state(self, self.goal_state))
+        print('---------------------------------')
+        print(self.states)
         g = Graph(self.states, get_state(self, self.start_state), final_states, self.edges)
         
         g.show_graph('high level model')

@@ -1,7 +1,9 @@
 from Environment_9_rooms import Environment_9_rooms
 from Util.Objective import Objective
 from Util.automata_util import * 
+from Util.pareto_graph import pareto_graph
 from high_level_model import HLM
+import sys
 
 start_state = [1,1]
 goal_1 = {'state': [20, 20], 'color': 'green'}
@@ -26,25 +28,26 @@ env_settings = {
 }
 env = Environment_9_rooms(**env_settings)
 
+# current is id = 17, objective28r, [20,6], [14,3], next is id = 34, objective16, [10,14], [10,7]
 '''
 Create a list of sub-tasks in the environment that are used to generate a HLM
 '''
 objectives = []
-#Objective(start_state, goal_state, observation_top, observation_width, observation_height)
+# Objective(start_state, goal_state, observation_top, observation_width, observation_height)
 # Room Top-left objectives
-objective1 = Objective([1,1], [7,3], [0,0], 8, 8, ['d1', 'R1'], ['R1', 's'])
+objective1 = Objective([1,1], [7,3], [0,0], 8, 8, ['d1', 'R1'], ['R1'])
 objectives.append(objective1)
-objective1r = Objective([7,3], [1,1], [0,0], 8, 8, ['s', 'R1'], ['R1', 's'])
+objective1r = Objective([7,3], [1,1], [0,0], 8, 8, ['start', 'R1'], ['R1', 'start'])
 objectives.append(objective1r)
 
-objective2 = Objective([1,1], [3,7], [0,0], 8, 8, ['d3', 'R1'], ['R1', 's'])
+objective2 = Objective([1,1], [3,7], [0,0], 8, 8, ['d3', 'R1'], ['R1'])
 objectives.append(objective2)
-objective2r = Objective([3,7], [1,1], [0,0], 8, 8, ['s', 'R1'], ['R1', 's'])
+objective2r = Objective([3,7], [1,1], [0,0], 8, 8, ['start', 'R1'], ['R1', 'start'])
 objectives.append(objective2r)
 
-objective3 = Objective([3,7],[7,3], [0,0], 8, 8, ['d1', 'R1'], ['R1', 's'])
+objective3 = Objective([3,7],[7,3], [0,0], 8, 8, ['d1', 'R1'], ['R1', 'start'])
 objectives.append(objective3)
-objective3r = Objective([7,3], [3,7], [0,0], 8, 8, ['d3', 'R1'], ['R1', 's'])
+objective3r = Objective([7,3], [3,7], [0,0], 8, 8, ['d3', 'R1'], ['R1', 'start'])
 objectives.append(objective3r)
 
 #Room Top-middle objectives
@@ -71,13 +74,19 @@ objectives.append(objective7r)
 
 objective27 = Objective([17,7], [20,6], [14,0], 8, 8, ['y', 'R3'], ['R3', 'y'])
 objectives.append(objective27)
-objective27r = Objective([20,1], [17,7], [14,0], 8, 8, ['d5', 'R3'], ['R3', 'y'])
+
+##################################
+objective27r = Objective([20,6], [17,7], [14,0], 8, 8, ['d5', 'R3'], ['R3'])
 objectives.append(objective27r)
+##################################
 
 objective28 = Objective([14,3], [20,6], [14,0], 8, 8, ['y', 'R3'], ['R3', 'y'])
 objectives.append(objective28)
-objective28r = Objective([20,1], [14,3], [14,0], 8, 8, ['d2', 'R3'], ['R3', 'y'])
+
+###################################
+objective28r = Objective([20,6], [14,3], [14,0], 8, 8, ['d2', 'R3'], ['R3'])
 objectives.append(objective28r)
+###################################
 
 #Room Middle-left objectives
 objective8 = Objective([3,7], [7,10], [0,7], 8, 8, ['d6', 'R4'], ['R4'])
@@ -108,7 +117,7 @@ objectives.append(objective12r)
 
 objective13 = Objective([7,10], [14,10], [7,7], 8, 8, ['d7', 'R5'], ['R5', 'c'])
 objectives.append(objective13)
-objective13r = Objective([14,10], [7,10], [7,7], 8, 8, ['d7', 'R5'], ['R5', 'c'])
+objective13r = Objective([14,10], [7,10], [7,7], 8, 8, ['d6', 'R5'], ['R5', 'c'])
 objectives.append(objective13r)
 
 objective14 = Objective([14,10], [10,7], [7,7], 8, 8, ['d4', 'R5'], ['R5', 'c'])
@@ -121,29 +130,31 @@ objectives.append(objective15)
 objective15r = Objective([10,14], [14,10], [7,7], 8, 8, ['d7', 'R5'], ['R5', 'c'])
 objectives.append(objective15r)
 
-objective16 = Objective([7,10], [14,10], [7,7], 8, 8, ['d7', 'R5'], ['R5', 'c'])
+# ####################################
+objective16 = Objective([10,14], [10,7], [7,7], 8, 8, ['d9', 'R5'], ['R5', 'c'])
 objectives.append(objective16)
-objective16r = Objective([14,10], [7,10], [7,7], 8, 8, ['d6', 'R5'], ['R5', 'c'])
+objective16r = Objective([10,7], [10,14], [7,7], 8, 8, ['d4', 'R5'], ['R5', 'c'])
 objectives.append(objective16r)
+# ####################################
 
 objective29 = Objective([7,10], [10,10], [7,7], 8, 8, ['c', 'R5'], ['R5', 'c'])
 objectives.append(objective29)
-objective29r = Objective([10,10], [7,10], [7,7], 8, 8, ['d6', 'R5'], ['R5', 'c'])
+objective29r = Objective([10,10], [7,10], [7,7], 8, 8, ['d6', 'R5'], ['R5'])
 objectives.append(objective29r)
 
 objective30 = Objective([10,7], [10,10], [7,7], 8, 8, ['c', 'R5'], ['R5', 'c'])
 objectives.append(objective30)
-objective30r = Objective([10,10], [10,7], [7,7], 8, 8, ['d4', 'R5'], ['R5', 'c'])
+objective30r = Objective([10,10], [10,7], [7,7], 8, 8, ['d4', 'R5'], ['R5'])
 objectives.append(objective30r)
 
 objective31 = Objective([14,10], [10,10], [7,7], 8, 8, ['c', 'R5'], ['R5', 'c'])
 objectives.append(objective31)
-objective31r = Objective([10,10], [14,10], [7,7], 8, 8, ['d7', 'R5'], ['R5', 'c'])
+objective31r = Objective([10,10], [14,10], [7,7], 8, 8, ['d7', 'R5'], ['R5'])
 objectives.append(objective31r)
 
 objective32 = Objective([10,14], [10,10], [7,7], 8, 8, ['c', 'R5'], ['R5', 'c'])
 objectives.append(objective32)
-objective32r = Objective([10,10], [10,14], [7,7], 8, 8, ['d9', 'R5'], ['R5', 'c'])
+objective32r = Objective([10,10], [10,14], [7,7], 8, 8, ['d9', 'R5'], ['R5'])
 objectives.append(objective32r)
 
 #Room Middle-right objectives
@@ -170,12 +181,12 @@ objectives.append(objective20r)
 
 objective33 = Objective([3,14], [1,20], [0,14], 8, 8, ['p', 'R7'], ['R7', 'p'])
 objectives.append(objective33)
-objective33r = Objective([1,20], [3,14], [0,14], 8, 8, ['d8', 'R7'], ['R7', 'p'])
+objective33r = Objective([1,20], [3,14], [0,14], 8, 8, ['d8', 'R7'], ['R7'])
 objectives.append(objective33r)
 
 objective34 = Objective([7,17], [1,20], [0,14], 8, 8, ['p', 'R7'], ['R7', 'p'])
 objectives.append(objective34)
-objective34r = Objective([1,20], [7,17], [0,14], 8, 8, ['d11', 'R7'], ['R7', 'p'])
+objective34r = Objective([1,20], [7,17], [0,14], 8, 8, ['d11', 'R7'], ['R7'])
 objectives.append(objective34r)
 
 #Room Bottom-middle objectives
@@ -197,7 +208,7 @@ objectives.append(objective23r)
 #Room Bottom-right objectives
 objective24 = Objective([14,17], [20,20], [14,14], 8, 8, ['g', 'R9'], ['R9', 'g'])
 objectives.append(objective24)
-objective24r = Objective([20,20], [14,17], [14,14], 8, 8, ['d12', 'R9'], ['R9', 'g'])
+objective24r = Objective([20,20], [14,17], [14,14], 8, 8, ['d12', 'R9'], ['R9'])
 objectives.append(objective24r)
 
 objective25 = Objective([14,17], [17,14], [14,14], 8, 8, ['d10', 'R9'], ['R9', 'g'])
@@ -207,43 +218,52 @@ objectives.append(objective25r)
 
 objective26 = Objective([17,14], [20,20], [14,14], 8, 8, ['g', 'R9'], ['R9', 'g'])
 objectives.append(objective26)
-objective26r = Objective([20,20], [17,14], [14,14], 8, 8, ['d10', 'R9'], ['R9', 'g'])
+objective26r = Objective([20,20], [17,14], [14,14], 8, 8, ['d10', 'R9'], ['R9'])
 objectives.append(objective26r)
 
 high_level_model = HLM(objectives, start_state, goal_states, env)
-high_level_model.train_subcontrollers(50000)
+# high_level_model.train_subcontrollers(40000)
 high_level_model.save('9_rooms_HLM')
 
 high_level_model = None
 high_level_model = HLM(load_dir='9_rooms_HLM')
 
-#LTL = 'F p | F g'
+#LTL = 'F y | F g'
 #LTL = 'F (p & F g)'
-#LTL = 'G !p & F g'
-#LTL = 'G !d1 & F p'
-LTL = 'F g'
-#LTL = 'G !d1 & (F (p & F g))'
-#LTL = 'G !d1 & (F y & F c & F (p & F g))'
-#LTL = 'F y & F c & F p & F g'
+#LTL = 'G ! p & F g'
+#LTL = 'G ! d1 & F p'
+#LTL = 'F g'
+#LTL = 'G ! d1 & (F (p & F g))'
+# LTL = 'G ! d1 & (F y & F c & F (p & F g))'
+LTL = 'F y & F c & F p & F g'
+# LTL = '!start U p & !R4 U p & F start'
 automata = LTL_to_automata(LTL)
 bdict = automata.get_dict()
 
-#custom_print(automata)
+# #custom_print(automata)
 
 #show_automata(automata)
 #high_level_model.show_HLM_graph()
-
+sys.setrecursionlimit(10000)
 graph = high_level_model.create_product_graph(LTL)
 graph.martins_algorithm()
+paths_2 = graph.find_optimal_paths_2()
 paths, filterer_paths = graph.find_optimal_paths()
 print("---------------Paths---------------")
-print(paths)
-print("------------------------------------")
-print(filterer_paths)
-print("------------------------------------")
+# print(paths)
+# print("------------------------------------")
+# print(filterer_paths)
+# print("------------------------------------")
 print("num of paths: " + str(len(paths)))
-print("num of filtere paths: " + str(len(filterer_paths)))
+print("num of filtered paths: " + str(len(filterer_paths)))
+print("num of paths method 2: " + str(len(paths_2)))
 print("------------------------------------")
-paths = graph.find_optimal_paths_2()
-#graph.show_graph('product graph')
-high_level_model.demonstrate_HLC(path=filterer_paths[0], n_episodes=2, render = True)
+#paths = graph.find_optimal_paths_2()
+# print("------------------------------------")
+# print("num of paths: " + str(len(paths)))
+# print("------------------------------------")
+# graph.show_graph('product graph')
+high_level_model.demonstrate_HLC(path=paths_2[0], n_episodes=2, render = True)
+
+#pareto_graph(filterer_paths)
+pareto_graph(paths_2)

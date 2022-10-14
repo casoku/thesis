@@ -184,7 +184,7 @@ def update_environment(environment=None, objects_old_pos=None, objects_new_pos=N
     
     agent_pos = environment.agent_pos
     obs_grid = environment.grid.slice(environment.observation_top[0], environment.observation_top[1], environment.observation_width, environment.observation_height)
-    if not(agent_pos[1] - environment.observation_top[1] < obs_grid.height and agent_pos[1] - environment.observation_top[1] >= 0 and agent_pos[0] - environment.observation_top[0] < obs_grid.width and agent_pos[0] - environment.observation_top[0] >= 0):
+    if not(agent_new_pos[1] - environment.observation_top[1] < obs_grid.height and agent_new_pos[1] - environment.observation_top[1] >= 0 and agent_new_pos[0] - environment.observation_top[0] < obs_grid.width and agent_new_pos[0] - environment.observation_top[0] >= 0):
         done = True
         reward = -10
         return done, info, reward

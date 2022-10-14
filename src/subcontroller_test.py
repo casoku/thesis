@@ -15,12 +15,12 @@ start_state = [1,1]
 goal_1 = {'state': [20, 20], 'color': 'green'}
 goal_2 = {'state': [1, 20], 'color': 'purple'}
 goal_3 = {'state': [20, 6], 'color': 'yellow'}
-goal_4 = {'state': [10, 10], 'color': 'cyan'}
+#goal_4 = {'state': [10, 10], 'color': 'cyan'}
 goal_states = []
 goal_states.append(goal_1)
 goal_states.append(goal_2)
 goal_states.append(goal_3)
-goal_states.append(goal_4)
+#goal_states.append(goal_4)
 
 '''
 Create environment in which the high-level-controller will be tested

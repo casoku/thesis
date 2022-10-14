@@ -1,6 +1,7 @@
 from Environment_simple import Environment_simple
 from Util.Objective import Objective
 from Util.automata_util import * 
+from Util.pareto_graph import pareto_graph
 from high_level_model import HLM
 from Util.PAC import calculate_PAC
 
@@ -102,24 +103,32 @@ high_level_model = HLM(load_dir='simple_env_small_subtasks')
 #LTL = 'F p | F g'
 #LTL = 'F (g & F p)'
 #LTL = 'F g'
-LTL = 'F g & G ! r3'
+#LTL = 'F g & G ! r3'
 #LTL = 'F (g & F( p  & F (g & F start)))'
+LTL = '! r2 U g & F p'
 
 automata = LTL_to_automata(LTL)
 bdict = automata.get_dict()
 
 custom_print(automata)
 
-show_automata(automata)
-high_level_model.show_HLM_graph()
+#show_automata(automata)
+#high_level_model.show_HLM_graph()
 
 graph = high_level_model.create_product_graph(LTL)
-# graph.martins_algorithm()
-# paths = graph.find_optimal_paths_2()
-# print(paths)
+graph.martins_algorithm()
+paths_1, filtered_paths_1 = graph.find_optimal_paths()
+paths = graph.find_optimal_paths_2()
+print("------------------------------------")
+print("num of paths: " + str(len(paths_1)))
+print("num of filtere paths: " + str(len(filtered_paths_1)))
+print("num of paths method 2: " + str(len(paths)))
+print("------------------------------------")
 
-graph.show_graph('product graph')
-# dict = high_level_model.demonstrate_HLC(path=paths[0], n_episodes=8, render = True)
+pareto_graph(paths)
+
+#graph.show_graph('product graph')
+dict = high_level_model.demonstrate_HLC(path=paths[0], n_episodes=2, render = True)
 # PAC_upper_probability = dict["probability"] + 0.05 * dict["probability"]
 # PAC_lower_probability = dict["probability"] - 0.05 * dict["probability"]
 # PAC_upper_cost = dict["cost"] + 0.05 * dict["cost"]

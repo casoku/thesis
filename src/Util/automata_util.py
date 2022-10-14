@@ -83,7 +83,7 @@ def solve_edge_bool_expression(bdict, automata_edge, map_edge, variables):
 
     # recombine string
     expression = ' '.join(split)
-
+    
     #Replace unassigned values with "False"
     for variable in variables_copy:
         print("variable to replace: " + variable)

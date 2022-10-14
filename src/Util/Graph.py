@@ -123,6 +123,7 @@ class Graph:
                 #print("--" + str(predecessor.permanent_labels) + "--")
                 position = len(predecessor.permanent_labels) - 1
                 label = Label(probability, cost, predecessor, current, position)
+
                 #print(label.to_string())
                 #check if new label is dominated or not, if not add to temporary labels
                 dominated = False
@@ -139,7 +140,10 @@ class Graph:
                         current.temporary_labels.remove(temporary_label)
                         temporary_labels.remove(temporary_label)
 
-                #print(dominated)
+                # for f_state in self.final_states:
+                #     if current.name == f_state.name:
+                #         print("!!" + label.to_string())
+                #         print(dominated)
 
                 if not dominated:
                     current.add_temporary_label(label)
@@ -152,9 +156,13 @@ class Graph:
         
         #print(self.goal_state)
         #Print permanent labels of final node
-        for goal_state in self.final_states:
-            for label in goal_state.permanent_labels:
-                print(label.to_string())
+        # print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        # print("# of final states: " + str(len(self.final_states)))
+        # for state in self.states:
+        #     for goal_state in self.final_states:
+        #         if(state.name == goal_state.name):
+        #             for label in state.permanent_labels:
+        #                 print(label.to_string())
     
     def find_optimal_paths_2(self):
         #find all labels of final states
@@ -165,6 +173,8 @@ class Graph:
                     for label in state.permanent_labels:
                         final_labels.append(label)
         
+        # print("# of final states: " + str(len(self.final_states)))
+        # print("# of final labels: " + str(len(final_labels)))
         # filter on pareto optimal labels in all final states
         temp = copy.deepcopy(final_labels)
 
@@ -178,7 +188,7 @@ class Graph:
             if(dict1.probability <= other.probability and dict1.cost >= other.cost):
                 return -1
 
-            return 0
+            return 2
 
         for p1 in temp:
             for p2 in temp:
@@ -232,15 +242,16 @@ class Graph:
             
             filtered_states[str(state.name)] = filtered_permanent_labels
                 
-        print("---------------------------------------------------")
-        for key in filtered_states:
-            for item in filtered_states[key]:
-                print(item.to_string())
-        print("---------------------------------------------------")
+        # print("---------------------------------------------------")
+        # for key in filtered_states:
+        #     for item in filtered_states[key]:
+        #         print(item.to_string())
+        # print("---------------------------------------------------")
 
         all_paths = []
 
         #return self.printAllPaths(self.start_state.name, self.final_states[0].name, filtered_states, paths)
+        #print("# of final labels old method: " + str(len(self.final_states)))
         for stateF in self.final_states:
             tempPaths = self.findAllPaths(self.start_state.name, stateF.name, filtered_states, paths)
             for p in tempPaths:
@@ -256,7 +267,7 @@ class Graph:
             if(dict1["probability"] <= other["probability"] and dict1["cost"] >= other["cost"]):
                 return -1
 
-            return 0
+            return -2
         #filter out not pareto-optimal paths
         all_paths_copy = copy.deepcopy(all_paths)
 
@@ -350,7 +361,6 @@ class Graph:
         f.attr(rankdir='LR', size='8.5')
         #f.node("q1", shape="point")
 
-        #print(self.states)
         for state in self.states:
             if state.name == self.start_state.name:
                 f.attr('node', shape='Mdiamond', fontsize="24pt")
