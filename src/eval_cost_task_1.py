@@ -7,9 +7,13 @@ fig = plt.subplots(figsize =(12, 8))
  
 # set height of bar
 small_subtasks = [18.43]
-big_subtasks = [19.72]
+std_small_subtasks = [4.4]
+big_subtasks = [19.3]
+std_bigsubtasks = [4.8]
 DiRL = [17.3]
+std_DiRL = [4.7]
 SPECTRL = [23.3]
+std_SPECTRL = [5.3]
 # Set position of bar on X axis
 br1 = np.arange(len(small_subtasks))
 br2 = [x + barWidth for x in br1]
@@ -17,16 +21,16 @@ br3 = [x + barWidth for x in br2]
 br4 = [x + barWidth for x in br3]
  
 # Make the plot
-bar1 = plt.bar(br1, small_subtasks, color ='firebrick', width = barWidth-0.02,
+bar1 = plt.bar(br1, small_subtasks, yerr = std_small_subtasks, color ='firebrick', width = barWidth-0.02, capsize = 15,
          label ='OM + small subtasks')
 plt.bar_label(bar1, fontsize = 18)
-bar2 = plt.bar(br2, big_subtasks, color ='darkgreen', width = barWidth-0.02,
+bar2 = plt.bar(br2, big_subtasks, yerr = std_bigsubtasks, color ='darkgreen', width = barWidth-0.02, capsize = 15,
         label ='OM + big subtasks')
 plt.bar_label(bar2, fontsize = 18)
-bar3 = plt.bar(br3, DiRL, color ='midnightblue', width = barWidth-0.02,
+bar3 = plt.bar(br3, DiRL, yerr = std_DiRL, color ='midnightblue', width = barWidth-0.02, capsize = 15,
         label ='DiRL')
 plt.bar_label(bar3, fontsize = 18)
-bar4 = plt.bar(br4, SPECTRL, color ='darkorange', width = barWidth-0.02,
+bar4 = plt.bar(br4, SPECTRL, yerr = std_SPECTRL, color ='darkorange', width = barWidth-0.02, capsize = 15,
         label ='SPECTRL')
 plt.bar_label(bar4, fontsize = 18)
  

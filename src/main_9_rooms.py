@@ -2,6 +2,7 @@ from Environment_9_rooms import Environment_9_rooms
 from Util.Objective import Objective
 from Util.automata_util import * 
 from Util.pareto_graph import pareto_graph
+from Util.martins_util import order_lexicographically_dict
 from high_level_model import HLM
 import sys
 
@@ -221,49 +222,76 @@ objectives.append(objective26)
 objective26r = Objective([20,20], [17,14], [14,14], 8, 8, ['d10', 'R9'], ['R9'])
 objectives.append(objective26r)
 
-high_level_model = HLM(objectives, start_state, goal_states, env)
-# high_level_model.train_subcontrollers(40000)
-high_level_model.save('9_rooms_HLM')
+#high_level_model = HLM(objectives, start_state, goal_states, env)
+# high_level_model.train_subcontrollers(40000, '9_rooms_HLM')
+#high_level_model.save('9_rooms_HLM')
 
 high_level_model = None
 high_level_model = HLM(load_dir='9_rooms_HLM')
-
-#LTL = 'F y | F g'
-#LTL = 'F (p & F g)'
-#LTL = 'G ! p & F g'
-#LTL = 'G ! d1 & F p'
-#LTL = 'F g'
-#LTL = 'G ! d1 & (F (p & F g))'
-# LTL = 'G ! d1 & (F y & F c & F (p & F g))'
-LTL = 'F y & F c & F p & F g'
-# LTL = '!start U p & !R4 U p & F start'
-automata = LTL_to_automata(LTL)
-bdict = automata.get_dict()
-
-# #custom_print(automata)
-
-#show_automata(automata)
-#high_level_model.show_HLM_graph()
 sys.setrecursionlimit(10000)
-graph = high_level_model.create_product_graph(LTL)
-graph.martins_algorithm()
-paths_2 = graph.find_optimal_paths_2()
-paths, filterer_paths = graph.find_optimal_paths()
-print("---------------Paths---------------")
-# print(paths)
-# print("------------------------------------")
-# print(filterer_paths)
-# print("------------------------------------")
-print("num of paths: " + str(len(paths)))
-print("num of filtered paths: " + str(len(filterer_paths)))
-print("num of paths method 2: " + str(len(paths_2)))
-print("------------------------------------")
-#paths = graph.find_optimal_paths_2()
-# print("------------------------------------")
-# print("num of paths: " + str(len(paths)))
-# print("------------------------------------")
-# graph.show_graph('product graph')
-high_level_model.demonstrate_HLC(path=paths_2[0], n_episodes=2, render = True)
 
-#pareto_graph(filterer_paths)
-pareto_graph(paths_2)
+#LTL1 = 'F y | F g'
+#LTL2 = 'F (p & F g)'
+#LTL3 = 'G ! p & F g'
+#LTL4 = 'G ! d1 & F p'
+#LTL5 = 'F g'
+#LTL6 = 'G ! d1 & (F (p & F g))'
+#LTL7 = 'G ! d1 & (F y & F c & F (p & F g))'
+
+LTL1 = 'F g | F y'
+LTL2 = '! R4 U p & ! R7 U g'
+LTL3 = 'F y & F c & F p & F g'
+
+#tasks = [LTL1, LTL2, LTL3]
+tasks = [LTL2]
+for LTL in tasks:
+    print('---------------------- Task {}----------------------'.format(LTL))
+    automata = LTL_to_automata(LTL)
+    bdict = automata.get_dict()
+
+    # #custom_print(automata)
+
+    #show_automata(automata)
+    #high_level_model.show_HLM_graph()
+    graph = high_level_model.create_product_graph(LTL)
+    graph.martins_algorithm()
+    paths_2 = graph.find_optimal_paths_2()
+    paths, filterer_paths = graph.find_optimal_paths()
+    print("---------------Paths---------------")
+    # print(paths)
+    # print("------------------------------------")
+    # print(filterer_paths)
+    # print("------------------------------------")
+    print("num of paths: " + str(len(paths)))
+    print("num of filtered paths: " + str(len(filterer_paths)))
+    print("num of paths method 2: " + str(len(paths_2)))
+    print("------------------------------------")
+    #paths = graph.find_optimal_paths_2()
+    # print("------------------------------------")
+    # print("num of paths: " + str(len(paths)))
+    # print("------------------------------------")
+    # graph.show_graph('product graph')
+
+    paths_2 = order_lexicographically_dict(paths_2)
+
+    # index = 1
+    # for path in paths_2:
+    #     print('---------------------- Task {}----------------------'.format(index))
+    #     print("estimated probability: " + str(path['probability']) + " estimated cost: " + str(path['cost']))
+    #     print("number of subtasks: " + str(len(path['edges'])))
+    #     high_level_model.demonstrate_HLC(path=path, n_episodes=600, render = False)
+    #     index += 1
+    #     print()
+    dict = high_level_model.demonstrate_HLC(path=paths_2[len(paths_2)-1], n_episodes=8, render = True)
+    PAC_upper_probability = dict["probability"] + 0.05 
+    PAC_lower_probability = dict["probability"] - 0.05
+    # PAC_upper_cost = dict["cost"] + 0.05 * dict["cost"]
+    # PAC_lower_cost = dict["cost"] - 0.05 * dict["cost"]
+    print("--------------------------------------")
+    print("PAC lower Probability: " + str(PAC_lower_probability))
+    print("PAC upper Probability: " + str(PAC_upper_probability))
+
+    #high_level_model.demonstrate_HLC(path=paths_2[0], n_episodes=2, render = True)
+
+    #pareto_graph(filterer_paths)
+    #pareto_graph(paths_2)

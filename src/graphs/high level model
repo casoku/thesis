@@ -6,33 +6,11 @@ digraph finite_state_machine {
 	S2
 	node [fontsize="24pt" shape=circle]
 	S3
-	node [fontsize="24pt" shape=circle]
-	S4
-	node [fontsize="24pt" shape=circle]
-	S5
-	node [fontsize="24pt" shape=circle]
-	S6
-	node [fontsize="24pt" shape=circle]
-	S7
 	node [shape=circle]
-	S1 -> S2 [label="['d1'], ['r1']" fontsize="24pt"]
-	S2 -> S1 [label="['start'], ['r1']" fontsize="24pt"]
-	S1 -> S3 [label="['d2'], ['r1']" fontsize="24pt"]
-	S3 -> S1 [label="['start'], ['r1']" fontsize="24pt"]
-	S3 -> S2 [label="['d1'], ['r1']" fontsize="24pt"]
-	S2 -> S3 [label="['d2'], ['r1']" fontsize="24pt"]
-	S2 -> S4 [label="['d3'], ['r2']" fontsize="24pt"]
-	S4 -> S2 [label="['d1'], ['r2']" fontsize="24pt"]
-	S2 -> S5 [label="['p'], ['r2']" fontsize="24pt"]
-	S5 -> S2 [label="['d1'], ['r2']" fontsize="24pt"]
-	S4 -> S5 [label="['p'], ['r2']" fontsize="24pt"]
-	S5 -> S4 [label="['d3'], ['r2']" fontsize="24pt"]
-	S3 -> S6 [label="['d4'], ['r3']" fontsize="24pt"]
-	S6 -> S3 [label="['d2'], ['r3']" fontsize="24pt"]
-	S6 -> S7 [label="['g'], ['r4']" fontsize="24pt"]
-	S7 -> S6 [label="['d4'], ['r4']" fontsize="24pt"]
-	S4 -> S7 [label="['g'], ['r4']" fontsize="24pt"]
-	S7 -> S4 [label="['d3'], ['r4']" fontsize="24pt"]
-	S4 -> S6 [label="['d4'], ['r4']" fontsize="24pt"]
-	S6 -> S4 [label="['d3'], ['r4']" fontsize="24pt"]
+	S1 -> S2 [label="['p'], ['r1, r2']" fontsize="24pt"]
+	S2 -> S1 [label="['start'], ['r1, r2']" fontsize="24pt"]
+	S1 -> S3 [label="['g'], ['r1, r2, r3, r4']" fontsize="24pt"]
+	S3 -> S1 [label="['start'], ['r1, r2', 'r3', 'r4']" fontsize="24pt"]
+	S2 -> S3 [label="['g'], ['r2, r4']" fontsize="24pt"]
+	S3 -> S2 [label="['p'], ['r2, r4']" fontsize="24pt"]
 }
