@@ -1,9 +1,12 @@
+from math import sqrt
 import copy
 import os
 import pickle
 from time import sleep
 import spot
 import numpy as np
+import csv
+from datetime import datetime
 
 from Util.Graph import Graph
 from Util.State import State
@@ -29,7 +32,7 @@ class HLM:
             self.load(load_dir)
 
 
-    def train_subcontrollers(self):
+    def train_subcontrollers(self, epochs=50000, save_dir = ''):
         '''
         Train subcontrollers for all objectives (sub-tasks) 
         and collect their statistics (cost and success probability)
@@ -40,12 +43,18 @@ class HLM:
             print(task.to_string())
             controller = SubtaskController(controller_id, task.start_state, task.goal_state, env=self.env, verbose=0,
                  observation_top=task.observation_top, observation_width=task.observation_width, observation_height=task.observation_height)
-            controller.learn(50000)
+            controller.learn(epochs)
             controller.eval_performance(600)
             self.controllers.append(controller)
-            controller_id += 1
+
+            model_file, subcontroller_path = create_HLM_save_files(save_dir)
+            controller_dir = "controller" + str(controller.id)
+            controller_path = os.path.join(subcontroller_path, controller_dir)
+            controller.save(controller_path, HLM_save = True)
+
             print("controller" + str(controller_id) + " done")
             print(controller.get_performance())
+            controller_id += 1
 
     def save(self, save_dir):
         """
@@ -56,10 +65,10 @@ class HLM:
         model_file, subcontroller_path = create_HLM_save_files(save_dir)
 
         #Save each subcontroller in a seperate folder
-        for controller in self.controllers:
-            controller_dir = "controller" + str(controller.id)
-            controller_path = os.path.join(subcontroller_path, controller_dir)
-            controller.save(controller_path, HLM_save = True)
+        # for controller in self.controllers:
+        #     controller_dir = "controller" + str(controller.id)
+        #     controller_path = os.path.join(subcontroller_path, controller_dir)
+        #     controller.save(controller_path, HLM_save = True)
 
         #Save the data from the models
         model_data = {
@@ -105,6 +114,7 @@ class HLM:
         '''
         print('Creating state of HLM')
         id = 1
+        #print(len(self.objectives))
         for task in self.objectives:
             name = "S" + str(id)
             S1 = State(name, task.start_state, task.labels)
@@ -148,13 +158,13 @@ class HLM:
             #create edge
             id += 1
             name = 'E' + str(id)
-            edge = Edge(name, edge_controller, start_state, end_state, success_probability, cost, task.labels)
+            edge = Edge(name, edge_controller, start_state, end_state, success_probability, cost, task.labels, task.avoid_labels)
             self.edges.append(edge)
             start_state.add_outgoing_edge(edge)
             end_state.add_incoming_edge(edge)
         print('Done creating edges for HLM')
 
-    def demonstrate_HLC(self, path, n_episodes=8, n_steps=100, render=True, sleep_duration=0):
+    def demonstrate_HLC(self, path, n_episodes=8, n_steps=300, render=True, sleep_duration=0, save=True):
         '''
         Demonstrates a planning in the environment, the path exist out of subtask to executes in which order (left to right)
         '''
@@ -179,50 +189,84 @@ class HLM:
             next_edge_index = 1
             finished = False
             while not finished:
-                for step in range(n_steps):
-                    if sleep_duration != 0:
-                        sleep(sleep_duration)
-                    action, _states = controller.model.predict(obs)
-                    obs, reward, done, info = self.env.step(action)
-                    cost += 1
-                    if render:
-                        self.env.render(highlight=False)
-                    if done:
-                        #print(info)
-                        if info['task_complete']:
-                            #print(cur_edge.state2.to_string())
-                            #print(self.goal_state)
-                            #Goal reached
-                            if cur_edge.state2.name == path["edges"][-1].state2.name:
-                                #print("goal reached! :)")
-                                finished = True
-                                total_cost.append(cost)
-                                total_successes.append(1)
-                                break
-                            
-                            #Select next controller and reset environment
-                            edge = path["edges"][next_edge_index]
-                            controller = edge.controller
-                            self.env.set_observation_size(controller.observation_width, controller.observation_height, controller.observation_top)
-                            self.env.sub_task_goal = controller.goal_state
-                            cur_edge = edge
-                            next_edge_index += 1
-                            #print("new controller = " + str(cur_edge.name))
-                            #print("new controller start: " + str(cur_edge.state1.to_string()) + ", goal: " + str(cur_edge.state2.to_string()))
-                            obs = self.env.gen_obs()
-                            
-                        else:
-                            #print("sub task failed :(")
+                if sleep_duration != 0:
+                    sleep(sleep_duration)
+                action, _states = controller.model.predict(obs)
+                obs, reward, done, info = self.env.step(action)
+                cost += 1
+                if render:
+                    self.env.render(highlight=False)
+
+                if cost == n_steps:
+                    finished = True
+                    total_successes.append(0)
+                    break 
+
+                if done:
+                    #print(info)
+                    if info['task_complete']:
+                        #print(cur_edge.state2.to_string())
+                        #print(self.goal_state)
+                        #Goal reached
+                        if cur_edge.state2.name == path["edges"][-1].state2.name:
+                            #print("goal reached! :)")
                             finished = True
-                            total_successes.append(0)
+                            total_cost.append(cost)
+                            total_successes.append(1)
                             break
-        
+                        
+                        #Select next controller and reset environment
+                        edge = path["edges"][next_edge_index]
+                        controller = edge.controller
+                        self.env.set_observation_size(controller.observation_width, controller.observation_height, controller.observation_top)
+                        self.env.sub_task_goal = controller.goal_state
+                        cur_edge = edge
+                        next_edge_index += 1
+                        #print("new controller = " + str(cur_edge.name))
+                        #print("new controller start: " + str(cur_edge.state1.to_string()) + ", goal: " + str(cur_edge.state2.to_string()))
+                        obs = self.env.gen_obs()
+                        
+                    else:
+                        #print("sub task failed :(")
+                        finished = True
+                        total_successes.append(0)
+                        break
+
+        mean_succ = np.sum(total_successes)/len(total_successes)
+        mean_cost = np.average(total_cost)
+        std_cost = np.std(total_cost)
+        std_succ = round(sqrt((mean_succ * (1 - mean_succ))/n_episodes), 3)
+
+        if save:
+            current_time = datetime.now().strftime("%d-%m-%Y_%H:%M:%S")
+            title_cost = "../csv/data" + current_time + "_cost.csv"
+            title_succ = "../csv/data" + current_time + "_succ.csv"
+            title_calc = "../csv/data" + current_time + "_general.csv"
+            with open(title_cost, 'w') as file:
+                writer = csv.writer(file)
+                writer.writerow(['cost'])
+                for cost in total_cost:
+                    writer.writerow([cost])
+            
+            with open(title_succ, 'w') as file:
+                writer = csv.writer(file)
+                writer.writerow(['cost'])
+                for succ in total_successes:
+                    writer.writerow([succ])
+
+            with open(title_calc, 'w') as file:
+                writer = csv.writer(file)
+                writer.writerow(['mean cost', 'std cost', 'success probability', 'std success probability'])
+                writer.writerow([mean_cost, std_cost, mean_succ, std_succ])
+
         print("calculated pareto cost: " + str(path["cost"]))
         print("average cost: " + str(np.average(total_cost)))
+        print("std cost: " + str(std_cost))
         print("calculated pareto probability: " + str(path["probability"]))
         print("success rate: " + str(np.sum(total_successes)/len(total_successes)))
+        print("std success probability: " + str(std_succ))
 
-        dict = {"probability": np.sum(total_successes)/len(total_successes), "cost": np.average(total_cost)}
+        dict = {"probability": np.sum(total_successes)/len(total_successes), "cost": np.average(total_cost), "total_successes": total_successes}
         return dict
     
     def create_product_graph(self, LTL_string):
@@ -258,7 +302,7 @@ class HLM:
         variables = []
         for ap in automata.ap():
             variables.append(str(ap))
-        print(str(variables))
+        #print(str(variables))
 
         index = 0
         # - Create Product edge set
@@ -283,11 +327,11 @@ class HLM:
                         edge = {"start": startState, "end": endState, "label": spot.bdd_format_formula(bdict, edgeAut.cond), "probability": edgeHLM.probability, "cost":edgeHLM.cost} 
                         startStateS = get_state_by_name_from_array(stateset, startState)
                         endStateS = get_state_by_name_from_array(stateset, endState)
-                        edgeE = Edge('E' + str(index), edgeHLM.controller, startStateS, endStateS, edgeHLM.probability, edgeHLM.cost, edgeHLM.labels)  
+                        edgeE = Edge('E' + str(index), edgeHLM.controller, startStateS, endStateS, edgeHLM.probability, edgeHLM.cost, edgeHLM.labels, edgeHLM.avoid_labels)  
                         edgeset.append(edgeE)
-                        print(edgeE.to_string())         
+                        #print(edgeE.to_string())         
                         edgeset_string.append(edge)
-                        print(startStateS.to_string())
+                        #print(startStateS.to_string())
                         startStateS.add_outgoing_edge(edgeE)
                         endStateS.add_incoming_edge(edgeE)
                         index += 1
@@ -312,7 +356,7 @@ class HLM:
                     remove += 1
 
             if remove == len(final_state.incoming_edges):
-                print("remove state: " + str(final_state.name))
+                #print("remove state: " + str(final_state.name))
                 edgeset_copy = [e for e in edgeset_copy if e.state2.name != final_state.name]
                 edgeset_copy = [e for e in edgeset_copy if e.state1.name != final_state.name]
                 stateset_copy = [s for s in stateset_copy if s.name != final_state.name] 
@@ -337,8 +381,8 @@ class HLM:
                     stateset = [s for s in stateset if s.name != state.name] 
                     final_stateset = [fs for fs in final_stateset if fs.name != state.name]
 
-        for state in stateset:
-            print(str(state.name))
+        # for state in stateset:
+        #     print(str(state.name))
 
         # - Connect Correct states and edges
         graph = Graph(stateset, start_state_g, final_stateset, edgeset)
@@ -358,7 +402,8 @@ class HLM:
         '''
         
         final_states = []
-        #final_states.append(get_state(self, self.goal_state))
+        print('---------------------------------')
+        print(self.states)
         g = Graph(self.states, get_state(self, self.start_state), final_states, self.edges)
         
         g.show_graph('high level model')

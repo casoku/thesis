@@ -37,7 +37,7 @@ def get_state(HLM, state):
         if(cur_state == state):
             vertex = cur_state
             break
-    
+
     return vertex
 
 

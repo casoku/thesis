@@ -1,10 +1,26 @@
 import random
-from turtle import width
 from gym_minigrid.minigrid import *
 from operator import add
 
 def same_position(pos1, pos2):
     return pos1[0] == pos2[0] and pos1[1] == pos2[1]
+
+def generate_walls(grid=None):
+    assert grid is not None
+    #(wall_rect(x, y, width, height))
+
+    #Walls room 3
+    grid.wall_rect(18, 3, 1, 4)
+
+    #Walls room 4
+    grid.wall_rect(2, 10, 3, 1)
+
+    #Walls room 6
+    grid.wall_rect(17, 10, 1, 1)
+    grid.wall_rect(17, 11, 2, 1)
+
+    # Walls room 7
+    grid.wall_rect(0, 18, 5, 1)
 
 def generate_rooms(grid=None):
     assert grid is not None
@@ -43,16 +59,53 @@ def place_agent(environment=None):
     else:
         environment.place_agent()
 
+def add_ball(environment, top):
+    assert environment is not None
+    
+    ball = Ball()
+    environment.obstacles.append(ball)
+    environment.place_obj(obj = ball, top = top, size = (6, 6), max_tries=100)
+
+
+
 def place_obstacles(environment=None):
     assert environment is not None
-
+    
     environment.obstacles = []
 
-    num_rooms_in_width = 3
-    for i in range(0, num_rooms_in_width):
-        for j in range(0, num_rooms_in_width):
-            environment.obstacles.append(Ball())
-            environment.place_obj(obj = environment.obstacles[i * num_rooms_in_width + j], top = (i * 7, j * 7), size = (6, 6), max_tries=100)
+    # Obstacles room 1
+    add_ball(environment, (1, 1))
+
+    # Obstacles room 2
+    add_ball(environment, (8, 1))
+    add_ball(environment, (8, 1))
+
+    # Obstacles room 4
+    add_ball(environment, (1, 8))
+
+    # Obstacles room 5
+    add_ball(environment, (8, 8))
+
+    # Obstacles room 6
+    add_ball(environment, (16, 8))
+
+    # Obstacles room 8
+    add_ball(environment, (8, 16))
+    add_ball(environment, (8, 16))
+
+    # Obstacles room 9
+    add_ball(environment, (16, 16))
+
+
+
+    # environment.obstacles = []
+
+    # num_rooms_in_width = 3
+
+    # for i in range(0, num_rooms_in_width):
+    #     for j in range(0, num_rooms_in_width):
+    #         environment.obstacles.append(Ball())
+    #         environment.place_obj(obj = environment.obstacles[i * num_rooms_in_width + j], top = (i * 7, j * 7), size = (6, 6), max_tries=100)
 
 def create_observation(environment=None):
     assert environment is not None
@@ -128,7 +181,13 @@ def update_environment(environment=None, objects_old_pos=None, objects_new_pos=N
     for i in range(0, len(objects_old_pos)):
         if same_position(agent_old_pos, objects_new_pos[i]) and same_position(agent_new_pos, objects_old_pos[i]):
             collision = True
-        
+    
+    agent_pos = environment.agent_pos
+    obs_grid = environment.grid.slice(environment.observation_top[0], environment.observation_top[1], environment.observation_width, environment.observation_height)
+    if not(agent_new_pos[1] - environment.observation_top[1] < obs_grid.height and agent_new_pos[1] - environment.observation_top[1] >= 0 and agent_new_pos[0] - environment.observation_top[0] < obs_grid.width and agent_new_pos[0] - environment.observation_top[0] >= 0):
+        done = True
+        reward = -10
+        return done, info, reward
 
     if agent_new_cell == None or agent_new_cell.can_overlap():
         environment.agent_pos = agent_new_pos
@@ -143,7 +202,9 @@ def update_environment(environment=None, objects_old_pos=None, objects_new_pos=N
     if agent_new_cell != None and agent_new_cell.type == 'lava':
         done = True
         info['lava'] = True
-        reward = -1
+        # reward = -1
+    # if agent_new_cell != None and agent_new_cell.type == 'wall':
+    #     reward = -0.2
 
     return done, info, reward
 

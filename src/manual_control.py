@@ -148,14 +148,17 @@ env_settings = {
 env = Environment_simple(**env_settings)
 
 
-# goal_1 = {'state': [1, 6], 'color': 'green'}
-# goal_2 = {'state': [13, 1], 'color': 'yellow'}
-# goal_3 = {'state': [13, 8], 'color': 'purple'}
+
+# start_state = [1,1]
+# goal_1 = {'state': [20, 20], 'color': 'green'}
+# goal_2 = {'state': [1, 20], 'color': 'purple'}
+# goal_3 = {'state': [20, 6], 'color': 'yellow'}
+# goal_4 = {'state': [10, 10], 'color': 'cyan'}
 # goal_states = []
 # goal_states.append(goal_1)
 # goal_states.append(goal_2)
 # goal_states.append(goal_3)
-# start_state = [1,1]
+# goal_states.append(goal_4)
 
 # '''
 # Create environment in which the high-level-controller will be tested
@@ -164,16 +167,10 @@ env = Environment_simple(**env_settings)
 #     'agent_start_states' : start_state,
 #     'goal_states': goal_states,
 #     'slip_p' : 0,
-#     'width' : 15,
-#     'height' : 15
+#     'width' : 22,
+#     'height' : 22
 # }
-# env = Environment_discrete_rooms(**env_settings)
-
-# observation_top = [0, 0]
-# observation_width = 8
-# observation_height = 8
-# env.sub_task_goal = [1, 6]
-# env.set_observation_size(observation_width, observation_height, observation_top)
+# env = Environment_9_rooms(**env_settings)
 
 
 window = Window('gym_minigrid - Maze')

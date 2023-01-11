@@ -50,10 +50,6 @@ class Environment_simple(MiniGridEnv):
         self.observation_space = spaces.Box(low = 0, high = 5, shape=((self.observation_width * self.observation_height), ), dtype='uint8')
 
     def _gen_grid(self, width, height):
-        #Generate new seed, so that the map has randomized obstacle positions
-        seed = randint(0, 2000)
-        self.seed(seed)
-
         # Create an empty grid
         self.grid = Grid(width, height)
 

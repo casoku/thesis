@@ -1,6 +1,6 @@
 from Util.automata_util import * 
 
-LTL = 'G ! c & F g'
+LTL = 'F p | F g'
 
 automata = LTL_to_automata(LTL, 'small')
 bdict = automata.get_dict()

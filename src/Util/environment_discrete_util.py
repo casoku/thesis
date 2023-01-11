@@ -1,6 +1,6 @@
 import collections
 import random
-from dijkstar import Graph, find_path
+#from dijkstar import Graph, find_path
 from gym_minigrid.minigrid import *
 from operator import add
 

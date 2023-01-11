@@ -1,126 +1,66 @@
 digraph finite_state_machine {
 	rankdir=LR size=8.5
-	node [fontsize="24pt" shape=doublecircle]
-	S1b0
 	node [fontsize="24pt" shape=circle]
-	S1b2
+	S1b1
 	node [fontsize="24pt" shape=Mdiamond]
-	S1b3
-	node [fontsize="24pt" shape=circle]
-	S1b4
+	S1b2
 	node [fontsize="24pt" shape=circle]
 	S2b1
 	node [fontsize="24pt" shape=circle]
 	S2b2
 	node [fontsize="24pt" shape=circle]
-	S2b3
-	node [fontsize="24pt" shape=circle]
-	S2b4
-	node [fontsize="24pt" shape=circle]
 	S3b1
 	node [fontsize="24pt" shape=circle]
 	S3b2
-	node [fontsize="24pt" shape=circle]
-	S3b3
-	node [fontsize="24pt" shape=circle]
-	S3b4
 	node [fontsize="24pt" shape=circle]
 	S4b1
 	node [fontsize="24pt" shape=circle]
 	S4b2
 	node [fontsize="24pt" shape=circle]
-	S4b3
-	node [fontsize="24pt" shape=circle]
-	S4b4
-	node [fontsize="24pt" shape=circle]
 	S5b1
-	node [fontsize="24pt" shape=circle]
-	S5b2
-	node [fontsize="24pt" shape=circle]
-	S5b3
 	node [fontsize="24pt" shape=circle]
 	S6b1
 	node [fontsize="24pt" shape=circle]
 	S6b2
+	node [fontsize="24pt" shape=doublecircle]
+	S7b0
 	node [fontsize="24pt" shape=circle]
-	S6b3
-	node [fontsize="24pt" shape=circle]
-	S6b4
-	node [fontsize="24pt" shape=circle]
-	S7b1
-	node [fontsize="24pt" shape=circle]
-	S7b4
+	S7b2
 	node [shape=circle]
-	S1b2 -> S2b2 [label="['r2']" fontsize="24pt"]
-	S1b3 -> S2b3 [label="['r2']" fontsize="24pt"]
-	S1b4 -> S2b4 [label="['r2']" fontsize="24pt"]
-	S2b1 -> S1b0 [label="['start']" fontsize="24pt"]
-	S2b2 -> S1b2 [label="['start']" fontsize="24pt"]
-	S2b3 -> S1b3 [label="['start']" fontsize="24pt"]
-	S2b4 -> S1b4 [label="['start']" fontsize="24pt"]
-	S1b2 -> S3b2 [label="['r3']" fontsize="24pt"]
-	S1b3 -> S3b3 [label="['r3']" fontsize="24pt"]
-	S1b4 -> S3b4 [label="['r3']" fontsize="24pt"]
-	S3b1 -> S1b0 [label="['start']" fontsize="24pt"]
-	S3b2 -> S1b2 [label="['start']" fontsize="24pt"]
-	S3b3 -> S1b3 [label="['start']" fontsize="24pt"]
-	S3b4 -> S1b4 [label="['start']" fontsize="24pt"]
-	S3b1 -> S2b1 [label="['r2']" fontsize="24pt"]
-	S3b2 -> S2b2 [label="['r2']" fontsize="24pt"]
-	S3b3 -> S2b3 [label="['r2']" fontsize="24pt"]
-	S3b4 -> S2b4 [label="['r2']" fontsize="24pt"]
-	S2b1 -> S3b1 [label="['r3']" fontsize="24pt"]
-	S2b2 -> S3b2 [label="['r3']" fontsize="24pt"]
-	S2b3 -> S3b3 [label="['r3']" fontsize="24pt"]
-	S2b4 -> S3b4 [label="['r3']" fontsize="24pt"]
-	S2b1 -> S4b1 [label="['r4']" fontsize="24pt"]
-	S2b2 -> S4b2 [label="['r4']" fontsize="24pt"]
-	S2b3 -> S4b3 [label="['r4']" fontsize="24pt"]
-	S2b4 -> S4b4 [label="['r4']" fontsize="24pt"]
-	S4b1 -> S2b1 [label="['r1']" fontsize="24pt"]
-	S4b2 -> S2b2 [label="['r1']" fontsize="24pt"]
-	S4b3 -> S2b3 [label="['r1']" fontsize="24pt"]
-	S4b4 -> S2b4 [label="['r1']" fontsize="24pt"]
-	S2b1 -> S5b1 [label="['p']" fontsize="24pt"]
-	S2b2 -> S5b2 [label="['p']" fontsize="24pt"]
-	S2b3 -> S5b3 [label="['p']" fontsize="24pt"]
-	S2b4 -> S5b2 [label="['p']" fontsize="24pt"]
-	S5b1 -> S2b1 [label="['r1']" fontsize="24pt"]
-	S5b2 -> S2b2 [label="['r1']" fontsize="24pt"]
-	S5b3 -> S2b3 [label="['r1']" fontsize="24pt"]
-	S4b1 -> S5b1 [label="['p']" fontsize="24pt"]
-	S4b2 -> S5b2 [label="['p']" fontsize="24pt"]
-	S4b3 -> S5b3 [label="['p']" fontsize="24pt"]
-	S4b4 -> S5b2 [label="['p']" fontsize="24pt"]
-	S5b1 -> S4b1 [label="['r4']" fontsize="24pt"]
-	S5b2 -> S4b2 [label="['r4']" fontsize="24pt"]
-	S5b3 -> S4b3 [label="['r4']" fontsize="24pt"]
-	S3b1 -> S6b1 [label="['r4']" fontsize="24pt"]
-	S3b2 -> S6b2 [label="['r4']" fontsize="24pt"]
-	S3b3 -> S6b3 [label="['r4']" fontsize="24pt"]
-	S3b4 -> S6b4 [label="['r4']" fontsize="24pt"]
-	S6b1 -> S3b1 [label="['r1']" fontsize="24pt"]
-	S6b2 -> S3b2 [label="['r1']" fontsize="24pt"]
-	S6b3 -> S3b3 [label="['r1']" fontsize="24pt"]
-	S6b4 -> S3b4 [label="['r1']" fontsize="24pt"]
-	S6b1 -> S7b1 [label="['g']" fontsize="24pt"]
-	S6b2 -> S7b1 [label="['g']" fontsize="24pt"]
-	S6b3 -> S7b4 [label="['g']" fontsize="24pt"]
-	S6b4 -> S7b4 [label="['g']" fontsize="24pt"]
-	S7b1 -> S6b1 [label="['r3']" fontsize="24pt"]
-	S7b4 -> S6b4 [label="['r3']" fontsize="24pt"]
-	S4b1 -> S7b1 [label="['g']" fontsize="24pt"]
-	S4b2 -> S7b1 [label="['g']" fontsize="24pt"]
-	S4b3 -> S7b4 [label="['g']" fontsize="24pt"]
-	S4b4 -> S7b4 [label="['g']" fontsize="24pt"]
-	S7b1 -> S4b1 [label="['r2']" fontsize="24pt"]
-	S7b4 -> S4b4 [label="['r2']" fontsize="24pt"]
-	S4b1 -> S6b1 [label="['r3']" fontsize="24pt"]
-	S4b2 -> S6b2 [label="['r3']" fontsize="24pt"]
-	S4b3 -> S6b3 [label="['r3']" fontsize="24pt"]
-	S4b4 -> S6b4 [label="['r3']" fontsize="24pt"]
-	S6b1 -> S4b1 [label="['r2']" fontsize="24pt"]
-	S6b2 -> S4b2 [label="['r2']" fontsize="24pt"]
-	S6b3 -> S4b3 [label="['r2']" fontsize="24pt"]
-	S6b4 -> S4b4 [label="['r2']" fontsize="24pt"]
+	S1b1 -> S2b1 [label="['d1'], ['r1']" fontsize="24pt"]
+	S1b2 -> S2b2 [label="['d1'], ['r1']" fontsize="24pt"]
+	S2b1 -> S1b1 [label="['start'], ['r1']" fontsize="24pt"]
+	S2b2 -> S1b2 [label="['start'], ['r1']" fontsize="24pt"]
+	S1b1 -> S3b1 [label="['d2'], ['r1']" fontsize="24pt"]
+	S1b2 -> S3b2 [label="['d2'], ['r1']" fontsize="24pt"]
+	S3b1 -> S1b1 [label="['start'], ['r1']" fontsize="24pt"]
+	S3b2 -> S1b2 [label="['start'], ['r1']" fontsize="24pt"]
+	S3b1 -> S2b1 [label="['d1'], ['r1']" fontsize="24pt"]
+	S3b2 -> S2b2 [label="['d1'], ['r1']" fontsize="24pt"]
+	S2b1 -> S3b1 [label="['d2'], ['r1']" fontsize="24pt"]
+	S2b2 -> S3b2 [label="['d2'], ['r1']" fontsize="24pt"]
+	S2b1 -> S4b1 [label="['d3'], ['r2']" fontsize="24pt"]
+	S2b2 -> S4b2 [label="['d3'], ['r2']" fontsize="24pt"]
+	S4b1 -> S2b1 [label="['d1'], ['r2']" fontsize="24pt"]
+	S4b2 -> S2b2 [label="['d1'], ['r2']" fontsize="24pt"]
+	S2b1 -> S5b1 [label="['p'], ['r2']" fontsize="24pt"]
+	S2b2 -> S5b1 [label="['p'], ['r2']" fontsize="24pt"]
+	S5b1 -> S2b1 [label="['d1'], ['r2']" fontsize="24pt"]
+	S4b1 -> S5b1 [label="['p'], ['r2']" fontsize="24pt"]
+	S4b2 -> S5b1 [label="['p'], ['r2']" fontsize="24pt"]
+	S5b1 -> S4b1 [label="['d3'], ['r2']" fontsize="24pt"]
+	S3b1 -> S6b1 [label="['d4'], ['r3']" fontsize="24pt"]
+	S3b2 -> S6b2 [label="['d4'], ['r3']" fontsize="24pt"]
+	S6b1 -> S3b1 [label="['d2'], ['r3']" fontsize="24pt"]
+	S6b2 -> S3b2 [label="['d2'], ['r3']" fontsize="24pt"]
+	S6b1 -> S7b0 [label="['g'], ['r4']" fontsize="24pt"]
+	S6b2 -> S7b2 [label="['g'], ['r4']" fontsize="24pt"]
+	S7b2 -> S6b2 [label="['d4'], ['r4']" fontsize="24pt"]
+	S4b1 -> S7b0 [label="['g'], ['r4']" fontsize="24pt"]
+	S4b2 -> S7b2 [label="['g'], ['r4']" fontsize="24pt"]
+	S7b2 -> S4b2 [label="['d3'], ['r4']" fontsize="24pt"]
+	S4b1 -> S6b1 [label="['d4'], ['r4']" fontsize="24pt"]
+	S4b2 -> S6b2 [label="['d4'], ['r4']" fontsize="24pt"]
+	S6b1 -> S4b1 [label="['d3'], ['r4']" fontsize="24pt"]
+	S6b2 -> S4b2 [label="['d3'], ['r4']" fontsize="24pt"]
 }

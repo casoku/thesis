@@ -27,15 +27,32 @@ def custom_print(aut):
     print("Inherently Weak:", aut.prop_inherently_weak())
     print("Stutter Invariant:", aut.prop_stutter_invariant())
 
+    num_of_edges = 0
     for s in range(0, aut.num_states()):
         print("State {}:".format(s))
         for t in aut.out(s):
+            num_of_edges += 1
             print("  edge({} -> {})".format(t.src, t.dst))
             # bdd_print_formula() is designed to print on a std::ostream, and
             # is inconvenient to use in Python.  Instead we use
             # bdd_format_formula() as this simply returns a string.
             print("    label =", spot.bdd_format_formula(bdict, t.cond))
             print("    acc sets =", t.acc)
+
+    print("Number of states: ", num_of_edges)
+
+def num_states(aut):
+    return aut.num_states()
+
+def num_edges(aut):
+    num_of_edges = 0
+    for s in range(0, aut.num_states()):
+        #print("State {}:".format(s))
+        for t in aut.out(s):
+            num_of_edges += 1
+    
+    return num_of_edges
+
 
 def LTL_to_automata(ltl_string, setting = 'small'):
     #Change small to complete to also show terminating transitions
@@ -71,9 +88,22 @@ def solve_edge_bool_expression(bdict, automata_edge, map_edge, variables):
             variables_copy.remove(str(label))
         expression = str(expression.replace((str(label)) , 'True'))
 
+    # split string to find negation
+    split = expression.split()
+    split_expression_length = len(split)
+    
+    # check if variable in avoid_labels of edge and replace with True
+    for i in range(split_expression_length):
+        if split[i] == 'not':
+            if split[i+1] in map_edge.avoid_labels:
+                split[i+1] = 'True'
+
+    # recombine string
+    expression = ' '.join(split)
+    
     #Replace unassigned values with "False"
     for variable in variables_copy:
-        print("variable to replace: " + variable)
+        #print("variable to replace: " + variable)
         expression = str(expression.replace((str(variable)) , 'False'))
 
     #print("expression: " + expression)

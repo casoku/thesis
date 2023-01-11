@@ -22,7 +22,7 @@ class Label:
         if(self.probability <= other.probability and self.cost >= other.cost):
             return -1
 
-        return 0
+        return -2
     
     def state(self):
         return self.current
